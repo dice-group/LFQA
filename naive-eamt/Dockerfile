@@ -18,6 +18,8 @@ RUN pip install -r requirements.txt
 WORKDIR /neamt/GENRE
 RUN python setup.py build
     python setup.py install
+    # Downloading spacy's multilingual entity recognition model
+    python -m spacy download xx_ent_wiki_sm
 # Run the application
 CMD ["/neamt/start.py"]
 ENTRYPOINT ["python"]
