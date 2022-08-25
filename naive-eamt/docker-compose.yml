@@ -1,0 +1,53 @@
+version: "3"
+
+services:
+# Main service
+  naive-eamt:
+    image: naive-eamt
+    volumes:
+      # Copy config
+      - ./configuration.ini:/eamt/configuration.ini
+      # Mount the downloaded data directory(s)
+      - ./data:/eamt/data
+    ports:
+      - 6100:80
+    networks:
+      - neamt-net
+# MAG services
+# TODO: provide relevant parameters to the services
+  mag_en:
+    image: aksw/agdistis:latest
+    networks:
+      - neamt-net
+    profiles: ["mag"]
+    volumes:
+      # mount index
+      - .data/mag_data/indexdbpedia_en_2016:/usr/local/tomcat/index
+      # mount context
+      - .data/mag_data/index_bycontext_en:/usr/local/tomcat/index_bycontext
+  mag_de:
+    image: aksw/agdistis:latest
+    networks:
+      - neamt-net
+    profiles: ["mag"]
+    volumes:
+      # mount index
+      - .data/mag_data/indexdbpedia_de_2016:/usr/local/tomcat/index
+      # mount context
+      - .data/mag_data/index_bycontext_de:/usr/local/tomcat/index_bycontext
+  mag_fr:
+    image: aksw/agdistis:latest
+    networks:
+      - neamt-net
+    profiles: ["mag"]
+    volumes:
+      # mount index
+      - .data/mag_data/indexdbpedia_fr_2016:/usr/local/tomcat/index
+  mag_es:
+    image: aksw/agdistis:latest
+    networks:
+      - neamt-net
+    profiles: ["mag"]
+    volumes:
+      # mount index
+      - .data/mag_data/indexdbpedia_es_2016:/usr/local/tomcat/index
