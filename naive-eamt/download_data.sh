@@ -1,4 +1,5 @@
 #!/bin/bash
+# This might take some hours. Around 130 GB of storage space will be needed.
 cd "${BASH_SOURCE%/*}" || exit
 # download all the relevant data
 # download mag data

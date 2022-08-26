@@ -1,8 +1,8 @@
 FROM python:3.9
 WORKDIR /neamt
 COPY start.py .
-COPY ./component .
-COPY configuration.ini .
+    ./component .
+    configuration.ini .
 # install pytorch CPU
 RUN pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu
 # install fairseq
