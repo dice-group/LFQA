@@ -1,20 +1,32 @@
-version: "3"
+version: "3.3"
 
 services:
 # Main service
   naive-eamt:
     image: naive-eamt
     volumes:
+      # Copy code
+      - ./start.py:/neamt/start.py
+      - ./component:/neamt/component
+      - ./util:/neamt/util
+      - ./logs:/neamt/logs
       # Copy config
-      - ./configuration.ini:/eamt/configuration.ini
+      - ./configuration.ini:/neamt/configuration.ini
       # Mount the downloaded data directory(s)
-      - ./data:/eamt/data
+      - ./data:/neamt/data
     ports:
       - 6100:80
     networks:
       - neamt-net
-# MAG services with relevant parameters
-  mag_en:
+  # Libre Translate service
+  libretranslate:
+    image: libretranslate
+    restart: unless-stopped
+    profiles: ["libre_mt"]
+    ports:
+      - 6120:5000
+  # MAG services with relevant parameters
+  mag-en:
     image: aksw/agdistis:latest
     networks:
       - neamt-net
@@ -31,7 +43,7 @@ services:
       - AGDISTIS_EDGE_TYPE=http://dbpedia.org/ontology/
       - AGDISTIS_BASE_URI=http://dbpedia.org
       - AGDISTIS_CONTEXT=True
-  mag_de:
+  mag-de:
     image: aksw/agdistis:latest
     networks:
       - neamt-net
@@ -48,7 +60,7 @@ services:
       - AGDISTIS_EDGE_TYPE=http://dbpedia.org/ontology/
       - AGDISTIS_BASE_URI=http://dbpedia.org
       - AGDISTIS_CONTEXT=True
-  mag_fr:
+  mag-fr:
     image: aksw/agdistis:latest
     networks:
       - neamt-net
@@ -63,7 +75,7 @@ services:
       - AGDISTIS_EDGE_TYPE=http://dbpedia.org/ontology/
       - AGDISTIS_BASE_URI=http://dbpedia.org
       - AGDISTIS_CONTEXT=False
-  mag_es:
+  mag-es:
     image: aksw/agdistis:latest
     networks:
       - neamt-net
@@ -78,3 +90,6 @@ services:
       - AGDISTIS_EDGE_TYPE=http://dbpedia.org/ontology/
       - AGDISTIS_BASE_URI=http://dbpedia.org
       - AGDISTIS_CONTEXT=False
+      
+networks:
+  neamt-net:

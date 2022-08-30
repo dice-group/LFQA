@@ -1,5 +1,5 @@
 #!/bin/bash
-# This might take some hours. Around 130 GB of storage space will be needed.
+# This might take some hours. Around 150 GB of storage space will be needed.
 cd "${BASH_SOURCE%/*}" || exit
 # download all the relevant data
 # download mag data
@@ -26,6 +26,13 @@ rm -rf *.zip
 echo 'MAG: Pulling Docker Image'
 docker pull aksw/agdistis
 echo 'MAG: Finished!'
+cd ..
+# download fasttext language classification model
+wget https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz
+# download libre repo
+git clone https://github.com/LibreTranslate/LibreTranslate
+cd LibreTranslate
+docker build --build-arg with_models=true -t libretranslate .
 cd ..
 # download genre data
 # Downloading models

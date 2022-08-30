@@ -1,3 +1,6 @@
+SPARQLWrapper
+flask
+fasttext
 flair
 spacy
 marisa-trie

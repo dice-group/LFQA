@@ -5,19 +5,25 @@ EAMT pipelines configuration can be read/modified in the 'configuration.ini' fil
 # imports
 import configparser
 import json
+import logging
+import os
+
 from flask import request
 # importing the flask Module
 from flask import Flask
-
-from component.babelscape_ner import BabelscapeNer
-from component.davlan_ner import DavlanNer
-from component.flair_ner import FlairNer
-from component.helsinkinlp_mt import HelsinkiMt
-from component.libre_mt import LibreMt
-from component.mag_el import MagEl
-from component.mgenre_el import MgenreEl
-from component.spacy_ner import SpacyNer
-
+import sys
+# caution: path[0] is reserved for script path (or '' in REPL)
+sys.path.insert(1, '/neamt/component/')
+from babelscape_ner import BabelscapeNer
+from davlan_ner import DavlanNer
+from flair_ner import FlairNer
+from helsinkinlp_mt import HelsinkiMt
+from libre_mt import LibreMt
+from mag_el import MagEl
+from mgenre_el import MgenreEl
+from spacy_ner import SpacyNer
+# configuring logging
+logging.basicConfig(filename='/neamt/logs/neamt.log', level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 # Read the configuration file and find the relevant components
 comp_map = {
     'flair_ner': FlairNer,
@@ -62,9 +68,9 @@ def detect_components(config_file):
                 'inst_list': inst_list
             }
 
-
+logging.info('Reading configuration file..')
 # Initialize the requested components
-detect_components('configuration.ini')
+detect_components('/neamt/configuration.ini')
 
 
 # Process requests
@@ -77,18 +83,25 @@ def process_input(input_query, path):
     for inst in pipeline_info['inst_list']:
         io_var = inst.process_input(io_var)
     # return the last output
+    logging.info('final output:', io_var)
     return io_var
 
 
+# logging.info('Started')
 # Initiate dynamic the pipeline uris
 app = Flask(__name__)
+# logging.info('Finished')
 
 
 @app.route('/<string:path>', methods=['POST'])
 def allow(path):
     data = request.form
-    print('Query received for translation:', data)
+    logging.info('Query received for translation:', data)
     if (path in path_pipeline_map) and ('query' in data):
         return process_input(path, data['query'])
     else:
         return f'Invalid request'
+    
+# if __name__ == "__main__":
+#     port = int(os.environ.get('PORT', 80))
+#     app.run(use_reloader=False, host='0.0.0.0', port=port)
