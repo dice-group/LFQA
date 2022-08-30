@@ -9,11 +9,20 @@ sys.path.insert(1, '/neamt/util/')
 import placeholder_util as p_util
 
 
-def fetch_translation(query_plc, source_lang, url):
+def fetch_translation(query_plc, source_lang, target_lang, url):
+    '''
+    Function to fetch the translation of a natural language text.
+
+    :param target_lang: ISO code for the target language
+    :param query_plc: Natural language text to be translated
+    :param source_lang: ISO code for the source language
+    :param url: URL of the LibreTranslate service
+    :return: translated text
+    '''
     req_json = {
         'q': query_plc,
         'source': source_lang,
-        'target': 'en'
+        'target': target_lang
     }
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -26,7 +35,6 @@ def fetch_translation(query_plc, source_lang, url):
 
 
 class LibreMt:
-    sample_var = None
 
     def __init__(self):
         """
@@ -34,20 +42,23 @@ class LibreMt:
         It helps keep the framework from unnecessarily occupying the memory.
         """
         # Only accessible inside the docker network
-        self.url = "http://libremt:5000/translate"
+        self.url = "http://libretranslate:5000/translate"
         logging.debug('LibreMt component initialized.')
 
-    def process_input(input):
-        """
-        Each class must have process_input function. 
-        Depending upon the type of the component, it should expect/verify a certain input format.
-        The output should always be formatted as per the requirements as well. 
-        The input and output format for different component types can be found in the main readme file.
-        """
+    def process_input(self, input):
+        '''
+        Function to translate an entity annotated (linked) text to English
+
+        :param input: formatted dictionary as stated in the README for EL output
+        :return: translated text to English
+        '''
         # Send input for processing to the placeholder util
+        logging.debug('Input received: %s' % input)
         input = p_util.put_placeholders(input)
         # acquire text translated to English
-        trans_text = fetch_translation(input['text_plc'], input['lang'], 'en')
+        trans_text = fetch_translation(input['text_plc'], input['lang'], 'en', self.url)
+        logging.debug('Translated text with the placeholders: %s'%trans_text)
         # replace placeholders in the translated text
         trans_text = p_util.replace_placeholders(trans_text, input)
+        logging.debug('Output: %s'%trans_text)
         return trans_text

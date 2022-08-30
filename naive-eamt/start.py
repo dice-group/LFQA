@@ -22,6 +22,8 @@ from libre_mt import LibreMt
 from mag_el import MagEl
 from mgenre_el import MgenreEl
 from spacy_ner import SpacyNer
+from empty_ner import EmptyNer
+from empty_el import EmptyEl
 # configuring logging
 logging.basicConfig(filename='/neamt/logs/neamt.log', level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 # Read the configuration file and find the relevant components
@@ -33,7 +35,9 @@ comp_map = {
     'mgenre_el': MgenreEl,
     'mag_el': MagEl,
     'libre_mt': LibreMt,
-    'helsinkinlp_mt': HelsinkiMt
+    'helsinkinlp_mt': HelsinkiMt,
+    'no_ner': EmptyNer,
+    'no_el': EmptyEl
 }
 
 comp_inst_map = {}
@@ -67,6 +71,7 @@ def detect_components(config_file):
                 'comp_list': comp_list,
                 'inst_list': inst_list
             }
+    logging.info('Paths found:%s'%path_pipeline_map)
 
 logging.info('Reading configuration file..')
 # Initialize the requested components
@@ -77,13 +82,14 @@ detect_components('/neamt/configuration.ini')
 def process_input(input_query, path):
     # Find the pipeline
     pipeline_info = path_pipeline_map[path]
+    logging.debug('Pipeline Info:\n%s'%pipeline_info)
     # Persist the input/output for the pipeline components
     io_var = input_query
     # Loop through pipeline components and pass it the previous output as an input
     for inst in pipeline_info['inst_list']:
         io_var = inst.process_input(io_var)
     # return the last output
-    logging.info('final output:', io_var)
+    logging.info('final output: %s'%io_var)
     return io_var
 
 
@@ -96,9 +102,10 @@ app = Flask(__name__)
 @app.route('/<string:path>', methods=['POST'])
 def allow(path):
     data = request.form
-    logging.info('Query received for translation:', data)
+    logging.info('Query received at path: %s'%path)
+    logging.info('Query received for translation: %s'%data['query'])
     if (path in path_pipeline_map) and ('query' in data):
-        return process_input(path, data['query'])
+        return process_input(data['query'], path)
     else:
         return f'Invalid request'
     

@@ -1,9 +1,5 @@
 FROM python:3.9
 WORKDIR /neamt
-COPY start.py .
-COPY ./component .
-COPY ./util .
-COPY configuration.ini .
 COPY requirements.txt .
 # install pytorch CPU
 RUN pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu
@@ -22,8 +18,12 @@ RUN python setup.py build
 RUN python setup.py install
 # Downloading spacy's multilingual entity recognition model
 RUN python -m spacy download xx_ent_wiki_sm
-# flask module install
-RUN pip3 install flask
+# COPY SRC
+WORKDIR /neamt
+COPY start.py .
+COPY ./component .
+COPY ./util .
+COPY configuration.ini .
 # Run the application
 CMD ["-m", "flask", "--app", "/neamt/start", "run", "--host=0.0.0.0", "--port=80"]
 ENTRYPOINT ["python"]

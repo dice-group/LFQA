@@ -22,11 +22,11 @@ def detect_components(config_file):
 profile_str = ''
 component_set = detect_components('configuration.ini')
 profile_arr = []
-if 'mag' in component_set:
+if 'mag_el' in component_set:
     profile_arr.append('mag')
 if 'libre_mt' in component_set:
     profile_arr.append('libre_mt')
-profile_str = ', '.join(profile_arr)
+profile_str = ','.join(profile_arr)
 # Return the string to the shell, to be stored in COMPOSE_PROFILES variable
 print(profile_str)
 sys.exit(0)

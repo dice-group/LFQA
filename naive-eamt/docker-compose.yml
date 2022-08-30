@@ -6,9 +6,6 @@ services:
     image: naive-eamt
     volumes:
       # Copy code
-      - ./start.py:/neamt/start.py
-      - ./component:/neamt/component
-      - ./util:/neamt/util
       - ./logs:/neamt/logs
       # Copy config
       - ./configuration.ini:/neamt/configuration.ini
@@ -22,15 +19,20 @@ services:
   libretranslate:
     image: libretranslate
     restart: unless-stopped
+    command: ['--host', '0.0.0.0']
     profiles: ["libre_mt"]
     ports:
       - 6120:5000
+    networks:
+      - neamt-net
   # MAG services with relevant parameters
   mag-en:
     image: aksw/agdistis:latest
     networks:
       - neamt-net
     profiles: ["mag"]
+    ports:
+      - 6121:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_en_2016:/usr/local/tomcat/index
@@ -48,6 +50,8 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
+    ports:
+      - 6122:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_de_2016:/usr/local/tomcat/index
@@ -65,6 +69,8 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
+    ports:
+      - 6123:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_fr_2016:/usr/local/tomcat/index
@@ -80,6 +86,8 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
+    ports:
+      - 6124:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_es_2016:/usr/local/tomcat/index

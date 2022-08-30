@@ -12,6 +12,13 @@ sys.path.insert(1, '/neamt/util/')
 import common_util as c_util
 
 def fetch_ent_indexes(ner_results, query):
+    '''
+    Function to fetch the start and end indexes of each entity.
+
+    :param ner_results: Annotated NER results from huggingface/babescape NER pipeline
+    :param query: query to be annotated
+    :return: entity mentions along with their surface forms and start/end indexes
+    '''
     ent_indexes = []
     ent_item = {}
     begin_detect = False
@@ -56,13 +63,13 @@ class BabelscapeNer:
         logging.debug('BabelScapeNER component initialized.')
 
     def process_input(self, query):
-        """
-        Each class must have process_input function. 
-        Depending upon the type of the component, it should expect/verify a certain input format.
-        The output should always be formatted as per the requirements as well. 
-        The input and output format for different component types can be found in the main readme file.
-        """
-        logging.debug('Input received:', query)
+        '''
+        Function to annotate entities in a give natural language text.
+
+        :param query: natural language text to be annotated
+        :return:  formatted dictionary as stated in the README for NER output
+        '''
+        logging.debug('Input received: %s'%query)
         ner_results = self.nlp(query)
         print(ner_results)
         # find the start and end indexes
@@ -72,5 +79,5 @@ class BabelscapeNer:
             'lang': c_util.detect_lang(query),
             'ent_mentions': ent_indexes
         }
-        logging.debug('Output:', output)
+        logging.debug('Output: %s'%output)
         return output
