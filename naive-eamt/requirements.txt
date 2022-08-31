@@ -1,0 +1,7 @@
+SPARQLWrapper
+flask
+fasttext
+flair
+spacy
+marisa-trie
+transformers[torch]
