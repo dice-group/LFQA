@@ -117,6 +117,16 @@ To stop, use the stop script:
 ### Logs
 The logs are maintained in the ```log/neamt.log``` file
 
+### Query
+The configured pipelines can be queried through HTTP POST request, like:
+```
+curl --location --request POST 'http://localhost:6100/pipeline_bmgo' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'query=Ist Hawaii der Geburtsort von Obama'
+```
+The output format would depend upon the last component in the queried pipeline.
+
+## Customized Components
 ### Component I/O Formatting
 <a id="NER">__NER__:</a> For the components that strictly perform the task of named entity recognition, the expected input is a string containing text in natural language (en,de,fr,es). The output should be a JSON containing the string and information of annotated entities. Following is an example:
 
