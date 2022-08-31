@@ -5,7 +5,61 @@ This project aims to provide a configurable machine translation architecture. Th
 It comes already integrated with the following tools:
 
 <!-- Table including all the integrated NER, EL and MT tools -->
-*There will a table here instead of this text, soon.*
+<table id="comp-table">
+    <thead>
+        <tr>
+            <td>Type</td>
+            <td>Component</td>
+            <td>ID</td>
+            <td>Link</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan=4>NER</td>
+            <td>Babelscape NER</td>
+            <td>babelscape_ner</td>
+            <td>https://huggingface.co/Babelscape/wikineural-multilingual-ner</td>
+        </tr>
+        <tr>
+            <td>Flair NER</td>
+            <td>flair_ner</td>
+            <td>https://github.com/flairNLP/flair</td>
+        </tr>
+        <tr>
+            <td>Davlan NER</td>
+            <td>davlan_ner</td>
+            <td>https://huggingface.co/Davlan/bert-base-multilingual-cased-ner-hrl</td>
+        </tr>
+        <tr>
+            <td>Spacy NER</td>
+            <td>spacy_ner</td>
+            <td>https://spacy.io/api/entityrecognizer</td>
+        </tr>
+        <tr>
+            <td rowspan=2>EL</td>
+            <td>MAG</td>
+            <td>mag_el</td>
+            <td>https://github.com/dice-group/AGDISTIS/wiki/5---New-Capabilities---MAG</td>
+        </tr>
+        <tr>
+            <td>mGenre</td>
+            <td>mgenre_el</td>
+            <td>https://github.com/facebookresearch/GENRE</td>
+        </tr>
+        <tr>
+            <td rowspan=2>MT</td>
+            <td>Libre Translate</td>
+            <td>libre_mt</td>
+            <td>https://github.com/LibreTranslate/LibreTranslate</td>
+        </tr>
+        <tr>
+            <td>Opus MT</td>
+            <td>opus_mt</td>
+            <td>https://github.com/Helsinki-NLP/Opus-MT</td>
+        </tr>
+    </tbody>
+</table>
 
 <!-- ## Normal Setup
 We recommend using a tool like Anaconda to create a separate environment for this project's dependencies.
@@ -22,9 +76,46 @@ Afterwards, to install the dependencies and the download the needed files, run:
 
 ```bash req_install.sh``` -->
 
-## Docker Setup
+## Configuration
 
-*To be updated*
+The application uses a configuration file [```configuration.ini```](configuration.ini) to allow users to form pipelines based upon their combination of components.
+
+A sample pipeline configuration would look like this:
+```ini
+# unique pipeline section title
+[EAMT Pipeline 2]
+# pipeline name (can be non-unique as well)
+name = babelscape-mgenre-libre
+# ordered list of component ids in the pipeline
+components = ["babelscape_ner", "mgenre_el", "libre_mt"]
+# Path name (without /) that will be used to query this pipeline at localhost:6100/<path>
+path = pipeline_bmgl
+```
+
+The pipeline config allows to join any existing components together as long as they follow [I/O formatting rules](#NER). 
+The component IDs can be found in the [table above](#comp-table).
+
+__Important__: The application only initiates the components mentioned in the config pipelines to be memory efficient. To save on memory, please comment out the config for the non-required pipelines.
+
+## Docker Setup
+First, download and setup the data using the following command (needs 150GB free storage, can take a few hours to finish):
+
+```bash setup_data.sh```
+
+Then, build the docker image:
+
+```docker build -t naive-eamt .```
+
+Finally, to start use the start script:
+
+```bash start_docker_containers.sh```
+
+To stop, use the stop script:
+
+```bash stop_docker_containers.sh```
+
+### Logs
+The logs are maintained in the ```log/neamt.log``` file
 
 ### Component I/O Formatting
 <a id="NER">__NER__:</a> For the components that strictly perform the task of named entity recognition, the expected input is a string containing text in natural language (en,de,fr,es). The output should be a JSON containing the string and information of annotated entities. Following is an example:

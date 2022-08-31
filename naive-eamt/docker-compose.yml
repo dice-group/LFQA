@@ -21,8 +21,20 @@ services:
     restart: unless-stopped
     command: ['--host', '0.0.0.0']
     profiles: ["libre_mt"]
+    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
     ports:
       - 6120:5000
+    networks:
+      - neamt-net
+  # Helsinki Opus-MT Translate service
+  opusmt:
+    image: opus-mt
+    profiles: ["opus_mt"]
+    volumes:
+      - ./data/Opus-MT/models:/usr/src/app/models
+    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
+    ports:
+      - 6121:80
     networks:
       - neamt-net
   # MAG services with relevant parameters
@@ -31,8 +43,9 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
+    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
     ports:
-      - 6121:8080
+      - 6131:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_en_2016:/usr/local/tomcat/index
@@ -50,8 +63,9 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
+    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
     ports:
-      - 6122:8080
+      - 6132:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_de_2016:/usr/local/tomcat/index
@@ -69,8 +83,9 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
+    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
     ports:
-      - 6123:8080
+      - 6133:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_fr_2016:/usr/local/tomcat/index
@@ -86,8 +101,9 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
+    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
     ports:
-      - 6124:8080
+      - 6134:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_es_2016:/usr/local/tomcat/index

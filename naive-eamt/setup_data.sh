@@ -34,6 +34,31 @@ git clone https://github.com/LibreTranslate/LibreTranslate
 cd LibreTranslate
 docker build --build-arg with_models=true -t libretranslate .
 cd ..
+# Download Helsinki-OPT data
+git clone https://github.com/Helsinki-NLP/Opus-MT.git
+cd Opus-MT
+# Copy customized services.json
+mv services.json services.json.old
+cp ../../helsinki_opusmt_services.json ./services.json
+mkdir models && cd "$_"
+# Download models
+mkdir de-en && cd "$_"
+wget https://object.pouta.csc.fi/OPUS-MT-models/de-en/opus-2020-02-26.zip
+unzip 'opus-2020-02-26.zip'
+rm -rf 'opus-2020-02-26.zip'
+cd ..
+mkdir es-en && cd "$_"
+wget https://object.pouta.csc.fi/OPUS-MT-models/es-en/opus-2019-12-04.zip
+unzip 'opus-2019-12-04.zip'
+rm -rf 'opus-2019-12-04.zip'
+cd ..
+mkdir fr-en && cd "$_"
+wget https://object.pouta.csc.fi/OPUS-MT-models/fr-en/opus-2020-02-26.zip
+unzip 'opus-2020-02-26.zip'
+rm -rf 'opus-2020-02-26.zip'
+cd ..
+docker build . -t opus-mt
+cd ..
 # download genre data
 # Downloading models
 mkdir mgenre_data && cd "$_"

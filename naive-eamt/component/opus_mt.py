@@ -1,6 +1,6 @@
 # This class demonstrates how each component should look like
 import logging
-
+import json
 import requests
 
 import sys
@@ -20,30 +20,27 @@ def fetch_translation(query_plc, source_lang, target_lang, url):
     :return: translated text
     '''
     req_json = {
-        'q': query_plc,
-        'source': source_lang,
-        'target': target_lang
+        'source': query_plc,
+        'from': source_lang,
+        'to': target_lang
     }
     headers = {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/json'
     }
 
-    response = requests.request("POST", url, headers=headers, data=req_json)
+    response = requests.request("POST", url, headers=headers, data=json.dumps(req_json))
 
-    trans_text = response.json()['translatedText']
+    trans_text = response.json()['translation']
     return trans_text
-
-
-class LibreMt:
-
+class OpusMt:
     def __init__(self):
         """
         Load the resources needed for your component onto the memory only in this block.
         It helps keep the framework from unnecessarily occupying the memory.
         """
         # Only accessible inside the docker network
-        self.url = "http://libretranslate:5000/translate"
-        logging.debug('LibreMt component initialized.')
+        self.url = "http://opusmt:80/api/translate"
+        logging.debug('OpusMt component initialized.')
 
     def process_input(self, input):
         '''

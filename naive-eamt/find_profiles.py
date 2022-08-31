@@ -26,6 +26,8 @@ if 'mag_el' in component_set:
     profile_arr.append('mag')
 if 'libre_mt' in component_set:
     profile_arr.append('libre_mt')
+if 'opus_mt' in component_set:
+    profile_arr.append('opus_mt')
 profile_str = ','.join(profile_arr)
 # Return the string to the shell, to be stored in COMPOSE_PROFILES variable
 print(profile_str)

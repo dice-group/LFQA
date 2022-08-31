@@ -17,7 +17,7 @@ sys.path.insert(1, '/neamt/component/')
 from babelscape_ner import BabelscapeNer
 from davlan_ner import DavlanNer
 from flair_ner import FlairNer
-from helsinkinlp_mt import HelsinkiMt
+from opus_mt import OpusMt
 from libre_mt import LibreMt
 from mag_el import MagEl
 from mgenre_el import MgenreEl
@@ -35,7 +35,7 @@ comp_map = {
     'mgenre_el': MgenreEl,
     'mag_el': MagEl,
     'libre_mt': LibreMt,
-    'helsinkinlp_mt': HelsinkiMt,
+    'opus_mt': OpusMt,
     'no_ner': EmptyNer,
     'no_el': EmptyEl
 }
