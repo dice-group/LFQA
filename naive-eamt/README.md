@@ -119,13 +119,22 @@ The logs are maintained in the ```log/neamt.log``` file
 
 ### Query
 The configured pipelines can be queried through HTTP POST request, like:
-```
+```bash
 curl --location --request POST 'http://localhost:6100/pipeline_bmgo' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
 --data-urlencode 'query=Ist Hawaii der Geburtsort von Obama'
 ```
 The output format would depend upon the last component in the queried pipeline.
 
+The application also accepts custom pipelines submitted along with the HTTP request. However, the components must be pre-initialized.
+
+The query with custom pipeline request would look something like this:
+```bash
+curl --location --request GET 'http://localhost:6100/custom-pipeline' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'query=Ist Hawaii der Geburtsort von Obama' \
+--data-urlencode 'components=spacy_ner, mag_el, opus_mt'
+```
 ## Customized Components
 ### Component I/O Formatting
 <a id="NER">__NER__:</a> For the components that strictly perform the task of named entity recognition, the expected input is a string containing text in natural language (en,de,fr,es). The output should be a JSON containing the string and information of annotated entities. Following is an example:
