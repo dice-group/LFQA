@@ -8,10 +8,11 @@ It comes already integrated with the following tools:
 <table id="comp-table">
     <thead>
         <tr>
-            <td>Type</td>
-            <td>Component</td>
-            <td>ID</td>
-            <td>Link</td>
+            <th>Type</th>
+            <th>Component</th>
+            <th>ID</th>
+            <th>Supported Lang.</th>
+            <th>Link</th>
         </tr>
     </thead>
     <tbody>
@@ -19,62 +20,59 @@ It comes already integrated with the following tools:
             <td rowspan=4>NER</td>
             <td>Babelscape NER</td>
             <td>babelscape_ner</td>
+            <td>de, en, es, fr, it, nl, pl, pt, ru</td>
             <td>https://huggingface.co/Babelscape/wikineural-multilingual-ner</td>
         </tr>
         <tr>
             <td>Flair NER</td>
             <td>flair_ner</td>
+            <td>de, en, es, nl</td>
             <td>https://github.com/flairNLP/flair</td>
         </tr>
         <tr>
             <td>Davlan NER</td>
             <td>davlan_ner</td>
+            <td>ar, de, en, es, fr, it, lv, nl, pt, zh</td>
             <td>https://huggingface.co/Davlan/bert-base-multilingual-cased-ner-hrl</td>
         </tr>
         <tr>
             <td>Spacy NER</td>
             <td>spacy_ner</td>
-            <td>https://spacy.io/api/entityrecognizer</td>
+            <td>de, en, es, fr, it, nl, pl, pt, ru</td>
+            <td>https://github.com/explosion/spacy-models/releases/tag/xx_ent_wiki_sm-3.4.0</td>
         </tr>
         <tr>
             <td rowspan=2>EL</td>
             <td>MAG</td>
             <td>mag_el</td>
+            <td>'en', 'de', 'fr', 'es', 'it', 'ja', 'nl'</td>
             <td>https://github.com/dice-group/AGDISTIS/wiki/5---New-Capabilities---MAG</td>
         </tr>
         <tr>
             <td>mGenre</td>
             <td>mgenre_el</td>
+            <td>105 languages (Table 10: https://arxiv.org/pdf/2103.12528.pdf)</td>
             <td>https://github.com/facebookresearch/GENRE</td>
         </tr>
         <tr>
             <td rowspan=2>MT</td>
             <td>Libre Translate</td>
             <td>libre_mt</td>
+            <td>ar, az, zh, cs, da, nl, en, eo, fi, fr, de, el, he, hi, hu, id, ga, it, ja, ko, fa, pl, pt, ru, sk, es, sv, tr, uk</td>
             <td>https://github.com/LibreTranslate/LibreTranslate</td>
         </tr>
         <tr>
-            <td>Opus MT</td>
+            <td>Opus MT*</td>
             <td>opus_mt</td>
+            <td>Supports 203 languages for translation to English (https://opus.nlpl.eu/Opus-MT/)</td>
             <td>https://github.com/Helsinki-NLP/Opus-MT</td>
         </tr>
     </tbody>
 </table>
 
-<!-- ## Normal Setup
-We recommend using a tool like Anaconda to create a separate environment for this project's dependencies.
+Language code ref: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes 
 
-You can create a python environment for this project using the following command:
-
-```conda create -n lf_eamt python=3.9```
-
-Once the environment is created, you can activate it using:
-
-```conda activate lf_eamt```
-
-Afterwards, to install the dependencies and the download the needed files, run:
-
-```bash req_install.sh``` -->
+[*] currently the application only downloads some (de, es, fr) of the supported languages' data for Opus MT. For further language support, please download the data and modify the [configuration](helsinki_opusmt_services.json). This should be done before [setup](setup_data.sh) is executed, otherwise you will have to rebuild the Opus docker image with the right configuration.
 
 ## Configuration
 
@@ -115,17 +113,26 @@ To stop, use the stop script:
 ```bash stop_docker_containers.sh```
 
 ### Logs
-The logs are maintained in the ```log/neamt.log``` file
+The logs are maintained in the ```logs/neamt.log``` file
 
 ### Query
 The configured pipelines can be queried through HTTP POST request, like:
-```
+```bash
 curl --location --request POST 'http://localhost:6100/pipeline_bmgo' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
 --data-urlencode 'query=Ist Hawaii der Geburtsort von Obama'
 ```
 The output format would depend upon the last component in the queried pipeline.
 
+The application also accepts custom pipelines submitted along with the HTTP request. However, the components must be pre-initialized.
+
+The query with custom pipeline request would look something like this:
+```bash
+curl --location --request GET 'http://localhost:6100/custom-pipeline' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'query=Ist Hawaii der Geburtsort von Obama' \
+--data-urlencode 'components=spacy_ner, mag_el, opus_mt'
+```
 ## Customized Components
 ### Component I/O Formatting
 <a id="NER">__NER__:</a> For the components that strictly perform the task of named entity recognition, the expected input is a string containing text in natural language (en,de,fr,es). The output should be a JSON containing the string and information of annotated entities. Following is an example:
@@ -160,6 +167,7 @@ The output format would depend upon the last component in the queried pipeline.
 {
   "text": "Ist Hawaii der Geburtsort von Obama?",
   "lang": "de",
+  "kb": "wd",
   "ent_mentions": [
       {
           "start": 3,
@@ -189,7 +197,7 @@ __MT__: For the components performing the machine translation task, the expected
 
 *Output*: ```Is Hawaii the birth place of Barack Obama?```
 
-Additionally, you can make use of the functions in [placeholder_util.py](util/placeholder_util.py) replace entities with placeholder tokens and vice versa.
+Additionally, you can make use of the functions in [placeholder_util.py](util/placeholder_util.py) to replace the entities with placeholder tokens and vice versa. The framework also provides dummy NER([no_ner](component/empty_ner.py)) and EL([no_el](component/empty_el.py))  components that would format the data according to the listed I/O format but would not perform any NER/EL tasks. The dummy components can be used to build MT only pipelines.
 
 __Combination__: If your custom component is a combination of consecutive components in the pipeline, then you must follow the input/output format accordingly. Your combined component must comply to the input format for the point of entrance and output format for the point of exit.
 <!-- Obsolete: Provide the link to sample code (LibreMT) -->

@@ -12,6 +12,7 @@ from flask import request
 # importing the flask Module
 from flask import Flask
 import sys
+
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, '/neamt/component/')
 from babelscape_ner import BabelscapeNer
@@ -24,8 +25,10 @@ from mgenre_el import MgenreEl
 from spacy_ner import SpacyNer
 from empty_ner import EmptyNer
 from empty_el import EmptyEl
+
 # configuring logging
-logging.basicConfig(filename='/neamt/logs/neamt.log', level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+logging.basicConfig(filename='/neamt/logs/neamt.log', level=logging.DEBUG,
+                    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 # Read the configuration file and find the relevant components
 comp_map = {
     'flair_ner': FlairNer,
@@ -71,7 +74,8 @@ def detect_components(config_file):
                 'comp_list': comp_list,
                 'inst_list': inst_list
             }
-    logging.info('Paths found:%s'%path_pipeline_map)
+    logging.info('Paths found:%s' % path_pipeline_map)
+
 
 logging.info('Reading configuration file..')
 # Initialize the requested components
@@ -82,33 +86,64 @@ detect_components('/neamt/configuration.ini')
 def process_input(input_query, path):
     # Find the pipeline
     pipeline_info = path_pipeline_map[path]
-    logging.debug('Pipeline Info:\n%s'%pipeline_info)
+    logging.debug('Pipeline Info:\n%s' % pipeline_info)
     # Persist the input/output for the pipeline components
     io_var = input_query
     # Loop through pipeline components and pass it the previous output as an input
     for inst in pipeline_info['inst_list']:
         io_var = inst.process_input(io_var)
     # return the last output
-    logging.info('final output: %s'%io_var)
+    logging.info('final output: %s' % io_var)
+    return io_var
+
+
+# Process custom pipeline requests
+def process_cus_input(input_query, inst_list):
+    logging.debug('Pipeline Info:\n%s' % inst_list)
+    # Persist the input/output for the pipeline components
+    io_var = input_query
+    # Loop through pipeline components and pass it the previous output as an input
+    for inst in inst_list:
+        io_var = inst.process_input(io_var)
+    # return the last output
+    logging.info('final output: %s' % io_var)
     return io_var
 
 
 # logging.info('Started')
 # Initiate dynamic the pipeline uris
 app = Flask(__name__)
+
+
 # logging.info('Finished')
 
 
 @app.route('/<string:path>', methods=['POST'])
-def allow(path):
+def gen_pipe(path):
     data = request.form
-    logging.info('Query received at path: %s'%path)
-    logging.info('Query received for translation: %s'%data['query'])
+    logging.info('Query received at path: %s' % path)
+    logging.info('Query received for translation: %s' % data['query'])
     if (path in path_pipeline_map) and ('query' in data):
         return process_input(data['query'], path)
     else:
         return f'Invalid request'
-    
+
+
+@app.route('/custom-pipeline', methods=['POST'])
+def cus_pipe():
+    data = request.form
+    logging.info('Query received at custom-pipeline')
+    logging.info('Data received for translation: %s' % data)
+    comp_arr = data['components'].split(',')
+    inst_list = []
+    for item in comp_arr:
+        inst_list.append(comp_inst_map[item.strip()])
+
+    if (len(inst_list) == len(comp_arr)) and ('query' in data):
+        return process_cus_input(data['query'], inst_list)
+    else:
+        return f'Invalid request'
+
 # if __name__ == "__main__":
 #     port = int(os.environ.get('PORT', 80))
 #     app.run(use_reloader=False, host='0.0.0.0', port=port)
