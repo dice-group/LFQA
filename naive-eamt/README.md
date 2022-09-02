@@ -197,7 +197,7 @@ __MT__: For the components performing the machine translation task, the expected
 
 *Output*: ```Is Hawaii the birth place of Barack Obama?```
 
-Additionally, you can make use of the functions in [placeholder_util.py](util/placeholder_util.py) replace entities with placeholder tokens and vice versa.
+Additionally, you can make use of the functions in [placeholder_util.py](util/placeholder_util.py) to replace the entities with placeholder tokens and vice versa. The framework also provides dummy NER([no_ner](component/empty_ner.py)) and EL([no_el](component/empty_el.py))  components that would format the data according to the listed I/O format but would not perform any NER/EL tasks. The dummy components can be used to build MT only pipelines.
 
 __Combination__: If your custom component is a combination of consecutive components in the pipeline, then you must follow the input/output format accordingly. Your combined component must comply to the input format for the point of entrance and output format for the point of exit.
 <!-- Obsolete: Provide the link to sample code (LibreMT) -->
