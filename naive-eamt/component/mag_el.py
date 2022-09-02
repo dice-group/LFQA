@@ -32,7 +32,7 @@ class MagEl:
         It helps keep the framework from unnecessarily occupying the memory.
         """
         # Entity Linking
-        self.supported_langs = ['en', 'de', 'fr', 'es']
+        self.supported_langs = ['en', 'de', 'fr', 'es', 'it', 'ja', 'nl']
         self.endpoint_format = 'http://mag-%s:8080/AGDISTIS'
         logging.debug('MagEl component initialized.')
 
