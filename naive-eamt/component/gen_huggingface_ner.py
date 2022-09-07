@@ -39,6 +39,9 @@ def fetch_ent_indexes(ner_results, query):
         # Check if Inside
         elif entry['entity'].startswith('I'):
             ent_item['end'] = entry['end']
+            # condition involving I but no B before
+            if not ('start' in ent_item):
+                ent_item['start'] = entry['start']
             ent_item['surface_form'] = query[ent_item['start']:ent_item['end']]
             begin_detect = False
         # Ignore everything else
@@ -73,7 +76,7 @@ class GenHuggingfaceNer:
         '''
         logging.debug('Input received: %s' % query)
         ner_results = self.nlp(query)
-        print(ner_results)
+        logging.debug(ner_results)
         # find the start and end indexes
         ent_indexes = fetch_ent_indexes(ner_results, query)
         output = {

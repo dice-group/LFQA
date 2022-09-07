@@ -25,5 +25,32 @@
             "host": "0.0.0.0",
             "port": "10003"
         }
+    },
+     "ru": {
+        "en": {
+            "configuration": "./models/ru-en/decoder.yml",
+            "sourcespm": "./models/ru-en/source.spm",
+            "targetspm": "./models/ru-en/target.spm",
+            "host": "0.0.0.0",
+            "port": "10004"
+        }
+    },
+     "nl": {
+        "en": {
+            "configuration": "./models/nl-en/decoder.yml",
+            "sourcespm": "./models/nl-en/source.spm",
+            "targetspm": "./models/nl-en/target.spm",
+            "host": "0.0.0.0",
+            "port": "10005"
+        }
+    },
+     "zh": {
+        "en": {
+            "configuration": "./models/zh-en/decoder.yml",
+            "sourcespm": "./models/zh-en/source.spm",
+            "targetspm": "./models/zh-en/target.spm",
+            "host": "0.0.0.0",
+            "port": "10006"
+        }
     }
 }

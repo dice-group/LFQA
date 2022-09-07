@@ -60,6 +60,21 @@ wget https://object.pouta.csc.fi/OPUS-MT-models/fr-en/opus-2020-02-26.zip
 unzip 'opus-2020-02-26.zip'
 rm -rf 'opus-2020-02-26.zip'
 cd ..
+mkdir ru-en && cd "$_"
+wget https://object.pouta.csc.fi/OPUS-MT-models/ru-en/opus-2020-02-26.zip
+unzip 'opus-2020-02-26.zip'
+rm -rf 'opus-2020-02-26.zip'
+cd ..
+mkdir nl-en && cd "$_"
+wget https://object.pouta.csc.fi/OPUS-MT-models/nl-en/opus-2019-12-05.zip
+unzip 'opus-2019-12-05.zip'
+rm -rf 'opus-2019-12-05.zip'
+cd ..
+mkdir zh-en && cd "$_"
+wget https://object.pouta.csc.fi/Tatoeba-MT-models/zho-eng/opus-2020-07-14.zip
+unzip 'opus-2020-07-14.zip'
+rm -rf 'opus-2020-07-14.zip'
+cd ..
 docker build . -t opus-mt
 cd ..
 # download genre data
@@ -71,4 +86,8 @@ tar -xvf fairseq_multilingual_entity_disambiguation.tar.gz
 wget http://dl.fbaipublicfiles.com/GENRE/titles_lang_all105_trie_with_redirect.pkl
 wget https://dl.fbaipublicfiles.com/GENRE/lang_title2wikidataID-normalized_with_redirect.pkl
 wget http://dl.fbaipublicfiles.com/GENRE/titles_lang_all105_marisa_trie_with_redirect.pkl
+# Download evaluation data
+cd ../../eval
+mkdir qald10 && cd "$_"
+wget https://raw.githubusercontent.com/KGQA/QALD_10/main/data/qald_10/qald_10.json
 echo "Downloads finished!"
