@@ -123,7 +123,12 @@ def gen_pipe(path):
     data = request.form
     logging.info('Query received at path: %s' % path)
     logging.info('Query received for translation: %s' % data['query'])
+
     if (path in path_pipeline_map) and ('query' in data):
+        # Temporary workaround for placeholder, removing '?' from query
+        logging.debug('Input query: %s' % data['query'])
+        san_query = data['query'].replace('?', '')
+        logging.debug('Sanitized input query: %s' % san_query)
         return process_input(data['query'], path)
     else:
         return f'Invalid request'
@@ -140,7 +145,11 @@ def cus_pipe():
         inst_list.append(comp_inst_map[item.strip()])
 
     if (len(inst_list) == len(comp_arr)) and ('query' in data):
-        return process_cus_input(data['query'], inst_list)
+        # Temporary workaround for placeholder, removing '?' from query
+        logging.debug('Input query: %s' % data['query'])
+        san_query = data['query'].replace('?', '')
+        logging.debug('Sanitized input query: %s' % san_query)
+        return process_cus_input(san_query, inst_list)
     else:
         return f'Invalid request'
 

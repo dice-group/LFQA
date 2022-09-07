@@ -35,6 +35,10 @@ class MgenreEl:
         # Setting knowledge base as Wikidata
         input['kb'] = 'wd'
         ent_indexes = input['ent_mentions']
+        # do not continue if no mentions are present
+        if len(ent_indexes) == 0:
+            logging.debug('No mentions found!')
+            return input
         query = input['text']
         sentences = []
         # Generate annotated sentence for each mention + placeholder

@@ -53,6 +53,10 @@ class MagEl:
         endpoint = self.endpoint_format%lang
         # Setting knowledge base as Wikidata
         ent_indexes = input['ent_mentions']
+        # do not continue if non mentions are present
+        if len(ent_indexes) == 0:
+            logging.debug('No mentions found!')
+            return input
         query = input['text']
         sentence = ''
         last_ind = 0

@@ -45,7 +45,7 @@ It comes already integrated with the following tools:
             <td rowspan=2>EL</td>
             <td>MAG</td>
             <td>mag_el</td>
-            <td>'en', 'de', 'fr', 'es', 'it', 'ja', 'nl'</td>
+            <td>en, de, fr, es, it, ja, nl</td>
             <td>https://github.com/dice-group/AGDISTIS/wiki/5---New-Capabilities---MAG</td>
         </tr>
         <tr>
@@ -72,7 +72,7 @@ It comes already integrated with the following tools:
 
 Language code ref: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes 
 
-[*] currently the application only downloads some (de, es, fr) of the supported languages' data for Opus MT. For further language support, please download the data and modify the [configuration](helsinki_opusmt_services.json). This should be done before [setup](setup_data.sh) is executed, otherwise you will have to rebuild the Opus docker image with the right configuration.
+[*] currently the application only downloads some (de, es, fr, nl, ru) of the supported languages' data for Opus MT. For further language support, please download the data and modify the [configuration](helsinki_opusmt_services.json). This should be done before [setup](setup_data.sh) is executed, otherwise you will have to rebuild the Opus docker image with the right configuration.
 
 ## Configuration
 
