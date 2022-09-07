@@ -1,21 +1,25 @@
+# This script is to help generate the translations for the defined test configuration
 import json
 import time
 import requests
 from pathlib import Path
 from tqdm import tqdm
 
-
+# URL to the custom NEAMT pipeline
 url = "http://porque.cs.upb.de:6100/custom-pipeline"
 headers = {
   'Content-Type': 'application/x-www-form-urlencoded'
 }
+# Output directory to store the translation files to
 output_dir = 'pred_results/'
+# Create the directory(s) in the output path
 Path(output_dir).mkdir(parents=True, exist_ok=True)
 
 # Read Config file
 eval_cfg = []
 with open('eval_config.json', 'r') as ec:
     eval_cfg= json.load(ec)
+
 print(eval_cfg)
 
 # Function to generate test data using QALD file
@@ -33,8 +37,10 @@ def get_qald_test_data(filename):
            res_data[q_pair['language']].append(q_pair['string'])
     return res_data
 
+# Go through the configuration to form the translation pipelines
 test_pipelines = {}
 total_req_count = 0
+
 for cfg in eval_cfg:
     lang_comp_count = 0
     test_name = cfg['name']
@@ -65,15 +71,15 @@ for cfg in eval_cfg:
         # For each test string
         for query in test_data['en']:
             out.write(query + '\n')
-print('Total request count:', total_req_count)
 
+print('Total request count:', total_req_count)
 print('Test Pipelines:\n',test_pipelines['QALD10-MT']['pipelines'])
 
 # function to create unique prediction file name
 def get_pred_file_name(lang, components):
     return lang + '-' + '-'.join(components)
 
-# Create HTTP request object
+# Function to fetch the transation through a HTTP POST request
 def get_translation(query, components):
     # print('Getting Translation for: ', query)
     payload={

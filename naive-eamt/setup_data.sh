@@ -86,4 +86,8 @@ tar -xvf fairseq_multilingual_entity_disambiguation.tar.gz
 wget http://dl.fbaipublicfiles.com/GENRE/titles_lang_all105_trie_with_redirect.pkl
 wget https://dl.fbaipublicfiles.com/GENRE/lang_title2wikidataID-normalized_with_redirect.pkl
 wget http://dl.fbaipublicfiles.com/GENRE/titles_lang_all105_marisa_trie_with_redirect.pkl
+# Download evaluation data
+cd ../../eval
+mkdir qald10 && cd "$_"
+wget https://raw.githubusercontent.com/KGQA/QALD_10/main/data/qald_10/qald_10.json
 echo "Downloads finished!"
