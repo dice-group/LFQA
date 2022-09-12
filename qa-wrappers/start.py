@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from systems import system, qanswer, tebaqa
+from systems import qanswer, tebaqa, qanary
 
 
 app = FastAPI(
@@ -7,13 +7,7 @@ app = FastAPI(
             description=""
 )
 
-system_routable = system.QASystem(
-    api_url="http://localhost:8080",
-    language="en",
-    kg="dbpedia",
-    prefix="/baseSystem",
-    tags=["BaseSystem"]
-)
+# TODO: read config from file and include routers via loop
 
 qanswer_routable = qanswer.QAnswer(
     api_url="http://qanswer-core1.univ-st-etienne.fr/api/gerbil", # TODO: diffent endpoints
@@ -31,9 +25,16 @@ tebaqa_routable = tebaqa.TeBaQA(
     tags=["TeBaQA"]
 )
 
-app.include_router(system_routable.router)
+qanary_routable = qanary.Qanary(
+    api_url="http://demos.swe.htwk-leipzig.de:40111/startquestionansweringwithtextquestion",
+    components_list=["NED-DBpediaSpotlight"],
+    prefix="/qanary",
+    tags=["Qanary"]
+)
+
 app.include_router(qanswer_routable.router)
 app.include_router(tebaqa_routable.router)
+app.include_router(qanary_routable.router)
 
 @app.get("/health", include_in_schema=False)
 async def root():

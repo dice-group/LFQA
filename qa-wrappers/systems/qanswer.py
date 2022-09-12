@@ -7,7 +7,7 @@ import logging
 import json
 
 from systems.system import QASystem
-from systems.qa_utils import example_question, prettify_answers, parse_gerbil
+from systems.qa_utils import example_question, prettify_answers, parse_gerbil, dummy_answers
 
 
 logger = logging.getLogger("uvicorn")
@@ -47,24 +47,41 @@ class QAnswer(QASystem): # TODO: cache request and response
 
     @post("/gerbil", description="Get gerbil response")
     async def gerbil_response(self, request: Request) -> str:
-        question, lang = parse_gerbil(str(await request.body())) # get question and language from the gerbil request
-        
-        logger.info('GERBIL input:', question, lang)
-        
-        query_data = {'query': question, 'lang': lang, 'kb': self.kg}
-        response = requests.post(self.api_url, query_data).json()['questions'][0]['question']
-        final_response = {
-            "questions": [{
-                "id": "1",
-                "question": [{
-                    "language": lang,
-                    "string": question
-                }],
-                "query": {
-                    "sparql": ""
-                },
-                "answers": [json.loads(response['answers'])]   
-            }]
-        }
-
+        try:
+            request_body = str(await request.body())
+            question, lang = parse_gerbil(request_body) # get question and language from the gerbil request
+            
+            logger.info('GERBIL input:', question, lang)
+            
+            query_data = {'query': question, 'lang': lang, 'kb': self.kg}
+            response = requests.post(self.api_url, query_data).json()['questions'][0]['question']
+            final_response = {
+                "questions": [{
+                    "id": "1",
+                    "question": [{
+                        "language": lang,
+                        "string": question
+                    }],
+                    "query": {
+                        "sparql": ""
+                    },
+                    "answers": [json.loads(response['answers'])]   
+                }]
+            }
+        except Exception as e:
+            logger.error("Error in QAnswer.gerbil_response: {0}".format(str(e)))
+            final_response = {
+                "questions": [{
+                    "id": "1",
+                    "question": [{
+                        "language": lang,
+                        "string": question
+                    }],
+                    "query": {
+                        "sparql": ""
+                    },
+                    "answers": [dummy_answers]   
+                }]
+            }
+            
         return JSONResponse(content=final_response)
