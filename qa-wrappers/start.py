@@ -5,42 +5,36 @@ Here we parse the config file and include the routers for each system.
 """
 
 from fastapi import FastAPI
+from configparser import ConfigParser
+import pathlib, os
+
 from systems import qanswer, tebaqa, qanary
 
 
+parser = ConfigParser()
+
+with open(os.path.join(pathlib.Path(__file__).parent.resolve(), "config.ini")) as f:
+    parser.read_string(f.read())
+
 app = FastAPI(
-            title="QA Systems Wrapper", # TODO: add environment variable
-            description=""
+            title=os.environ.get("APP_NAME", "QA Wrappers"),
+            description=os.environ.get("APP_DESCRIPTION", "This is a QA Wrappers application."),
 )
 
-# TODO: read config from file and include routers via loop
+available_classes_dict = {
+    "QAnswer": qanswer.QAnswer,
+    "TeBaQA": tebaqa.TeBaQA,
+    "Qanary": qanary.Qanary
+}
 
-qanswer_routable = qanswer.QAnswer(
-    api_url="http://qanswer-core1.univ-st-etienne.fr/api/gerbil", # TODO: diffent endpoints
-    language="en",
-    kg="dbpedia",
-    prefix="/qanswer",
-    tags=["QAnswer"]
-)
-
-tebaqa_routable = tebaqa.TeBaQA(
-    api_url="https://tebaqa.demos.dice-research.org/qa-simple", # TODO: diffent endpoints
-    language="en",
-    kg="dbpedia",
-    prefix="/tebaqa",
-    tags=["TeBaQA"]
-)
-
-qanary_routable = qanary.Qanary(
-    api_url="http://demos.swe.htwk-leipzig.de:40111/startquestionansweringwithtextquestion",
-    components_list=["NED-DBpediaSpotlight"],
-    prefix="/qanary",
-    tags=["Qanary"]
-)
-
-app.include_router(qanswer_routable.router)
-app.include_router(tebaqa_routable.router)
-app.include_router(qanary_routable.router)
+for system in parser.items(): # create routers from a config file
+    if system[0] != parser.default_section:
+        sys_routable = available_classes_dict[system[0]](
+            **dict(parser[system[0]].items()),
+            prefix=f"/{system[0].lower()}",
+            tags=[system[0]]
+        )
+        app.include_router(sys_routable.router)
 
 @app.get("/health", include_in_schema=False)
 async def root():

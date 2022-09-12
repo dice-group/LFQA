@@ -11,7 +11,7 @@ class QASystem(Routable):
 
     It inherits from the Routable class of the classy_fastapi package which allows us to create the methods wrapped as the FastAPI routes.
     """
-    def __init__(self, api_url: str = None, language: str = None, kg: str = None, *args, **kwargs) -> Routable:
+    def __init__(self, *args, **kwargs) -> Routable:
         """Constructor for the QASystem class.
 
         Args:
@@ -19,10 +19,10 @@ class QASystem(Routable):
             language (str, optional): Language tag of a question (ISO 639-1). Defaults to None.
             kg (str, optional): Knowledge Graph to perform the QA process on. Defaults to None.
         """
+        self.api_url = kwargs.pop("api_url", None)
+        self.language = kwargs.pop("language", None)
+        self.kg = kwargs.pop("kg", None)
         super().__init__(*args, **kwargs) # initialize the APIRouter
-        self.api_url = api_url
-        self.language = language
-        self.kg = kg
 
     @get("/answers", description="Get answers")
     async def get_answers(self, request: Request, question: str = example_question) -> str:

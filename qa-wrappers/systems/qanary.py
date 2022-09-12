@@ -20,7 +20,7 @@ class Qanary(QASystem):
 
     It provides the corresponding functionality for quering the Qanary and receiving the answers.
     """
-    def __init__(self, components_list: list = None, api_url: str = None, language: str = None, kg: str = None, *args, **kwargs) -> Routable:
+    def __init__(self,*args, **kwargs) -> Routable:
         """Constructor for the Qanary class.
 
         Args:
@@ -30,8 +30,8 @@ class Qanary(QASystem):
             components_list (list, optional): list of the Qanary components to query. Defaults to None.
         """
         
-        super().__init__(api_url, language, kg, *args, **kwargs)
-        self.components_list = components_list
+        self.components_list = kwargs.pop("components_list", None)
+        super().__init__(*args, **kwargs)
 
     @get("/query_candidates", description="Get query candidates")
     async def get_query_candidates(self, question: str = example_question) -> str:

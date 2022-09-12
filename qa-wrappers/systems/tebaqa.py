@@ -36,8 +36,8 @@ class TeBaQA(QASystem):
         logger.info('Get raw answers from TeBaQA: {0}'.format(str(query_data)))
 
         response = requests.post(self.api_url, query_data).json()
-        final_response = response
-        return JSONResponse(content=final_response)
+        
+        return JSONResponse(content=response)
 
     @post("/gerbil", description="Get gerbil response")
     async def gerbil_response(self, request: Request) -> str:
