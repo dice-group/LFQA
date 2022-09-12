@@ -14,6 +14,11 @@ logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.INFO)
 
 class TeBaQA(QASystem):
+    """ 
+    This is the class for the TeBaQA QA system.
+
+    It provides the wrapper functionality for the TeBaQA QA system.
+    """
     @get("/answers", description="Get answers")
     async def get_answers(self, question: str = example_question) -> str:
         query_data = {'query': question, 'lang': self.language}

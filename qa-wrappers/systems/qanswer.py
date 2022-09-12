@@ -13,7 +13,12 @@ from systems.qa_utils import example_question, prettify_answers, parse_gerbil, d
 logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.INFO)
 
-class QAnswer(QASystem): # TODO: cache request and response
+class QAnswer(QASystem):
+    """ 
+    This is the class for the QAnswer QA system.
+
+    It provides the wrapper functionality for the QAnswer QA system.
+    """
     @get("/query_candidates", description="Get query candidates")
     async def get_query_candidates(self, question: str = example_question) -> str:
         response = requests.get(
@@ -36,7 +41,7 @@ class QAnswer(QASystem): # TODO: cache request and response
         final_response['answer'] = prettify_answers(final_response['answers_raw'])
         final_response['SPARQL'] = response['language'][0]['SPARQL']
         final_response['confidence'] = response['language'][0]['confidence']
-        # cache request and response
+        
         return JSONResponse(content=final_response)
 
     @get("/answers_raw", description="Get answers raw")

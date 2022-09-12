@@ -1,3 +1,9 @@
+"""
+This is the main entry point for the QA Wrappers application.
+
+Here we parse the config file and include the routers for each system.
+"""
+
 from fastapi import FastAPI
 from systems import qanswer, tebaqa, qanary
 

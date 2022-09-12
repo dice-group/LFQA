@@ -15,7 +15,21 @@ logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.INFO)
 
 class Qanary(QASystem):
+    """ 
+    This is the class for the Qanary QA system.
+
+    It provides the corresponding functionality for quering the Qanary and receiving the answers.
+    """
     def __init__(self, components_list: list = None, api_url: str = None, language: str = None, kg: str = None, *args, **kwargs) -> Routable:
+        """Constructor for the Qanary class.
+
+        Args:
+            api_url (str, optional): API URL of a Qanary instance. Defaults to None.
+            language (str, optional): Language tag of a question (ISO 639-1). Defaults to None.
+            kg (str, optional): Knowledge Graph to perform the QA process on. Defaults to None.
+            components_list (list, optional): list of the Qanary components to query. Defaults to None.
+        """
+        
         super().__init__(api_url, language, kg, *args, **kwargs)
         self.components_list = components_list
 
@@ -102,5 +116,5 @@ class Qanary(QASystem):
                     "answers": [dummy_answers]   
                 }]
             }
-            
+
         return JSONResponse(content=final_response)

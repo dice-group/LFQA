@@ -1,3 +1,7 @@
+""" 
+This file contains the functions and variables that are used by the QA wrappers in common.
+"""
+
 example_question = "Where was Albert Einstein born?"
 
 dummy_answers = {
