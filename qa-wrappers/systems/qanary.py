@@ -76,18 +76,18 @@ class Qanary(QASystem):
                 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                 PREFIX oa: <http://www.w3.org/ns/openannotation/core/>
                 PREFIX qa: <http://www.wdaqua.eu/qa#>
-                SELECT DISTINCT ?v1
+                SELECT DISTINCT ?jsonValue
                 FROM <{graphId}> 
                 WHERE {{
-                    ?s a qa:AnnotationAnswer ;
+                    ?s a qa:AnnotationOfAnswerJson ;
                         oa:hasBody ?body .
-                    ?body rdf:value ?value .
-                    ?value rdf:_1 ?v1 .
+                    ?body rdf:value ?jsonValue .
                 }}
             """
 
             response = qanary_queries.select_from_triplestore(response["endpoint"], sparql.format(graphId=response["inGraph"]))
-            
+            answer = json.loads(response["results"]["bindings"][0]["jsonValue"]["value"]) # load the answer from the response
+
             final_response = {
                 "questions": [{
                     "id": "1",
