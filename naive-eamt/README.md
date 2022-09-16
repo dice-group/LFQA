@@ -51,11 +51,11 @@ It comes already integrated with the following tools:
         <tr>
             <td>mGenre</td>
             <td>mgenre_el</td>
-            <td>105 languages (Table 10: https://arxiv.org/pdf/2103.12528.pdf)</td>
+            <td>Supports 105 languages (Table 10: https://arxiv.org/pdf/2103.12528.pdf)</td>
             <td>https://github.com/facebookresearch/GENRE</td>
         </tr>
         <tr>
-            <td rowspan=2>MT</td>
+            <td rowspan=4>MT</td>
             <td>Libre Translate</td>
             <td>libre_mt</td>
             <td>ar, az, zh, cs, da, nl, en, eo, fi, fr, de, el, he, hi, hu, id, ga, it, ja, ko, fa, pl, pt, ru, sk, es, sv, tr, uk</td>
@@ -67,13 +67,26 @@ It comes already integrated with the following tools:
             <td>Supports 203 languages for translation to English (https://opus.nlpl.eu/Opus-MT/)</td>
             <td>https://github.com/Helsinki-NLP/Opus-MT</td>
         </tr>
+        <tr>
+            <td>NLLB MT**</td>
+            <td>nllb_mt</td>
+            <td>Supports 196 languages</td>
+            <td>https://github.com/facebookresearch/fairseq/tree/nllb/#multilingual-translation-models</td>
+        </tr>
+        <tr>
+            <td>MBart MT**</td>
+            <td>mbart_mt</td>
+            <td>Supports 53 languages</td>
+            <td>https://huggingface.co/facebook/mbart-large-50-many-to-many-mmt</td>
+        </tr>
     </tbody>
 </table>
 
 Language code ref: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes 
 
-[*] currently the application only downloads some (de, es, fr, nl, ru, zh) of the supported languages' data for Opus MT. For further language support, please download the data and modify the [configuration](helsinki_opusmt_services.json). This should be done before [setup](setup_data.sh) is executed, otherwise you will have to rebuild the Opus docker image with the right configuration.
+[*] currently the application only downloads some (de, es, fr, nl, ru) of the supported languages' data for Opus MT. For further language support, please download the data and modify the [configuration](helsinki_opusmt_services.json). This should be done before [setup](setup_data.sh) is executed, otherwise you will have to rebuild the Opus docker image with the right configuration.
 
+[**] for NLLB and MBart MT, currently the application only allows the following: de, es, fr, pt, ru. Edit the ```lang_code_map``` in the component file to extend support for further languages.
 ## Configuration
 
 The application uses a configuration file [```configuration.ini```](configuration.ini) to allow users to form pipelines based upon their combination of components.
@@ -202,3 +215,18 @@ Additionally, you can make use of the functions in [placeholder_util.py](util/pl
 __Combination__: If your custom component is a combination of consecutive components in the pipeline, then you must follow the input/output format accordingly. Your combined component must comply to the input format for the point of entrance and output format for the point of exit.
 <!-- Obsolete: Provide the link to sample code (LibreMT) -->
 <!-- If in case the combination of your components do not need any intermediatory processing of the input or outputs you can set the ```skip_intermediate_processing``` to ```False``` as demonstrated here: *This is a placeholder for the link* -->
+
+### How to add a new component?
+
+To add your own custom component you can follow these steps:
+- Add your dependencies to [requirements.txt](requirements.txt)
+- Create a new python file in the ```component/``` directory
+- Your python file must have a ``` process_input``` function that will receive the input as per its placement in the pipeline ([I/O Formatting](#component-io-formatting))
+- Make sure to load the necessary resources (models, data etc.) onto the memory only inside the ```__init__``` function, this helps keeps the application memory efficient
+- Import your component in the [start.py](start.py) and add an ID to Class mapping inside ```comp_map```
+- Create a new pipeline with your component in [configuration.ini](configuration.ini)
+
+Additional steps for Docker based components:
+- If your component has a docker image, then create a service using your docker image in [docker-compose.yml](docker-compose.yml)
+- Assign a new docker profile to your component to ensure that it's not loaded unnecessarily
+- Modify the logic in [find_profiles.py](find_profiles.py) to accommodate your component

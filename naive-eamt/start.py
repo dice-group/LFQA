@@ -20,6 +20,8 @@ from davlan_ner import DavlanNer
 from flair_ner import FlairNer
 from opus_mt import OpusMt
 from libre_mt import LibreMt
+from nllb_mt import NllbMt
+from mbart_mt import MbartMt
 from mag_el import MagEl
 from mgenre_el import MgenreEl
 from spacy_ner import SpacyNer
@@ -39,6 +41,8 @@ comp_map = {
     'mag_el': MagEl,
     'libre_mt': LibreMt,
     'opus_mt': OpusMt,
+    'nllb_mt': NllbMt,
+    'mbart_mt': MbartMt,
     'no_ner': EmptyNer,
     'no_el': EmptyEl
 }
