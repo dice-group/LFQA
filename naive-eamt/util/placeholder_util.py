@@ -2,6 +2,7 @@
 This python encapsulates the functions to deal with placeholders in the annotated natural language text.
 '''
 import logging
+import time
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 
@@ -32,6 +33,12 @@ kb_info = {
             ''')
 }
 
+# Maintain translated placeholder count
+plc_count = {
+    'total': 0,
+    'translated': 0
+}
+
 
 def put_placeholders(input):
     '''
@@ -58,12 +65,17 @@ def put_placeholders(input):
     for link in ent_links:
         if 'link' not in link:
             continue
+        # sleep the thread to avoid spamming SPARQL endpoint
+        time.sleep(2)
         f_sparql = sparql_str % link['link']
         sparql.setQuery(f_sparql)
         logging.debug('Formed SPARQL:\n %s'%f_sparql)
         ret = sparql.queryAndConvert()
-        plchldr = '[plc%d]' % arr_ind
+        plchldr = '[00%d]' % arr_ind
+        # plchldr = '[plc%d]' % arr_ind
         link['placeholder'] = plchldr
+        # incrementing global placeholder count
+        plc_count['total'] += 1
         # forming the placeholder query
         query_plc += query[last_ind:link['start']] + plchldr
         arr_ind += 1
@@ -94,6 +106,10 @@ def replace_placeholders(trans_text, input):
         label = link['surface_form']
         if 'en_label' in link:
             label = link['en_label']
+        # check the number of properly translated placeholders
+        if link['placeholder'] in res_query:
+            plc_count['translated'] += 1
         res_query = res_query.replace(link['placeholder'], label)
     logging.debug('Query after replaced placeholder: %s'%res_query)
+    logging.debug('Correctly translated placeholders: %d / %d' % (plc_count['translated'], plc_count['total']))
     return res_query
