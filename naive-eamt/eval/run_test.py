@@ -12,7 +12,7 @@ headers = {
     'Content-Type': 'application/x-www-form-urlencoded'
 }
 # Output directory to store the translation files to
-output_dir = 'pred_results_old/'
+output_dir = 'pred_results/'
 # Create the directory(s) in the output path
 Path(output_dir).mkdir(parents=True, exist_ok=True)
 # error count
@@ -33,7 +33,7 @@ print(eval_cfg)
 def get_qald_test_data(filename):
     qald_json = {}
     res_data = {}
-    with open('qald10/qald_10.json', 'r') as qald_file:
+    with open(filename, 'r') as qald_file:
         qald_json = json.load(qald_file)
     for q_item in qald_json['questions']:
         id = q_item['id']
@@ -86,8 +86,9 @@ for cfg in eval_cfg:
     test_pipelines[test_name]['data'] = test_data
 
 print('Total request count:', count['request'])
-print('Test Pipelines:\n', test_pipelines['QALD10-MT']['pipelines'])
 
+for test in test_pipelines:
+    print('Test Pipelines for %s:\n' % test, test_pipelines[test]['pipelines'])
 
 # function to create unique prediction file name
 def get_pred_file_name(lang, components):

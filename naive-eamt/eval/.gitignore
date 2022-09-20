@@ -3,3 +3,8 @@ pred_results*
 test-scratchpad.ipynb
 *.json.old
 *_archive
+evaluation_results.tsv
+experiment_details.tsv
+translated_qald/
+qald9plus/
+qald10/
