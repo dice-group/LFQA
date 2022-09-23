@@ -7,7 +7,7 @@ import logging
 import json
 
 from systems.system import QASystem
-from systems.qa_utils import example_question, prettify_answers, parse_gerbil, dummy_answers
+from systems.qa_utils import example_question, prettify_answers, parse_gerbil, dummy_answers, execute
 
 
 logger = logging.getLogger("uvicorn")
@@ -19,6 +19,13 @@ class QAnswer(QASystem):
 
     It provides the wrapper functionality for the QAnswer QA system.
     """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.kg == 'dbpedia':
+            self.endpoint_url = 'https://dbpedia.org/sparql'
+        elif self.kg == 'wikidata':
+            self.endpoint_url = 'https://query.wikidata.org/bigdata/namespace/wdq/sparql'
+
     @get("/query_candidates", description="Get query candidates")
     async def get_query_candidates(self, question: str = example_question) -> str:
         response = requests.get(
@@ -58,8 +65,10 @@ class QAnswer(QASystem):
             
             logger.info('GERBIL input: {0} {1}'.format(question, lang))
             
-            query_data = {'query': question, 'lang': lang, 'kb': self.kg}
-            response = requests.post(self.api_url, query_data).json()['questions'][0]['question']
+            query_data = {'question': question, 'lang': lang, 'kb': self.kg} 
+            response = requests.get(self.api_url, params=query_data).json() # ?question=test&lang=en&kb=dbpedia&user=open
+            first_query = response["queries"][0]['query']
+
             final_response = {
                 "questions": [{
                     "id": "1",
@@ -70,7 +79,7 @@ class QAnswer(QASystem):
                     "query": {
                         "sparql": ""
                     },
-                    "answers": [json.loads(response['answers'])]   
+                    "answers": [execute(first_query, self.endpoint_url)]   
                 }]
             }
         except Exception as e:

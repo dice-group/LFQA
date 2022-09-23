@@ -5,7 +5,7 @@ from qanary_helpers import qanary_queries
 
 import requests
 import logging
-import json
+import ast
 
 from systems.system import QASystem
 from systems.qa_utils import example_question, parse_gerbil, dummy_answers
@@ -30,7 +30,7 @@ class Qanary(QASystem):
             components_list (list, optional): list of the Qanary components to query. Defaults to None.
         """
         
-        self.components_list = kwargs.pop("components_list", None)
+        self.components_list = ast.literal_eval(kwargs.pop("components_list", None))
         super().__init__(*args, **kwargs)
 
     @get("/query_candidates", description="Get query candidates")
@@ -86,7 +86,7 @@ class Qanary(QASystem):
             """
 
             response = qanary_queries.select_from_triplestore(response["endpoint"], sparql.format(graphId=response["inGraph"]))
-            answer = json.loads(response["results"]["bindings"][0]["jsonValue"]["value"]) # load the answer from the response
+            # answer = json.loads(response["results"]["bindings"][0]["jsonValue"]["value"]) # load the answer from the response
 
             final_response = {
                 "questions": [{

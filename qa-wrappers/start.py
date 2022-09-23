@@ -4,6 +4,7 @@ This is the main entry point for the QA Wrappers application.
 Here we parse the config file and include the routers for each system.
 """
 
+from imp import reload
 from fastapi import FastAPI
 from configparser import ConfigParser
 import pathlib, os
@@ -43,4 +44,4 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
