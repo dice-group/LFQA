@@ -45,10 +45,10 @@ class TeBaQA(QASystem):
             request_body = str(await request.body())
             question, lang = parse_gerbil(request_body) # get question and language from the gerbil request
             
-            logger.info('GERBIL input:', question, lang)
+            logger.info('GERBIL input: {0} {1}'.format(question, lang))
             
             query_data = {'query': question, 'lang': lang, 'kb': self.kg}
-            response = requests.post(self.api_url, query_data).json()['questions'][0]['question']
+            response = requests.post(self.api_url, query_data).json()['questions'][0]['question'] # TODO: change to the format
             final_response = {
                 "questions": [{
                     "id": "1",
@@ -63,7 +63,7 @@ class TeBaQA(QASystem):
                 }]
             }
         except Exception as e:
-            logger.error("Error in QAnswer.gerbil_response: {0}".format(str(e)))
+            logger.error("Error in TeBaQa.gerbil_response: {0}".format(str(e)))
             final_response = {
                 "questions": [{
                     "id": "1",

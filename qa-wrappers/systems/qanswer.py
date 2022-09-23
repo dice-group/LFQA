@@ -56,7 +56,7 @@ class QAnswer(QASystem):
             request_body = str(await request.body())
             question, lang = parse_gerbil(request_body) # get question and language from the gerbil request
             
-            logger.info('GERBIL input:', question, lang)
+            logger.info('GERBIL input: {0} {1}'.format(question, lang))
             
             query_data = {'query': question, 'lang': lang, 'kb': self.kg}
             response = requests.post(self.api_url, query_data).json()['questions'][0]['question']

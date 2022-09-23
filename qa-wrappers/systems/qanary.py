@@ -102,7 +102,7 @@ class Qanary(QASystem):
                 }]
             }
         except Exception as e:
-            logger.error("Error in QAnswer.gerbil_response: {0}".format(str(e)))
+            logger.error("Error in Qanary.gerbil_response: {0}".format(str(e)))
             final_response = {
                 "questions": [{
                     "id": "1",
