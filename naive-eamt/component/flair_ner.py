@@ -22,14 +22,15 @@ class FlairNer:
         self.tagger = SequenceTagger.load('flair/ner-multi')
         logging.debug('FlairNer component initialized.')
 
-    def process_input(self, query):
+    def process_input(self, input):
         '''
         Function to annotate entities in a give natural language text.
 
-        :param query: natural language text to be annotated
+        :param input: input json containing natural language text to be annotated
         :return:  formatted dictionary as stated in the README for NER output
         '''
-        logging.debug('Input received: %s' % query)
+        logging.debug('Input received: %s' % input)
+        query = input['text']
         ent_indexes = []
         # make a sentence
         sentence = Sentence(query)
@@ -44,10 +45,8 @@ class FlairNer:
                 'end': entity.end_position
             }
             ent_indexes.append(new_item)
-        output = {
-            'text': query,
-            'lang': c_util.detect_lang(query),
-            'ent_mentions': ent_indexes
-        }
-        logging.debug('Output: %s' % output)
-        return output
+
+        input['lang'] = c_util.detect_lang(query)
+        input['ent_mentions'] = ent_indexes
+        logging.debug('Output: %s' % input)
+        return input

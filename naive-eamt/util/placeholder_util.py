@@ -3,6 +3,7 @@ This python encapsulates the functions to deal with placeholders in the annotate
 '''
 import logging
 import time
+import stats_util
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 
@@ -33,12 +34,6 @@ kb_info = {
             ''')
 }
 
-# Maintain translated placeholder count
-plc_count = {
-    'total': 0,
-    'translated': 0
-}
-
 
 def put_placeholders(input):
     '''
@@ -48,8 +43,11 @@ def put_placeholders(input):
     :param kb: knowledge-base that the entities are linked to. Can only handle Wikidata and DBpedia for now
     :return: input dictionary with append key-value pair mapping 'text_plc' to the text with placeholders.
     '''
-
+    # Maintain translated placeholder count
+    plc_count = stats_util.stats['placeholder_count']
     query = input['text']
+    plc_token = input['placeholder']
+    replace_before = input['replace_before']
     if 'kb' not in input:
         logging.debug('No KB information found in the input.')
         input['text_plc'] = query
@@ -69,24 +67,32 @@ def put_placeholders(input):
         # time.sleep(2)
         f_sparql = sparql_str % link['link']
         sparql.setQuery(f_sparql)
-        logging.debug('Formed SPARQL:\n %s'%f_sparql)
+        logging.debug('Formed SPARQL:\n %s' % f_sparql)
         ret = sparql.queryAndConvert()
-        plchldr = '[00%d]' % arr_ind
-        # plchldr = '[plc%d]' % arr_ind
-        link['placeholder'] = plchldr
-        # incrementing global placeholder count
-        plc_count['total'] += 1
-        # forming the placeholder query
-        query_plc += query[last_ind:link['start']] + plchldr
-        arr_ind += 1
-        last_ind = link['end']
+        # Check if no results are retrieved
+        if len(ret["results"]["bindings"]) == 0:
+            plc_count['no_en_lbl_count'] += 1
         # extracting English label
+        eng_label = None
         for r in ret["results"]["bindings"]:
             link['en_label'] = r['enlbl']['value']
+            eng_label = link['en_label']
             break
+        if replace_before:
+            plchldr = eng_label
+        else:
+            plchldr = '[%s%d]' % (plc_token, arr_ind)
+            link['placeholder'] = plchldr
+            # incrementing global placeholder count
+            plc_count['total'] += 1
+        # forming the placeholder query
+        if plchldr:
+            query_plc += query[last_ind:link['start']] + plchldr
+        arr_ind += 1
+        last_ind = link['end']
     query_plc += query[last_ind:]
     input['text_plc'] = query_plc
-    logging.debug('Injected placeholders: %s'%input)
+    logging.debug('Injected placeholders: %s' % input)
     return input
 
 
@@ -98,6 +104,11 @@ def replace_placeholders(trans_text, input):
     :param input: input dictionary with details about mentions and placeholders + links
     :return: translated string with replaced placeholders
     '''
+    # Maintain translated placeholder count
+    plc_count = stats_util.stats['placeholder_count']
+    replace_before = input['replace_before']
+    if replace_before:
+        return trans_text
     res_query = trans_text
     ent_links = input['ent_mentions']
     for link in ent_links:
@@ -109,7 +120,7 @@ def replace_placeholders(trans_text, input):
         # check the number of properly translated placeholders
         if link['placeholder'] in res_query:
             plc_count['translated'] += 1
-        res_query = res_query.replace(link['placeholder'], label)
-    logging.debug('Query after replaced placeholder: %s'%res_query)
-    logging.debug('Correctly translated placeholders: %d / %d' % (plc_count['translated'], plc_count['total']))
+            res_query = res_query.replace(link['placeholder'], label)
+    logging.debug('Query after replaced placeholder: %s' % res_query)
+    logging.debug('Placeholder stats: %s' % plc_count)
     return res_query
