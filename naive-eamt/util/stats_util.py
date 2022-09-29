@@ -3,8 +3,12 @@ import copy
 stats = {
     'placeholder_count': {
         'total': 0,
-        'translated': 0,
-        'no_en_lbl_count': 0
+        'translated': 0
+    },
+    'english_label_count': {
+        'total_found': 0,
+        'not_found': 0,
+        'trans_copied': 0
     },
     'query_count': 0
 }
@@ -21,3 +25,4 @@ def reset_stats():
 def reset_placeholder_stats():
     global stats
     stats['placeholder_count'] = copy.deepcopy(default_stats['placeholder_count'])
+    stats['english_label_count'] = copy.deepcopy(default_stats['english_label_count'])
