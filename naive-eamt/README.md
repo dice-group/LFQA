@@ -148,9 +148,14 @@ curl --location --request GET 'http://localhost:6100/custom-pipeline' \
 ```
 ## Customized Components
 ### Component I/O Formatting
-<a id="NER">__NER__:</a> For the components that strictly perform the task of named entity recognition, the expected input is a string containing text in natural language (en,de,fr,es). The output should be a JSON containing the string and information of annotated entities. Following is an example:
+<a id="NER">__NER__:</a> For the components that strictly perform the task of named entity recognition, the expected input is a dictionary containing text in natural language (en,de,fr,es). The output should be a dictionary containing the string and information of annotated entities. Following is an example:
 
-*Input*: ```Ist Hawaii der Geburtsort von Obama?```
+*Input*: 
+```json
+{
+  "text": "Ist Hawaii der Geburtsort von Obama?"
+}
+```
 
 
 *Output*: 
@@ -173,7 +178,7 @@ curl --location --request GET 'http://localhost:6100/custom-pipeline' \
 }
 ```
 
-<a id="EL">__EL__:</a> For the components performing only the entity linking task, the expected input is the output from the [*NER*](#NER). The output should be the same JSON with additional information about the entity mentions. Carrying on with the example from above, following is a sample output:
+<a id="EL">__EL__:</a> For the components performing only the entity linking task, the expected input is the output from the [*NER*](#NER). The output should be the same dictionary with additional information about the entity mentions. Carrying on with the example from above, following is a sample output:
 
 *Output*: 
 ```json
