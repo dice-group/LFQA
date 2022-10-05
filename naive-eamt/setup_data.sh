@@ -74,7 +74,7 @@ mkdir zh-en && cd "$_"
 wget https://object.pouta.csc.fi/Tatoeba-MT-models/zho-eng/opus-2020-07-14.zip
 unzip 'opus-2020-07-14.zip'
 rm -rf 'opus-2020-07-14.zip'
-cd ..
+cd ../..
 docker build . -t opus-mt
 cd ..
 # download genre data
