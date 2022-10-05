@@ -120,10 +120,10 @@ def replace_placeholders(trans_text, input):
         if 'en_label' in link:
             label = link['en_label']
             # record label stats if replaced before
-            if replace_before and (label in trans_text):
+            if replace_before and (label.casefold() in trans_text.casefold()):
                 en_count['trans_copied'] += 1
         # check the number of properly translated placeholders
-        if (link['placeholder'] in res_query) and (not replace_before):
+        if (not replace_before) and (link['placeholder'] in res_query):
             plc_count['translated'] += 1
             res_query = res_query.replace(link['placeholder'], label)
     logging.debug('Query after replaced placeholder: %s' % res_query)
