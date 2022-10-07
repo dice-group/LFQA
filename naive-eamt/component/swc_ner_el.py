@@ -1,6 +1,7 @@
 # This class demonstrates how each component should look like
 import logging
 import requests
+import os
 import sys
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, '/neamt/util/')
@@ -59,7 +60,7 @@ class SwcNerEl:
         It helps keep the framework from unnecessarily occupying the memory.
         """
         
-        parser = SafeConfigParser()
+        parser = SafeConfigParser(os.environ)
         parser.read('/neamt/configuration.ini')
         
         section = 'SWC'
