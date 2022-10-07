@@ -13,6 +13,9 @@ sparql_wd.setReturnFormat(JSON)
 sparql_db = SPARQLWrapper("https://dbpedia.org/sparql")
 sparql_db.setReturnFormat(JSON)
 
+sparql_swc = SPARQLWrapper("https://porque-dev.poolparty.biz/PoolParty/sparql/WaffenRecht")
+sparql_swc.setReturnFormat(JSON)
+
 kb_info = {
     'wd': (sparql_wd,
            '''
@@ -30,6 +33,15 @@ kb_info = {
                 ?sub owl:sameAs <%s> .
                 FILTER (langMatches( lang(?enlbl), "EN" ) )
             } 
+            LIMIT 1
+            '''),
+    'swc': (sparql_swc,
+            '''
+            PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
+            SELECT ?enlbl WHERE {
+              <%s> skos:prefLabel ?enlbl .
+              FILTER (langMatches ( lang(?enlbl), "EN"))
+            }
             LIMIT 1
             ''')
 }
