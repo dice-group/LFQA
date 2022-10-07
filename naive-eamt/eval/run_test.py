@@ -5,6 +5,9 @@ import time
 import requests
 from pathlib import Path
 from tqdm import tqdm
+from multiprocessing import Pool
+
+pool = Pool(processes=28)
 
 # URL to the custom NEAMT pipeline
 url = "http://localhost:6100/custom-pipeline"
@@ -71,8 +74,8 @@ for cfg in eval_cfg:
                 for mt_item in mt_comps:
                     lang_pipes.append([ner_item, el_item, mt_item])
         # append no_ner, no_el MT pipes
-        for mt_item in mt_comps:
-            lang_pipes.append(['no_ner', 'no_el', mt_item])
+        # for mt_item in mt_comps:
+        #     lang_pipes.append(['no_ner', 'no_el', mt_item])
         pipes.append((lang, lang_pipes))
         count['request'] += (len(lang_pipes) * len(test_data[lang]))
         # Write test data to a file for each lang -> en combination
@@ -104,7 +107,7 @@ def get_translation(query, components):
     }
     ret_val = ''
     try:
-        response = requests.request("POST", url, headers=headers, data=payload, timeout=60)
+        response = requests.request("POST", url, headers=headers, data=payload, timeout=600)
         # print('Translation received: ', response.text)
         if response.status_code != 200:
             print('error encountered for the query %s and components %s. Response: \n %s' % (
@@ -117,7 +120,18 @@ def get_translation(query, components):
         count['exception'] += 1
 
     return ret_val
-
+# function that can be run in parallel
+def execute_pipeline(lang, pipeline, output_dir, test, test_data, pbar):
+    # Create a prediction file
+    pred_file = test + '_' + get_pred_file_name(lang, pipeline) + '.txt'
+    with open(output_dir + pred_file, 'w') as out:
+        # For each test string
+        for id in test_data[lang]:
+            # Get the prediction
+            # print('Pipeline:', pipeline)
+            query = test_data[lang][id]
+            out.write(get_translation(query, pipeline) + '\n')
+            pbar.update(1)
 
 # setup progress bar
 with tqdm(total=count['request']) as pbar:
@@ -131,16 +145,7 @@ with tqdm(total=count['request']) as pbar:
             pipelines = pipeline_pair[1]
             # for each pipeline
             for pipeline in pipelines:
-                # Create a prediction file
-                pred_file = test + '_' + get_pred_file_name(lang, pipeline) + '.txt'
-                with open(output_dir + pred_file, 'w') as out:
-                    # For each test string
-                    for id in test_data[lang]:
-                        # Get the prediction
-                        # print('Pipeline:', pipeline)
-                        query = test_data[lang][id]
-                        out.write(get_translation(query, pipeline) + '\n')
-                        pbar.update(1)
+                pool.apply_async(execute_pipeline, [lang, pipeline, output_dir, test, test_data, pbar])
 # Server errors
 print('Total error count: %d' % count['error'])
 # Exceptions in the test script

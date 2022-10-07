@@ -5,7 +5,7 @@
     "test_cfg": {
       "de": {
         "ner": [ "babelscape_ner", "flair_ner", "davlan_ner", "spacy_ner"],
-        "el": ["mag_el", "mgenre_el"],
+        "el": ["mgenre_el"],
         "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       },
       "ru": {
@@ -21,7 +21,7 @@
     "test_cfg": {
       "de": {
         "ner": [ "babelscape_ner", "flair_ner", "davlan_ner", "spacy_ner"],
-        "el": ["mag_el", "mgenre_el"],
+        "el": [ "mgenre_el"],
         "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       },
       "ru": {
@@ -31,7 +31,7 @@
       },
       "fr": {
         "ner": [ "babelscape_ner", "davlan_ner", "spacy_ner"],
-        "el": ["mag_el", "mgenre_el"],
+        "el": [ "mgenre_el"],
         "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       }
     }
@@ -41,7 +41,7 @@
     "test_cfg": {
       "de": {
         "ner": [ "babelscape_ner", "flair_ner", "davlan_ner", "spacy_ner"],
-        "el": ["mag_el", "mgenre_el"],
+        "el": [ "mgenre_el"],
         "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       },
       "ru": {
@@ -51,7 +51,7 @@
       },
       "fr": {
         "ner": [ "babelscape_ner", "davlan_ner", "spacy_ner"],
-        "el": ["mag_el", "mgenre_el"],
+        "el": [ "mgenre_el"],
         "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       }
     }
