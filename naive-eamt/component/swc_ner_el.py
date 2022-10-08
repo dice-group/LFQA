@@ -6,7 +6,7 @@ import sys
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, '/neamt/util/')
 import common_util as c_util
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 
 def fetch_entlinks(text, url, auth, pid):
 
@@ -65,9 +65,9 @@ class SwcNerEl:
         
         section = 'SWC'
 
-        self.url = parser.get(section, 'url')
-        self.auth = parser.get(section, 'auth')
-        self.pid = parser.get(section, 'pid')
+        self.url = parser.get(section, 'url').strip('"')
+        self.auth = parser.get(section, 'auth').strip('"')
+        self.pid = parser.get(section, 'pid').strip('"')
         self.supported_langs = ['en', 'de']
         logging.debug('SwcNerEl component initialized.')
 
