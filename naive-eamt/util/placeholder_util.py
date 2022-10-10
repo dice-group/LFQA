@@ -86,7 +86,7 @@ def put_placeholders(input):
             stats_lock.release()
             break
         if replace_before:
-            plchldr = None
+            plchldr = eng_label
         else:
             plchldr = '[%s%d]' % (plc_token, arr_ind)
             link['placeholder'] = plchldr

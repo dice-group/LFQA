@@ -9,9 +9,7 @@ class PipelineHandler:
     
     # error count
     count = {
-        'error': 0,
-        'request': 0,
-        'exception': 0
+        'request': 0
     }
     # Read Config file
     eval_cfg = []
@@ -58,8 +56,8 @@ class PipelineHandler:
                         for mt_item in mt_comps:
                             lang_pipes.append([ner_item, el_item, mt_item])
                 # append no_ner, no_el MT pipes
-                # for mt_item in mt_comps:
-                #     lang_pipes.append(['no_ner', 'no_el', mt_item])
+                for mt_item in mt_comps:
+                    lang_pipes.append(['no_ner', 'no_el', mt_item])
                 pipes.append((lang, lang_pipes))
                 self.count['request'] += (len(lang_pipes) * len(test_data[lang]))
                 # Write test data to a file for each lang -> en combination
@@ -99,12 +97,13 @@ class PipelineHandler:
 
 
     # Function to fetch the transation through a HTTP POST request
-    def get_translation(self, query, components):
+    def get_translation(self, query, components, error_stats):
         # print('Getting Translation for: ', query)
         payload = {
             'query': query,
             'components': ','.join(components),
             'replace_before': True
+            #'placeholder': 'plc'
         }
         ret_val = ''
         try:
@@ -113,17 +112,21 @@ class PipelineHandler:
             if response.status_code != 200:
                 print('error encountered for the query %s and components %s. Response: \n %s' % (
                     query, payload['components'], response))
-                self.count['error'] += 1
+                error_stats['error'] += 1
             else:
                 ret_val = response.text
         except Exception as e:
             print('Following exception encountered for the query %s: %s' % (query, e))
-            self.count['exception'] += 1
+            error_stats['exception'] += 1
 
         return ret_val
     # function that can be run in parallel
     def execute_pipeline(self, lang, pipeline, output_dir, test, test_data):
         print('\nProcess started: test: %s\tlang: %s\tpipeline: %s'%(test, lang, pipeline))
+        error_stats = {
+            'error': 0,
+            'exception': 0
+        }
         # Create a prediction file
         pred_file = test + '_' + self.get_pred_file_name(lang, pipeline) + '.txt'
         with open(output_dir + pred_file, 'w') as out:
@@ -132,13 +135,17 @@ class PipelineHandler:
                 # Get the prediction
                 # print('Pipeline:', pipeline)
                 query = test_data[lang][id]
-                out.write(self.get_translation(query, pipeline) + '\n')
-        return len(test_data[lang])
+                out.write(self.get_translation(query, pipeline, error_stats) + '\n')
+        return (len(test_data[lang]), error_stats)
 
     def dummy_pipeline_executor(self, lang, pipeline, output_dir, test, test_data):
         print('Process started: test: %s\tlang: %s\tpipeline: %s\tData length: %d'%(test, lang, pipeline, len(test_data[lang])))
-        time.sleep(5)
-        return len(test_data[lang])
+        error_stats = {
+            'error': 0,
+            'exception': 0
+        }
+        time.sleep(2)
+        return (len(test_data[lang]), error_stats)
 
     def thread_wrapper(self, func, args):
         return func(*args)
