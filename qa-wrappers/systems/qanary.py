@@ -69,7 +69,8 @@ class Qanary(QASystem):
                 params={
                     "question": question,
                     "componentlist[]": self.components_list,
-                }
+                },
+                timeout=30
             ).json()
 
             sparql = """
