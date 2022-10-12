@@ -44,6 +44,7 @@ def put_placeholders(input):
     :return: input dictionary with append key-value pair mapping 'text_plc' to the text with placeholders.
     '''
     # Maintain translated placeholder count
+    stats_lock = stats_util.lock
     plc_count = stats_util.stats['placeholder_count']
     en_count = stats_util.stats['english_label_count']
     query = input['text']
@@ -72,13 +73,17 @@ def put_placeholders(input):
         ret = sparql.queryAndConvert()
         # Check if no results are retrieved
         if len(ret["results"]["bindings"]) == 0:
+            stats_lock.acquire()
             en_count['not_found'] += 1
+            stats_lock.release()
         # extracting English label
         eng_label = None
         for r in ret["results"]["bindings"]:
             link['en_label'] = r['enlbl']['value']
             eng_label = link['en_label']
+            stats_lock.acquire()
             en_count['total_found'] += 1
+            stats_lock.release()
             break
         if replace_before:
             plchldr = eng_label
@@ -86,7 +91,9 @@ def put_placeholders(input):
             plchldr = '[%s%d]' % (plc_token, arr_ind)
             link['placeholder'] = plchldr
             # incrementing global placeholder count
+            stats_lock.acquire()
             plc_count['total'] += 1
+            stats_lock.release()
         # forming the placeholder query
         if plchldr:
             query_plc += query[last_ind:link['start']] + plchldr
@@ -107,6 +114,7 @@ def replace_placeholders(trans_text, input):
     :return: translated string with replaced placeholders
     '''
     # Maintain translated placeholder count
+    stats_lock = stats_util.lock
     plc_count = stats_util.stats['placeholder_count']
     en_count = stats_util.stats['english_label_count']
     replace_before = input['replace_before']
@@ -121,10 +129,14 @@ def replace_placeholders(trans_text, input):
             label = link['en_label']
             # record label stats if replaced before
             if replace_before and (label.casefold() in trans_text.casefold()):
+                stats_lock.acquire()
                 en_count['trans_copied'] += 1
+                stats_lock.release()
         # check the number of properly translated placeholders
         if (not replace_before) and (link['placeholder'] in res_query):
+            stats_lock.acquire()
             plc_count['translated'] += 1
+            stats_lock.release()
             res_query = res_query.replace(link['placeholder'], label)
     logging.debug('Query after replaced placeholder: %s' % res_query)
     logging.debug('Stats: %s' % stats_util.stats)
