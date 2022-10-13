@@ -44,13 +44,11 @@ def parse_gerbil(body):
     query, lang = body[0][body[0].index('=')+1:], body[1][body[1].index('=')+1:]
     return query, lang
 
-def execute(query: str, endpoint_url: str = 'https://dbpedia.org/sparql'):
+def execute(query: str, endpoint_url: str = 'https://dbpedia.org/sparql', agent_header: dict = {}):
     """
     https://dbpedia.org/sparql
     https://query.wikidata.org/bigdata/namespace/wdq/sparql
     """
-    agent_header = {'User-Agent': 'wiki_parser_online/0.17.1 (https://deeppavlov.ai;'
-                                        ' info@deeppavlov.ai) deeppavlov/0.17.1'}
     try:
         sparql = SPARQLWrapper(endpoint_url)
         if "wikidata" in endpoint_url:
