@@ -3,12 +3,13 @@ from fastapi.responses import JSONResponse
 from classy_fastapi import Routable, get, post
 from qanary_helpers import qanary_queries
 
+import json
 import requests
 import logging
 import ast
 
 from systems.system import QASystem
-from systems.qa_utils import example_question, parse_gerbil, dummy_answers
+from systems.qa_utils import example_question, parse_gerbil, dummy_answers, find_in_cache, cache_question
 
 
 logger = logging.getLogger("uvicorn")
@@ -64,13 +65,18 @@ class Qanary(QASystem):
             
             logger.info('GERBIL input: {0}, {1}'.format(question, lang))
             
+            cache = find_in_cache(system_name='_'.join(c for c in self.components_list), path=request.url.path, question=question)
+            if cache:
+                return JSONResponse(content=cache)
+
+            
             response = requests.post(
                 url=self.api_url,
                 params={
                     "question": question,
                     "componentlist[]": self.components_list,
                 },
-                timeout=30
+                timeout=20
             ).json()
 
             sparql = """
@@ -87,7 +93,7 @@ class Qanary(QASystem):
             """
 
             response = qanary_queries.select_from_triplestore(response["endpoint"], sparql.format(graphId=response["inGraph"]))
-            # answer = json.loads(response["results"]["bindings"][0]["jsonValue"]["value"]) # load the answer from the response
+            answer = json.loads(response["results"]["bindings"][0]["jsonValue"]["value"]) # load the answer from the response
 
             final_response = {
                 "questions": [{
@@ -99,9 +105,11 @@ class Qanary(QASystem):
                     "query": {
                         "sparql": ""
                     },
-                    "answers": [response]
+                    "answers": [answer]
                 }]
             }
+            
+            cache_question(system_name='_'.join(c for c in self.components_list), path=request.url.path, question=question, input_params=self.components_list, output=final_response)
         except Exception as e:
             logger.error("Error in Qanary.gerbil_response: {0}".format(str(e)))
             final_response = {
@@ -117,5 +125,8 @@ class Qanary(QASystem):
                     "answers": [dummy_answers]   
                 }]
             }
-
+        logger.info('Qanary response: {0}'.format(str(final_response)))
+        
+        
+        
         return JSONResponse(content=final_response)
