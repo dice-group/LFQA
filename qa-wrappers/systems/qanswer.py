@@ -7,7 +7,7 @@ import logging
 import json
 
 from systems.system import QASystem
-from systems.qa_utils import example_question, prettify_answers, parse_gerbil, dummy_answers, execute
+from systems.qa_utils import example_question, prettify_answers, parse_gerbil, dummy_answers, execute, find_in_cache, cache_question
 
 
 logger = logging.getLogger("uvicorn")
@@ -65,6 +65,10 @@ class QAnswer(QASystem):
             
             logger.info('GERBIL input: {0} {1}'.format(question, lang))
             
+            cache = find_in_cache(system_name='qanswer' + "_" + self.kg + '_' + lang, path=request.url.path, question=question)
+            if cache:
+                return JSONResponse(content=cache)
+            
             query_data = {'question': question, 'lang': lang, 'kb': self.kg} 
             response = requests.get(self.api_url, params=query_data).json() # ?question=test&lang=en&kb=dbpedia&user=open
             first_query = response["queries"][0]['query']
@@ -82,6 +86,8 @@ class QAnswer(QASystem):
                     "answers": [execute(first_query, self.endpoint_url)]   
                 }]
             }
+            
+            cache_question(system_name='qanswer' + "_" + self.kg + '_' + lang, path=request.url.path, question=question, input_params=self.api_url, output=final_response)
         except Exception as e:
             logger.error("Error in QAnswer.gerbil_response: {0}".format(str(e)))
             final_response = {
