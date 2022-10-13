@@ -14,7 +14,7 @@ import pandas as pd
 # vars
 output_file = 'evaluation_results.tsv'
 old_tsv = 'experiment_details.tsv'
-header_arr = ['Test Name', 'Language', 'Components', 'Gold File', 'Prediction File', 'Uploaded Gold File', 'Uploaded Prediction File', 'Experiment URI']
+header_arr = ['Test Name', 'Language', 'Components', 'Gold File', 'Prediction File', 'Uploaded Gold File', 'Uploaded Prediction File', 'Experiment URI', 'BertScore F1', 'BLEURT Score']
 
 # Open the new output file (w) and old tsv file (r)
 with open(output_file,'w') as fout, open(old_tsv,'r') as fin:
