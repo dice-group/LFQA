@@ -2,11 +2,11 @@ version: "3.3"
 
 services:
 # Main service
-  bertscore-neamt:
-    image: bertscore-neamt
+  bertsimilarity-neamt:
+    image: bertsimilarity-neamt
     volumes:
       # Copy code
-      - ./logs:/bertscore/logs
+      - ./logs:/bertsimilarity/logs
     ports:
       - 6150:80
     networks:
