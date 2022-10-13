@@ -24,7 +24,7 @@ url = {
     'experiment': 'https://beng.dice-research.org/gerbil/experiment?id='
 }
 
-bertscore_url = "localhost:6150/bertsimilarity"
+bertscore_url = "http://localhost:6150/bertsimilarity"
 pred_dir = 'pred_results/'
 # output file
 output_file = 'experiment_details.tsv'
@@ -84,7 +84,7 @@ def get_bertsimilarity(pred_lines, gold_lines):
     headers = {
       'Content-Type': 'application/json'
     }
-    response = requests.request("POST", bertscore_url, headers=headers, data=payload)
+    response = requests.request("POST", bertscore_url, headers=headers, data=payload, timeout=600)
     # fetch the f1 scores and average them
     bertscore_f1_arr = response.json()['bert-score']['f1']
     bleurt_arr = response.json()['bleurt']['scores']
@@ -127,7 +127,7 @@ with open(output_file, 'w') as out, tqdm(total=count['request']) as pbar:
                         # write csv entry
                         out.write('\t'.join(
                             [test_name, lang, str(pipe), gold_file, pred_file, up_gold_file, up_pred_file,
-                             url['experiment'] + exp_id, bert_f1, bleurt_score]) + '\n')
+                             url['experiment'] + exp_id, str(bert_f1), str(bleurt_score)]) + '\n')
                         out.flush()
                         # update progress
                         pbar.update(1)
@@ -149,11 +149,11 @@ with open(output_file, 'w') as out, tqdm(total=count['request']) as pbar:
                 bert_f1, bleurt_score = get_bertsimilarity(pred_file_lines, gold_file_lines)
                 # write csv entry
                 out.write('\t'.join([test_name, lang, str(pipe), gold_file, pred_file, up_gold_file, up_pred_file,
-                                     url['experiment'] + exp_id, bert_f1, bleurt_score]) + '\n')
+                                     url['experiment'] + exp_id, str(bert_f1), str(bleurt_score)]) + '\n')
                 out.flush()
                 # update progress
                 pbar.update(1)
                 # Wait for a few seconds
-                time.sleep(10)
+                # time.sleep(2)
 
 print('Done!')

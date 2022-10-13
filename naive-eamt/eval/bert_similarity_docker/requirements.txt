@@ -1,3 +1,5 @@
+tensorflow
+tf-slim
 evaluate
 bert-score
 flask
