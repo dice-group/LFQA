@@ -28,6 +28,10 @@ from spacy_ner import SpacyNer
 from empty_ner import EmptyNer
 from empty_el import EmptyEl
 
+sys.path.insert(1, '/neamt/util/')
+import stats_util
+
+stat_dict = stats_util.stats
 # configuring logging
 logging.basicConfig(filename='/neamt/logs/neamt.log', level=logging.DEBUG,
                     format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
@@ -46,6 +50,8 @@ comp_map = {
     'no_ner': EmptyNer,
     'no_el': EmptyEl
 }
+
+def_placeholder = '00'
 
 comp_inst_map = {}
 path_pipeline_map = {}
@@ -121,9 +127,26 @@ app = Flask(__name__)
 
 # logging.info('Finished')
 
+def get_input_dict(san_query, data):
+    rep_before = False
+    if 'replace_before' in data:
+        rep_before = eval(data['replace_before'])
+    placeholder = def_placeholder
+    if 'placeholder' in data:
+        placeholder = data['placeholder']
+    f_input = {
+        'text': san_query,
+        'replace_before': rep_before,
+        'placeholder': placeholder
+    }
+    return f_input
+
 
 @app.route('/<string:path>', methods=['POST'])
 def gen_pipe(path):
+    global stat_dict
+    # incrementing query count
+    stat_dict['query_count'] += 1
     data = request.form
     logging.info('Query received at path: %s' % path)
     logging.info('Query received for translation: %s' % data['query'])
@@ -133,13 +156,16 @@ def gen_pipe(path):
         logging.debug('Input query: %s' % data['query'])
         san_query = data['query'].replace('?', '')
         logging.debug('Sanitized input query: %s' % san_query)
-        return process_input(data['query'], path)
+        return process_input(get_input_dict(san_query, data), path)
     else:
         return f'Invalid request'
 
 
 @app.route('/custom-pipeline', methods=['POST'])
 def cus_pipe():
+    global stat_dict
+    # incrementing query count
+    stat_dict['query_count'] += 1
     data = request.form
     logging.info('Query received at custom-pipeline')
     logging.info('Data received for translation: %s' % data)
@@ -153,10 +179,26 @@ def cus_pipe():
         logging.debug('Input query: %s' % data['query'])
         san_query = data['query'].replace('?', '')
         logging.debug('Sanitized input query: %s' % san_query)
-        return process_cus_input(san_query, inst_list)
+        return process_cus_input(get_input_dict(san_query, data), inst_list)
     else:
         return f'Invalid request'
 
-# if __name__ == "__main__":
-#     port = int(os.environ.get('PORT', 80))
-#     app.run(use_reloader=False, host='0.0.0.0', port=port)
+
+@app.route('/reset-stats', methods=['GET'])
+def reset_stats():
+    stats_util.reset_stats()
+    global stat_dict
+    return stat_dict
+
+
+@app.route('/reset-plc-stats', methods=['GET'])
+def reset_placeholder_stats():
+    stats_util.reset_placeholder_stats()
+    global stat_dict
+    return stat_dict
+
+
+@app.route('/fetch-stats', methods=['GET'])
+def fetch_stats():
+    global stat_dict
+    return stat_dict

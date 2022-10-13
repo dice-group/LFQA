@@ -14,6 +14,7 @@
 # Imports
 import json
 from pathlib import Path
+import copy
 
 # vars
 # error count
@@ -55,9 +56,15 @@ def write_translated_qald(lang, pipe, pred_dir, test_name, output_dir, gold_tran
     for i in range(len(gold_translations)):
         # find the QALD object for gold english text
         gold_str = gold_translations[i]
-        qald_obj = q_map[gold_str.strip()].copy()
+        qald_obj = copy.deepcopy(q_map[gold_str.strip()])
+        # extract language specific string to keep for reference
+        lang_spec_q = None
+        for qstr_pair in qald_obj['question']:
+            if qstr_pair['language'] == lang:
+                lang_spec_q = qstr_pair
+                break
         # create a new object with translated english text
-        qald_obj['question'] = [{'language': 'en', 'string': pred_translations[i].strip()}]
+        qald_obj['question'] = [{'language': 'en', 'string': pred_translations[i].strip()}, lang_spec_q]
         # save the object in json
         out_qald["questions"].append(qald_obj)
     # Save the QALD output

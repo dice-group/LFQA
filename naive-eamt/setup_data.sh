@@ -74,7 +74,7 @@ mkdir zh-en && cd "$_"
 wget https://object.pouta.csc.fi/Tatoeba-MT-models/zho-eng/opus-2020-07-14.zip
 unzip 'opus-2020-07-14.zip'
 rm -rf 'opus-2020-07-14.zip'
-cd ..
+cd ../..
 docker build . -t opus-mt
 cd ..
 # download genre data
@@ -93,4 +93,5 @@ wget https://raw.githubusercontent.com/KGQA/QALD_10/main/data/qald_10/qald_10.js
 cd ..
 mkdir qald9plus && cd "$_"
 wget https://raw.githubusercontent.com/KGQA/QALD_9_plus/main/data/qald_9_plus_test_dbpedia.json
+wget https://raw.githubusercontent.com/KGQA/QALD_9_plus/main/data/qald_9_plus_train_dbpedia.json
 echo "Downloads finished!"

@@ -109,9 +109,16 @@ The component IDs can be found in the [table above](#comp-table).
 __Important__: The application only initiates the components mentioned in the config pipelines to be memory efficient. To save on memory, please comment out the config for the non-required pipelines.
 
 ## Docker Setup
-First, download and setup the data using the following command (needs 150GB free storage, can take a few hours to finish):
 
-```bash setup_data.sh```
+Before running the setup script, please make sure you have the proper docker permissions. You can test it using the following command (without sudo):
+
+```docker run hello-world```
+
+If that works, then you can proceed normally, otherwise, you must perform the steps to [manage docker as a non-root user](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user).
+
+Download and setup the data using the following command (needs 150GB free storage, can take a few hours to finish):
+
+```./setup_data.sh```
 
 Then, build the docker image:
 
@@ -119,11 +126,11 @@ Then, build the docker image:
 
 Finally, to start use the start script:
 
-```bash start_docker_containers.sh```
+```./start_docker_containers.sh```
 
 To stop, use the stop script:
 
-```bash stop_docker_containers.sh```
+```./stop_docker_containers.sh```
 
 ### Logs
 The logs are maintained in the ```logs/neamt.log``` file
@@ -146,11 +153,20 @@ curl --location --request GET 'http://localhost:6100/custom-pipeline' \
 --data-urlencode 'query=Ist Hawaii der Geburtsort von Obama' \
 --data-urlencode 'components=spacy_ner, mag_el, opus_mt'
 ```
+
+__Optional Parameters__: The NEAMT application also allows its users to configure two optional parameters: 
+- *placeholder* : string value that will be used as a placholder in concatenation with a number
+- *replace_before*: boolean value, if set to True, the application will replace placeholders with target labels before sending for machine translation
 ## Customized Components
 ### Component I/O Formatting
-<a id="NER">__NER__:</a> For the components that strictly perform the task of named entity recognition, the expected input is a string containing text in natural language (en,de,fr,es). The output should be a JSON containing the string and information of annotated entities. Following is an example:
+<a id="NER">__NER__:</a> For the components that strictly perform the task of named entity recognition, the expected input is a dictionary containing text in natural language (en,de,fr,es). The output should be a dictionary containing the string and information of annotated entities. Following is an example:
 
-*Input*: ```Ist Hawaii der Geburtsort von Obama?```
+*Input*: 
+```json
+{
+  "text": "Ist Hawaii der Geburtsort von Obama?"
+}
+```
 
 
 *Output*: 
@@ -173,7 +189,7 @@ curl --location --request GET 'http://localhost:6100/custom-pipeline' \
 }
 ```
 
-<a id="EL">__EL__:</a> For the components performing only the entity linking task, the expected input is the output from the [*NER*](#NER). The output should be the same JSON with additional information about the entity mentions. Carrying on with the example from above, following is a sample output:
+<a id="EL">__EL__:</a> For the components performing only the entity linking task, the expected input is the output from the [*NER*](#NER). The output should be the same dictionary with additional information about the entity mentions. Carrying on with the example from above, following is a sample output:
 
 *Output*: 
 ```json
@@ -215,6 +231,8 @@ Additionally, you can make use of the functions in [placeholder_util.py](util/pl
 __Combination__: If your custom component is a combination of consecutive components in the pipeline, then you must follow the input/output format accordingly. Your combined component must comply to the input format for the point of entrance and output format for the point of exit.
 <!-- Obsolete: Provide the link to sample code (LibreMT) -->
 <!-- If in case the combination of your components do not need any intermediatory processing of the input or outputs you can set the ```skip_intermediate_processing``` to ```False``` as demonstrated here: *This is a placeholder for the link* -->
+
+
 
 ### How to add a new component?
 

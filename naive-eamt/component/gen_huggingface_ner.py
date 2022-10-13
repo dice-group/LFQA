@@ -67,22 +67,20 @@ class GenHuggingfaceNer:
         self.nlp = pipeline("ner", model=self.ner_model, tokenizer=self.ner_tokenizer)
         logging.debug('%s component initialized.' % model_name)
 
-    def process_input(self, query):
+    def process_input(self, input):
         '''
         Function to annotate entities in a give natural language text.
 
-        :param query: natural language text to be annotated
+        :param input: input json containing natural language text to be annotated
         :return:  formatted dictionary as stated in the README for NER output
         '''
-        logging.debug('Input received: %s' % query)
+        logging.debug('Input received: %s' % input)
+        query = input['text']
         ner_results = self.nlp(query)
         logging.debug(ner_results)
         # find the start and end indexes
         ent_indexes = fetch_ent_indexes(ner_results, query)
-        output = {
-            'text': query,
-            'lang': c_util.detect_lang(query),
-            'ent_mentions': ent_indexes
-        }
-        logging.debug('Output: %s' % output)
-        return output
+        input['lang'] = c_util.detect_lang(query)
+        input['ent_mentions'] = ent_indexes
+        logging.debug('Output: %s' % input)
+        return input
