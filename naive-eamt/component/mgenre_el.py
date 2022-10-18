@@ -68,20 +68,24 @@ class MgenreEl:
         )
 
         res_arr = self.el_tokenizer.batch_decode(outputs, skip_special_tokens=True)
-        print(res_arr)
+        logging.debug('model output: %s'%str(res_arr))
         mention_index = 0
         result_index = 0
         while result_index < len(res_arr):
             rev_tuple = get_rev_tuple(result_index, res_arr)
             if rev_tuple in self.lang_title2wikidataID:
-                ent_indexes[mention_index]['link'] = max(self.lang_title2wikidataID[rev_tuple])
+                temp_link = max(self.lang_title2wikidataID[rev_tuple])
+                logging.debug('link found %s for the tuple %s' % (temp_link, str(rev_tuple)))
+                ent_indexes[mention_index]['link'] = temp_link
             # Find all candidates
             ent_indexes[mention_index]['link_candidates'] = []
             j = result_index
             while j < result_index + num_return_sequences:
                 rev_tuple = get_rev_tuple(j, res_arr)
                 if rev_tuple in self.lang_title2wikidataID:
-                    ent_indexes[mention_index]['link_candidates'].append(max(self.lang_title2wikidataID[rev_tuple]))
+                    temp_link = max(self.lang_title2wikidataID[rev_tuple])
+                    logging.debug('link found %s for the tuple %s' % (temp_link, str(rev_tuple)))
+                    ent_indexes[mention_index]['link_candidates'].append(temp_link)
                 j += 1
             result_index += num_return_sequences
             mention_index += 1

@@ -139,6 +139,11 @@ def get_input_dict(san_query, data):
         'replace_before': rep_before,
         'placeholder': placeholder
     }
+    # Passing all the params
+    for entry in data:
+        if entry not in f_input:
+            f_input[entry] = data[entry]
+
     return f_input
 
 
