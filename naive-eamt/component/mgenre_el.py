@@ -77,11 +77,12 @@ class MgenreEl:
             if rev_tuple in self.lang_title2wikidataID:
                 ent_indexes[mention_index]['link'] = max(self.lang_title2wikidataID[rev_tuple])
             # Find all candidates
+            ent_indexes[mention_index]['link_candidates'] = []
             j = result_index
             while j < result_index + num_return_sequences:
                 rev_tuple = get_rev_tuple(j, res_arr)
                 if rev_tuple in self.lang_title2wikidataID:
-                    ent_indexes[mention_index]['link_candidates'] = max(self.lang_title2wikidataID[rev_tuple])
+                    ent_indexes[mention_index]['link_candidates'].append(max(self.lang_title2wikidataID[rev_tuple]))
             result_index += num_return_sequences
             mention_index += 1
         logging.debug('Output: %s'%input)
