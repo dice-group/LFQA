@@ -42,7 +42,7 @@ class MgenreEl:
         # Extract custom parameter
         num_return_sequences = 1
         if 'mg_num_return_sequences' in input:
-            num_return_sequences = input['mg_num_return_sequences']
+            num_return_sequences = int(input['mg_num_return_sequences'])
         # Setting knowledge base as Wikidata
         input['kb'] = 'wd'
         ent_indexes = input['ent_mentions']
@@ -82,10 +82,11 @@ class MgenreEl:
             j = result_index
             while j < result_index + num_return_sequences:
                 rev_tuple = get_rev_tuple(j, res_arr)
+                temp_link = ''
                 if rev_tuple in self.lang_title2wikidataID:
                     temp_link = max(self.lang_title2wikidataID[rev_tuple])
                     logging.debug('link found %s for the tuple %s' % (temp_link, str(rev_tuple)))
-                    ent_indexes[mention_index]['link_candidates'].append(temp_link)
+                ent_indexes[mention_index]['link_candidates'].append((rev_tuple[1], rev_tuple[0], temp_link))
                 j += 1
             result_index += num_return_sequences
             mention_index += 1
