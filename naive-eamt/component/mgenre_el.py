@@ -40,10 +40,9 @@ class MgenreEl:
         '''
         logging.debug('Input received: %s'%input)
         # Extract custom parameter
-        custom_params = input['custom_params']
         num_return_sequences = 1
         if 'mg_num_return_sequences' in custom_params:
-            num_return_sequences = custom_params['mg_num_return_sequences']
+            num_return_sequences = input['mg_num_return_sequences']
         # Setting knowledge base as Wikidata
         input['kb'] = 'wd'
         ent_indexes = input['ent_mentions']
