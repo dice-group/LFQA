@@ -7,6 +7,7 @@ import sys
 sys.path.insert(1, '/neamt/util/')
 import common_util as c_util
 from configparser import SafeConfigParser
+from ner_abs import GenNER
 
 def fetch_entlinks(text, url, auth, pid):
 
@@ -52,7 +53,7 @@ def fetch_entlinks(text, url, auth, pid):
                         ent_indexes.append({'': mt["matchedText"], })
     return ent_indexes
 
-class SwcNerEl:
+class SwcNerEl(GenNER):
 
     def __init__(self):
         """
@@ -71,21 +72,20 @@ class SwcNerEl:
         self.supported_langs = ['en', 'de']
         logging.debug('SwcNerEl component initialized.')
 
-    def process_input(self, input):
+    def recognize_entities(self, query, lang, input):
         '''
-        Function to link the entities from an annotated text.
+        Function to annotate entities in a given natural language text.
 
-        :param input:  formatted dictionary as stated in the README for NER output
-        :return:  formatted dictionary as stated in the README for EL output
+        :param query: input natural language text to be annotated
+        :param lang: language of the query
+        :param input: input json to use/provide extra information
+        
+        :return:  list of entity mentions found in the provided query
         '''
-        logging.debug('Input received: %s'%input)
-        query = input['text']
-        input['lang'] = c_util.detect_lang(query)
         ent_indexes = []
-        input['ent_mentions'] = ent_indexes
         # checking for supported languages
-        if input['lang'] in self.supported_langs:
+        if lang in self.supported_langs:
             ent_indexes.extend(fetch_entlinks(query, self.url, self.auth, self.pid))
         # set the KB to query
         input['kb'] = 'swc'
-        return input
+        return ent_indexes
