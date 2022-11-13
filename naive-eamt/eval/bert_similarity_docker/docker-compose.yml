@@ -1,0 +1,16 @@
+version: "3.3"
+
+services:
+# Main service
+  bertsimilarity-neamt:
+    image: bertsimilarity-neamt
+    volumes:
+      # Copy code
+      - ./logs:/bertsimilarity/logs
+    ports:
+      - 6150:80
+    networks:
+      - eval-net
+
+networks:
+  eval-net:

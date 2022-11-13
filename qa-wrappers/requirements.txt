@@ -4,3 +4,4 @@ requests==2.22.0
 classy-fastapi==0.2.11
 fastapi==0.83.0
 SPARQLWrapper
+pymongo

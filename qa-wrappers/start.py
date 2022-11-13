@@ -30,7 +30,8 @@ available_classes_dict = {
 
 for system in parser.items(): # create routers from a config file
     if system[0] != parser.default_section:
-        sys_routable = available_classes_dict[system[0]](
+        class_name = system[0].split("_")[0]
+        sys_routable = available_classes_dict[class_name](
             **dict(parser[system[0]].items()),
             prefix=f"/{system[0].lower()}",
             tags=[system[0]]
@@ -44,4 +45,4 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

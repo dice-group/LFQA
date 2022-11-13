@@ -1,4 +1,8 @@
 import copy
+from threading import Lock
+
+# Thread safe access
+lock = Lock()
 # Initialize vars
 stats = {
     'placeholder_count': {
