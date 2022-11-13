@@ -27,6 +27,7 @@ from mgenre_el import MgenreEl
 from spacy_ner import SpacyNer
 from empty_ner import EmptyNer
 from empty_el import EmptyEl
+from swc_ner_el import SwcNerEl
 
 sys.path.insert(1, '/neamt/util/')
 import stats_util
@@ -48,7 +49,8 @@ comp_map = {
     'nllb_mt': NllbMt,
     'mbart_mt': MbartMt,
     'no_ner': EmptyNer,
-    'no_el': EmptyEl
+    'no_el': EmptyEl,
+    'swc_ner_el': SwcNerEl
 }
 
 def_placeholder = '00'
