@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 # This might take some hours. Around 150 GB of storage space will be needed.
 cd "${BASH_SOURCE%/*}" || exit
 # download all the relevant data
