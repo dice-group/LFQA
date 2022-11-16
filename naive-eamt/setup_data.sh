@@ -34,12 +34,12 @@ cd ..
 # download fasttext language classification model
 wget https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz
 # download libre repo
-git clone https://github.com/LibreTranslate/LibreTranslate
+git clone --depth 1 https://github.com/LibreTranslate/LibreTranslate
 cd LibreTranslate
 docker build --build-arg with_models=true -t libretranslate .
 cd ..
 # Download Helsinki-OPT data
-git clone https://github.com/Helsinki-NLP/Opus-MT.git
+git clone --depth 1 https://github.com/Helsinki-NLP/Opus-MT.git
 cd Opus-MT
 # Copy customized services.json
 mv services.json services.json.old
