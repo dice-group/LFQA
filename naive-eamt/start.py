@@ -8,6 +8,7 @@ import json
 import logging
 import os
 import ast
+import time
 
 from flask import request
 # importing the flask Module
@@ -99,15 +100,7 @@ detect_components('/neamt/configuration.ini')
 def process_input(input_query, path):
     # Find the pipeline
     pipeline_info = path_pipeline_map[path]
-    logging.debug('Pipeline Info:\n%s' % pipeline_info)
-    # Persist the input/output for the pipeline components
-    io_var = input_query
-    # Loop through pipeline components and pass it the previous output as an input
-    for inst in pipeline_info['inst_list']:
-        io_var = inst.process_input(io_var)
-    # return the last output
-    logging.info('final output: %s' % io_var)
-    return io_var
+    return process_cus_input(input_query, pipeline_info['inst_list'])
 
 
 # Process custom pipeline requests
@@ -117,7 +110,11 @@ def process_cus_input(input_query, inst_list):
     io_var = input_query
     # Loop through pipeline components and pass it the previous output as an input
     for inst in inst_list:
+        # Log start time
+        start_time = time.time()
         io_var = inst.process_input(io_var)
+        # Print step time
+        logging.debug('Time needed to process input using %s class: %s second(s)' % (type(inst).__name__, (time.time() - start_time)))
     # return the last output
     logging.info('final output: %s' % io_var)
     return io_var
@@ -153,6 +150,8 @@ def clean_proc_query(query, data, inst_list):
     except Exception as inst:
         logging.error('Exception occurred for the query: %s\nException: %s' % (query, inst))
         return {}
+    
+
 @app.route('/<string:path>', methods=['POST'])
 def gen_pipe(path):
     global stat_dict
@@ -187,15 +186,22 @@ def cus_pipe():
 
     if (len(inst_list) == len(comp_arr)) and ('query' in data):
         output = None
-        data_q = '"'+ data['query'] + '"'
-        data_q = ast.literal_eval(data_q)
+        data_q = data['query'].strip()
+        try:
+            if data_q.startswith('['):
+                data_q = ast.literal_eval(data_q)
+        except Exception as e:
+            # do nothing
+            pass
         # if the query is list, then process one at a time
         if type(data_q) == list:
+            logging.debug('Processing query as a list.')
             output = []
             for query in data_q:
                 output.append(clean_proc_query(query, data, inst_list))
         # else process the single query
         else:
+            logging.debug('Processing a single query.')
             output = clean_proc_query(data_q, data, inst_list)
         return output
     else:
