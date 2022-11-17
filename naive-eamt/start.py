@@ -7,6 +7,7 @@ import configparser
 import json
 import logging
 import os
+import ast
 
 from flask import request
 # importing the flask Module
@@ -186,14 +187,16 @@ def cus_pipe():
 
     if (len(inst_list) == len(comp_arr)) and ('query' in data):
         output = None
+        data_q = '"'+ data['query'] + '"'
+        data_q = ast.literal_eval(data_q)
         # if the query is list, then process one at a time
-        if type(data['query']) == list:
+        if type(data_q) == list:
             output = []
-            for query in data['query']:
-                output.append(clean_proc_query(data['query'], data, inst_list))
+            for query in data_q:
+                output.append(clean_proc_query(query, data, inst_list))
         # else process the single query
         else:
-            output = clean_proc_query(data['query'], data, inst_list)
+            output = clean_proc_query(data_q, data, inst_list)
         return output
     else:
         return f'Invalid request'
