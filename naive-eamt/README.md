@@ -116,6 +116,8 @@ Before running the setup script, please make sure you have the proper docker per
 
 If that works, then you can proceed normally, otherwise, you must perform the steps to [manage docker as a non-root user](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user).
 
+Also, please make sure that your ```docker-compose``` is version 1.28.0 or above to support [docker profiles](https://docs.docker.com/compose/profiles/).
+
 Download and setup the data using the following command (needs 150GB free storage, can take a few hours to finish):
 
 ```./setup_data.sh```
