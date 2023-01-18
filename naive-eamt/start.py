@@ -57,6 +57,7 @@ comp_map = {
 
 def_placeholder = '00'
 
+io_exc_list = ['query']
 comp_inst_map = {}
 path_pipeline_map = {}
 
@@ -139,6 +140,11 @@ def get_input_dict(san_query, data):
         'replace_before': rep_before,
         'placeholder': placeholder
     }
+    # Passing all the params
+    for entry in data:
+        if (entry not in f_input) and (entry not in io_exc_list):
+            f_input[entry] = data[entry]
+
     return f_input
 def clean_proc_query(query, data, inst_list):
     try:

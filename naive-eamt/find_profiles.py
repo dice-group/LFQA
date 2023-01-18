@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
 This python file helps decide on available docker-compose profiles, based on the configuration.ini file.
 It is called from 'start_docker_containers.sh'

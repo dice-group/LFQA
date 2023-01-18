@@ -5,6 +5,13 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import pickle
 
 
+def get_rev_tuple(index, arr):
+    det_ent = arr[index]
+    ent_lang_pair = det_ent.split(" >> ")
+    rev_tuple = tuple(reversed(ent_lang_pair))
+    return rev_tuple
+
+
 class MgenreEl:
 
     def __init__(self):
@@ -32,6 +39,10 @@ class MgenreEl:
         :return:  formatted dictionary as stated in the README for EL output
         '''
         logging.debug('Input received: %s'%input)
+        # Extract custom parameter
+        num_return_sequences = 1
+        if 'mg_num_return_sequences' in input:
+            num_return_sequences = int(input['mg_num_return_sequences'])
         # Setting knowledge base as Wikidata
         input['kb'] = 'wd'
         ent_indexes = input['ent_mentions']
@@ -51,19 +62,33 @@ class MgenreEl:
         outputs = self.el_model.generate(
             **self.el_tokenizer(sentences, return_tensors="pt", padding=True),
             num_beams=5,
-            num_return_sequences=1,
+            num_return_sequences=num_return_sequences,
             # OPTIONAL: use constrained beam search
             # prefix_allowed_tokens_fn=lambda batch_id, sent: trie.get(sent.tolist())
         )
 
         res_arr = self.el_tokenizer.batch_decode(outputs, skip_special_tokens=True)
-        print(res_arr)
-        i = 0
-        for x in res_arr:
-            sp_arr = x.split(" >> ")
-            rev_tuple = tuple(reversed(sp_arr))
+        logging.debug('model output: %s'%str(res_arr))
+        mention_index = 0
+        result_index = 0
+        while result_index < len(res_arr):
+            rev_tuple = get_rev_tuple(result_index, res_arr)
             if rev_tuple in self.lang_title2wikidataID:
-                ent_indexes[i]['link'] = max(self.lang_title2wikidataID[rev_tuple])
-            i += 1
+                temp_link = max(self.lang_title2wikidataID[rev_tuple])
+                logging.debug('link found %s for the tuple %s' % (temp_link, str(rev_tuple)))
+                ent_indexes[mention_index]['link'] = temp_link
+            # Find all candidates
+            ent_indexes[mention_index]['link_candidates'] = []
+            j = result_index
+            while j < result_index + num_return_sequences:
+                rev_tuple = get_rev_tuple(j, res_arr)
+                temp_link = ''
+                if rev_tuple in self.lang_title2wikidataID:
+                    temp_link = max(self.lang_title2wikidataID[rev_tuple])
+                    logging.debug('link found %s for the tuple %s' % (temp_link, str(rev_tuple)))
+                ent_indexes[mention_index]['link_candidates'].append((rev_tuple[1], rev_tuple[0], temp_link))
+                j += 1
+            result_index += num_return_sequences
+            mention_index += 1
         logging.debug('Output: %s'%input)
         return input
