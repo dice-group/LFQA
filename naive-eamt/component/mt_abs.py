@@ -24,8 +24,12 @@ class GenMT(ABC):
         trans_text = input['text_plc']
         source_lang = input['lang']
         target_lang = 'en'
-        # only translate if the source is non-english
-        if source_lang != 'en':
+        if 'target_lang' in input:
+            target_lang = input['target_lang']
+        else:
+            input['target_lang'] = target_lang
+        # only translate if the source is not same as target language
+        if source_lang != target_lang:
             trans_text = self.translate_text(trans_text, source_lang, target_lang)
         logging.debug('Translated text with the placeholders: %s'%trans_text)
         # replace placeholders in the translated text
