@@ -4,8 +4,18 @@ This python encapsulates the functions to deal with placeholders in the annotate
 import logging
 import time
 import stats_util
+from string import Template
 
 from SPARQLWrapper import SPARQLWrapper, JSON
+
+SPARQL_LANG_MAP = {
+    'en': 'EN',
+    'de': 'DE',
+    'ru': 'RU',
+    'fr': 'FR',
+    'es': 'ES',
+    'pt': 'PT'
+}
 
 sparql_wd = SPARQLWrapper("https://query.wikidata.org/sparql")
 sparql_wd.setReturnFormat(JSON)
@@ -16,34 +26,72 @@ sparql_db.setReturnFormat(JSON)
 sparql_swc = SPARQLWrapper("https://porque-dev.poolparty.biz/PoolParty/sparql/WaffenRecht")
 sparql_swc.setReturnFormat(JSON)
 
+WD_QUERY_STR = '''
+    SELECT ?enlbl WHERE {
+        
+        OPTIONAL {
+            wd:$link rdfs:label ?enlbl .
+            FILTER (langMatches( lang(?enlbl), "$lang" ) )
+        }
+        OPTIONAL {
+            wd:$link rdfs:label ?enlbl .
+            FILTER (langMatches( lang(?enlbl), "EN" ) )
+        }
+    } 
+    LIMIT 1
+'''
+
+'''
+The reason behind the usage of owl:sameAs in the DBpedia is the MAG tool. 
+Mag returns language specific DBpedia URIs.
+'''
+
+DBP_QUERY_STR = '''
+    PREFIX owl:<http://www.w3.org/2002/07/owl#>
+    SELECT ?enlbl WHERE {
+    
+        OPTIONAL {
+            <$link> rdfs:label ?enlbl .
+            FILTER (langMatches( lang(?enlbl), "$lang" ) )
+        }
+        OPTIONAL {
+            <$link> rdfs:label ?enlbl .
+            FILTER (langMatches( lang(?enlbl), "EN" ) )
+        }
+        OPTIONAL {
+            ?sub rdfs:label ?enlbl .
+            ?sub owl:sameAs <$link> .
+            FILTER (langMatches( lang(?enlbl), "$lang" ) )
+        }
+        OPTIONAL {
+            ?sub rdfs:label ?enlbl .
+            ?sub owl:sameAs <$link> .
+            FILTER (langMatches( lang(?enlbl), "EN" ) )
+        }
+    } 
+    LIMIT 1
+'''
+
+SWC_QUERY_STR =  '''
+    PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
+    SELECT ?enlbl WHERE {
+      
+        OPTIONAL {
+            <$link> skos:prefLabel ?enlbl .
+            FILTER (langMatches( lang(?enlbl), "$lang" ) )
+        }
+        OPTIONAL {
+            <$link> skos:prefLabel ?enlbl .
+            FILTER (langMatches( lang(?enlbl), "EN" ) )
+        }
+    }
+    LIMIT 1
+'''
+
 kb_info = {
-    'wd': (sparql_wd,
-           '''
-            SELECT ?enlbl WHERE {
-                wd:%s rdfs:label ?enlbl .
-                FILTER (langMatches( lang(?enlbl), "EN" ) )
-            } 
-            LIMIT 1
-            '''),
-    'dbp': (sparql_db,
-            '''
-            PREFIX owl:<http://www.w3.org/2002/07/owl#>
-            SELECT ?enlbl WHERE {
-                ?sub rdfs:label ?enlbl .
-                ?sub owl:sameAs <%s> .
-                FILTER (langMatches( lang(?enlbl), "EN" ) )
-            } 
-            LIMIT 1
-            '''),
-    'swc': (sparql_swc,
-            '''
-            PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
-            SELECT ?enlbl WHERE {
-              <%s> skos:prefLabel ?enlbl .
-              FILTER (langMatches ( lang(?enlbl), "EN"))
-            }
-            LIMIT 1
-            ''')
+    'wd': (sparql_wd, Template(WD_QUERY_STR)),
+    'dbp': (sparql_db, Template(DBP_QUERY_STR)),
+    'swc': (sparql_swc, Template(SWC_QUERY_STR))
 }
 
 
@@ -62,6 +110,12 @@ def put_placeholders(input):
     query = input['text']
     plc_token = input['placeholder']
     replace_before = input['replace_before']
+    # Target language
+    target_lang = input['target_lang']
+    if target_lang in SPARQL_LANG_MAP:
+        target_lang = SPARQL_LANG_MAP[target_lang]
+    else:
+        target_lang = "EN"
     if 'kb' not in input:
         logging.debug('No KB information found in the input.')
         input['text_plc'] = query
@@ -79,7 +133,7 @@ def put_placeholders(input):
             continue
         # sleep the thread to avoid spamming SPARQL endpoint
         # time.sleep(2)
-        f_sparql = sparql_str % link['link']
+        f_sparql = sparql_str.substitute(link=link['link'], lang=target_lang)
         sparql.setQuery(f_sparql)
         logging.debug('Formed SPARQL:\n %s' % f_sparql)
         ret = sparql.queryAndConvert()
