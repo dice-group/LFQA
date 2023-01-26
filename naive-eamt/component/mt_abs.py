@@ -19,15 +19,19 @@ class GenMT(ABC):
         '''
         # Send input for processing to the placeholder util
         logging.debug('Input received: %s' % input)
-        input = p_util.put_placeholders(input)
-        # acquire text with placeholder
-        trans_text = input['text_plc']
+
+        # Extract source and target language
         source_lang = input['lang']
         target_lang = 'en'
         if 'target_lang' in input:
             target_lang = input['target_lang']
         else:
             input['target_lang'] = target_lang
+
+        input = p_util.put_placeholders(input)
+        # acquire text with placeholder
+        trans_text = input['text_plc']
+
         # only translate if the source is not same as target language
         if source_lang != target_lang:
             trans_text = self.translate_text(trans_text, source_lang, target_lang)
