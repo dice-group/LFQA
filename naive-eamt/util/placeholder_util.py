@@ -23,9 +23,6 @@ sparql_wd.setReturnFormat(JSON)
 sparql_db = SPARQLWrapper("https://dbpedia.org/sparql")
 sparql_db.setReturnFormat(JSON)
 
-sparql_swc = SPARQLWrapper("https://porque-dev.poolparty.biz/PoolParty/sparql/WaffenRecht")
-sparql_swc.setReturnFormat(JSON)
-
 WD_QUERY_STR = '''
     SELECT ?enlbl WHERE {
         
@@ -72,26 +69,9 @@ DBP_QUERY_STR = '''
     LIMIT 1
 '''
 
-SWC_QUERY_STR =  '''
-    PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
-    SELECT ?enlbl WHERE {
-      
-        OPTIONAL {
-            <$link> skos:prefLabel ?enlbl .
-            FILTER (langMatches( lang(?enlbl), "$lang" ) )
-        }
-        OPTIONAL {
-            <$link> skos:prefLabel ?enlbl .
-            FILTER (langMatches( lang(?enlbl), "EN" ) )
-        }
-    }
-    LIMIT 1
-'''
-
 kb_info = {
     'wd': (sparql_wd, Template(WD_QUERY_STR)),
-    'dbp': (sparql_db, Template(DBP_QUERY_STR)),
-    'swc': (sparql_swc, Template(SWC_QUERY_STR))
+    'dbp': (sparql_db, Template(DBP_QUERY_STR))
 }
 
 

@@ -15,10 +15,6 @@ services:
       - 6100:80
     networks:
       - neamt-net
-    environment:
-      - SWC_URL="${SWC_URL}"
-      - SWC_AUTH="${SWC_AUTH}"
-      - SWC_PID="${SWC_PID}"
   # Libre Translate service
   libretranslate:
     image: libretranslate
