@@ -4,6 +4,7 @@ services:
 # Main service
   naive-eamt:
     image: naive-eamt
+    build: .
     restart: always
     volumes:
       # Copy code
