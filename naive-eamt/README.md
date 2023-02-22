@@ -116,6 +116,8 @@ Before running the setup script, please make sure you have the proper docker per
 
 If that works, then you can proceed normally, otherwise, you must perform the steps to [manage docker as a non-root user](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user).
 
+Also, please make sure that your ```docker-compose``` is version 1.28.0 or above to support [docker profiles](https://docs.docker.com/compose/profiles/).
+
 Download and setup the data using the following command (needs 150GB free storage, can take a few hours to finish):
 
 ```./setup_data.sh```
@@ -155,8 +157,20 @@ curl --location --request GET 'http://localhost:6100/custom-pipeline' \
 ```
 
 __Optional Parameters__: The NEAMT application also allows its users to configure two optional parameters: 
-- *placeholder* : string value that will be used as a placholder in concatenation with a number
-- *replace_before*: boolean value, if set to True, the application will replace placeholders with target labels before sending for machine translation
+- *target_lang* (default: **en**): language code (e.g en, de, fr etc.) for the target language for the machine translation
+- *placeholder* (default: **00**): string value that will be used as a placeholder in concatenation with a number
+- *replace_before* (default: **False**): boolean value, if set to True, the application will replace placeholders with target labels before sending for machine translation
+
+Sample query with optional parameters:
+```bash
+curl --location --request POST 'http://porque.cs.upb.de:6100/custom-pipeline' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'components=babelscape_ner, mgenre_el, libre_mt' \
+--data-urlencode 'query=Wer ist älter, Lionel Messi oder Christiano Ronaldo?' \
+--data-urlencode 'placeholder=wd:res' \
+--data-urlencode 'replace_before=False' \
+--data-urlencode 'target_lang=ru'
+```
 ## Customized Components
 ### Component I/O Formatting
 <a id="NER">__NER__:</a> For the components that strictly perform the task of named entity recognition, the expected input is a dictionary containing text in natural language (en,de,fr,es). The output should be a dictionary containing the string and information of annotated entities. Following is an example:
@@ -248,3 +262,7 @@ Additional steps for Docker based components:
 - If your component has a docker image, then create a service using your docker image in [docker-compose.yml](docker-compose.yml)
 - Assign a new docker profile to your component to ensure that it's not loaded unnecessarily
 - Modify the logic in [find_profiles.py](find_profiles.py) to accommodate your component
+
+### How to pass a custom parameter as input?
+
+By default the framework passes on all the extra parameters in the input to the components. However, one has to make sure the that custom parameter name does match the preexisting parameters. To avoid conflict with the existing parameters, it would be a good practice to add a custom prefix to your parameter (e.g <b>orgname_</b>custompara1).

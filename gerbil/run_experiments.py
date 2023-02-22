@@ -7,14 +7,20 @@ import pandas as pd
 
 headers = {'Content-Type': 'multipart/form-data'}
 
+log_file = "experiments.log"
 url_postfix = """experimentData={{"type":"QA","matching":"STRONG_ENTITY_MATCH","annotator":["{annotator}"],"dataset":["{dataset}"],"answerFiles":[],"questionLanguage":"{lang}"}}"""
 uploaded_dataset_prefix = "NIFDS"
 
 data_folder = "translated_data"
 files = [os.path.join(data_folder, f) for f in os.listdir("translated_data")]
 
-df_exp = pd.read_csv("experiments.log", sep="\t", header=None)
-df_exp.columns = ["Annotator", "Dataset", "Language", "Experiment URI", "Time"]
+if not os.path.exists(log_file):
+    df_exp = pd.DataFrame.from_dict({"Annotator": [], "Dataset": [], "Language": [], "Experiment URI": [], "Time": []})
+else:
+    df_exp = pd.read_csv(log_file, sep="\t", header=None)
+    df_exp.columns = ["Annotator", "Dataset", "Language", "Experiment URI", "Time"]
+
+
 
 dataset_dict = {
     'English': 'en',
@@ -24,7 +30,7 @@ dataset_dict = {
 }
 
 annotators = [
-    'QAnswer',
+    # 'QAnswer',
     'Qanary_1',
     # 'Qanary_2',
     'Qanary_3',
@@ -92,7 +98,7 @@ if __name__ == "__main__":
                             
                             print(f"{annotator}\t{gold_standard_name}\t{src_lang}\t{experiment_url}\t{c_time}\n")
                             
-                            with open("experiments.log", 'a') as f:
+                            with open(log_file, 'a') as f:
                                 f.write(f"{annotator}\t{gold_standard_name}\t{src_lang}\t{experiment_url}\t{c_time}\n")
 
                             is_ok = True

@@ -9,9 +9,9 @@ import sys
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, '/neamt/util/')
 import common_util as c_util
+from ner_abs import GenNER
 
-
-class FlairNer:
+class FlairNer(GenNER):
     def __init__(self):
         """
         Load the resources needed for your component onto the memory only in this block.
@@ -21,16 +21,17 @@ class FlairNer:
         # load the NER tagger
         self.tagger = SequenceTagger.load('flair/ner-multi')
         logging.debug('FlairNer component initialized.')
-
-    def process_input(self, input):
+    
+    def recognize_entities(self, query, lang, input):
         '''
-        Function to annotate entities in a give natural language text.
+        Function to annotate entities in a given natural language text.
 
-        :param input: input json containing natural language text to be annotated
-        :return:  formatted dictionary as stated in the README for NER output
+        :param query: input natural language text to be annotated
+        :param lang: language of the query
+        :param input: input json to use/provide extra information
+        
+        :return:  list of entity mentions found in the provided query
         '''
-        logging.debug('Input received: %s' % input)
-        query = input['text']
         ent_indexes = []
         # make a sentence
         sentence = Sentence(query)
@@ -45,8 +46,5 @@ class FlairNer:
                 'end': entity.end_position
             }
             ent_indexes.append(new_item)
-
-        input['lang'] = c_util.detect_lang(query)
-        input['ent_mentions'] = ent_indexes
-        logging.debug('Output: %s' % input)
-        return input
+            
+        return ent_indexes

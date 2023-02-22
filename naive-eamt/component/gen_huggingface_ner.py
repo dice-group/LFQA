@@ -11,7 +11,7 @@ import sys
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, '/neamt/util/')
 import common_util as c_util
-
+from ner_abs import GenNER
 
 def fetch_ent_indexes(ner_results, query):
     '''
@@ -55,7 +55,7 @@ def fetch_ent_indexes(ner_results, query):
     return ent_indexes
 
 
-class GenHuggingfaceNer:
+class GenHuggingfaceNer(GenNER):
     def __init__(self, tokenizer_name, model_name):
         """
         Load the resources needed for your component onto the memory only in this block.
@@ -66,21 +66,19 @@ class GenHuggingfaceNer:
         self.ner_model = AutoModelForTokenClassification.from_pretrained(model_name)
         self.nlp = pipeline("ner", model=self.ner_model, tokenizer=self.ner_tokenizer)
         logging.debug('%s component initialized.' % model_name)
-
-    def process_input(self, input):
+        
+    def recognize_entities(self, query, lang, input):
         '''
-        Function to annotate entities in a give natural language text.
+        Function to annotate entities in a given natural language text.
 
-        :param input: input json containing natural language text to be annotated
-        :return:  formatted dictionary as stated in the README for NER output
+        :param query: input natural language text to be annotated
+        :param lang: language of the query
+        :param input: input json to use/provide extra information
+        
+        :return:  list of entity mentions found in the provided query
         '''
-        logging.debug('Input received: %s' % input)
-        query = input['text']
         ner_results = self.nlp(query)
         logging.debug(ner_results)
         # find the start and end indexes
         ent_indexes = fetch_ent_indexes(ner_results, query)
-        input['lang'] = c_util.detect_lang(query)
-        input['ent_mentions'] = ent_indexes
-        logging.debug('Output: %s' % input)
-        return input
+        return ent_indexes
