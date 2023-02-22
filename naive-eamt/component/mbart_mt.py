@@ -5,14 +5,16 @@ from transformers import MBartForConditionalGeneration, MBart50TokenizerFast
 from mt_abs import GenMT
 
 class MbartMt(GenMT):
+    mbart_model_name = "facebook/mbart-large-50-many-to-many-mmt"
+    mbart_tokenizer_name = "facebook/mbart-large-50-many-to-many-mmt"
     def __init__(self):
         """
         Load the resources needed for your component onto the memory only in this block.
         It helps keep the framework from unnecessarily occupying the memory.
         """
         # Only accessible inside the docker network
-        self.model = MBartForConditionalGeneration.from_pretrained("facebook/mbart-large-50-many-to-many-mmt")
-        self.tokenizer = MBart50TokenizerFast.from_pretrained("facebook/mbart-large-50-many-to-many-mmt")
+        self.model = MBartForConditionalGeneration.from_pretrained(self.mbart_model_name)
+        self.tokenizer = MBart50TokenizerFast.from_pretrained(self.mbart_tokenizer_name)
         self.lang_code_map = {
             'en': 'en_XX',
             'de': 'de_DE',
