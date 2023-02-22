@@ -27,8 +27,6 @@ mv index_bycontext index_bycontext_de
 rm -rf index_bycontext_en.zip index_bycontext_de.zip
 unzip '*.zip'
 rm -rf *.zip
-echo 'MAG: Pulling Docker Image'
-docker pull aksw/agdistis
 echo 'MAG: Finished!'
 cd ..
 # download fasttext language classification model
