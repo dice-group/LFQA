@@ -4,6 +4,7 @@ services:
 # Main service
   naive-eamt:
     image: naive-eamt
+    restart: always
     volumes:
       # Copy code
       - ./logs:/neamt/logs
@@ -18,7 +19,7 @@ services:
   # Libre Translate service
   libretranslate:
     image: libretranslate
-    restart: unless-stopped
+    restart: always
     command: ['--host', '0.0.0.0']
     profiles: ["libre_mt"]
     # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
@@ -30,6 +31,7 @@ services:
   opusmt:
     image: opus-mt
     profiles: ["opus_mt"]
+    restart: always
     volumes:
       - ./data/Opus-MT/models:/usr/src/app/models
     # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
