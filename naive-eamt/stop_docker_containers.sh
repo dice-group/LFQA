@@ -1,3 +1,4 @@
 #!/bin/bash
-cd "${BASH_SOURCE%/*}" || exit
-docker compose stop || docker-compose stop
+set -eu
+cd "${BASH_SOURCE%/*}"
+docker compose stop
