@@ -36,6 +36,7 @@ class GenMT(ABC):
         if source_lang != target_lang:
             trans_text = self.translate_text(trans_text, source_lang, target_lang)
         logging.debug('Translated text with the placeholders: %s'%trans_text)
+        input['translated_text_plc'] = trans_text
         # replace placeholders in the translated text
         trans_text = p_util.replace_placeholders(trans_text, input)
         # putting trans text into the input json
