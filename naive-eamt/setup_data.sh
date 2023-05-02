@@ -34,7 +34,7 @@ wget https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz
 # download libre repo
 git clone --depth 1 https://github.com/LibreTranslate/LibreTranslate
 cd LibreTranslate
-docker build --build-arg with_models=true -t libretranslate .
+docker build -f docker/Dockerfile --build-arg with_models=true -t libretranslate .
 cd ..
 # Download Helsinki-OPT data
 git clone --depth 1 https://github.com/Helsinki-NLP/Opus-MT.git
