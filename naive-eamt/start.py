@@ -153,6 +153,7 @@ def process_query(query, data, inst_list, full_json):
     try:
         # Temporary workaround for placeholder, removing '?' from query
         logging.debug('Input query: %s' % query)
+        san_query = query
         # san_query = query.replace('?', '')
         # logging.debug('Sanitized input query: %s' % san_query)
         res = process_cus_input(get_input_dict(san_query, data), inst_list)
