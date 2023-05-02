@@ -146,12 +146,12 @@ def get_input_dict(san_query, data):
             f_input[entry] = data[entry]
 
     return f_input
-def clean_proc_query(query, data, inst_list):
+def process_query(query, data, inst_list):
     try:
         # Temporary workaround for placeholder, removing '?' from query
         logging.debug('Input query: %s' % query)
-        san_query = query.replace('?', '')
-        logging.debug('Sanitized input query: %s' % san_query)
+        # san_query = query.replace('?', '')
+        # logging.debug('Sanitized input query: %s' % san_query)
         return process_cus_input(get_input_dict(san_query, data), inst_list)
     except Exception as inst:
         logging.error('Exception occurred for the query: %s\nException: %s' % (query, inst))
@@ -204,11 +204,11 @@ def cus_pipe():
             logging.debug('Processing query as a list.')
             output = []
             for query in data_q:
-                output.append(clean_proc_query(query, data, inst_list))
+                output.append(process_query(query, data, inst_list))
         # else process the single query
         else:
             logging.debug('Processing a single query.')
-            output = clean_proc_query(data_q, data, inst_list)
+            output = process_query(data_q, data, inst_list)
         return output
     else:
         return f'Invalid request'
