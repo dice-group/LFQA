@@ -1,4 +1,5 @@
 # This script is to help generate the translations for the defined test configuration
+import sys
 import json
 import logging
 import time
@@ -8,12 +9,30 @@ from tqdm import tqdm
 from multiprocessing import Pool
 from pipeline_handler import PipelineHandler
 
-pool = Pool(processes=5)
+args = sys.argv[1:]
+# Default values
+# URL to the custom NEAMT pipeline
+url = "http://localhost:6100/custom-pipeline"
+# Output directory to store the translation files to
+output_dir = "pred_results/"
+# Config file to read the pipeline config from
+config_file = 'config/eval_config.json'
+# Number of processes to spawn
+num_procs = 5
+
+if len(args) == 4:
+    url = args[0]
+    output_dir = args[1]
+    config_file = args[2]
+    num_procs = args[3]
+
+
+pool = Pool(processes=num_procs)
     
 
 if __name__ == '__main__':
     
-    pipe_handler = PipelineHandler()
+    pipe_handler = PipelineHandler(url, output_dir, config_file)
     # generate pipelines
     pipe_handler.gen_pipelines()
     # progress bar start
@@ -39,7 +58,7 @@ if __name__ == '__main__':
             # for each pipeline
             for pipeline in pipelines:
                 # queue pipeline execution to the pool
-                proc = pool.apply_async(pipe_handler.thread_wrapper, args=(pipe_handler.execute_pipeline, [lang, pipeline, pipe_handler.output_dir, test, test_data]), callback=collect_result)
+                proc = pool.apply_async(pipe_handler.thread_wrapper, args=(pipe_handler.execute_pipeline, [lang, pipeline, test, test_data]), callback=collect_result)
                 proc_res_arr.append(proc)
     
     pool.close()

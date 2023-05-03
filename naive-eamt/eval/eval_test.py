@@ -7,7 +7,7 @@ from statistics import mean
 
 # Load config file
 eval_cfg = []
-with open('eval_config.json', 'r') as ec:
+with open('config/eval_config.json', 'r') as ec:
     eval_cfg = json.load(ec)
 print(eval_cfg)
 
