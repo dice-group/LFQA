@@ -67,7 +67,7 @@ class PipelineHandler:
                 pipes.append((lang, lang_pipes))
                 self.count['request'] += (len(lang_pipes) * len(test_data[lang]))
                 # Write test data to a file for each lang -> en combination
-                with open(test_name + '_%s-en_gold_file.txt' % lang, 'w') as out:
+                with open(self.output_dir + test_name + '_%s-en_gold_file.txt' % lang, 'w') as out:
                     # For each test string
                     for id in test_data[lang]:
                         out.write(test_data['en'][id] + '\n')

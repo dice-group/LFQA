@@ -86,11 +86,11 @@ wget http://dl.fbaipublicfiles.com/GENRE/titles_lang_all105_trie_with_redirect.p
 wget https://dl.fbaipublicfiles.com/GENRE/lang_title2wikidataID-normalized_with_redirect.pkl
 wget http://dl.fbaipublicfiles.com/GENRE/titles_lang_all105_marisa_trie_with_redirect.pkl
 # Download evaluation data
-cd ../../eval
-mkdir qald10 && cd "$_"
-wget https://raw.githubusercontent.com/KGQA/QALD_10/main/data/qald_10/qald_10.json
-cd ..
-mkdir qald9plus && cd "$_"
-wget https://raw.githubusercontent.com/KGQA/QALD_9_plus/main/data/qald_9_plus_test_dbpedia.json
-wget https://raw.githubusercontent.com/KGQA/QALD_9_plus/main/data/qald_9_plus_train_dbpedia.json
+#cd ../../eval
+#mkdir qald10 && cd "$_"
+#wget https://raw.githubusercontent.com/KGQA/QALD_10/main/data/qald_10/qald_10.json
+#cd ..
+#mkdir qald9plus && cd "$_"
+#wget https://raw.githubusercontent.com/KGQA/QALD_9_plus/main/data/qald_9_plus_test_dbpedia.json
+#wget https://raw.githubusercontent.com/KGQA/QALD_9_plus/main/data/qald_9_plus_train_dbpedia.json
 echo "Downloads finished!"
