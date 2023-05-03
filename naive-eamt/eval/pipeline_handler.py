@@ -113,6 +113,7 @@ class PipelineHandler:
             #'placeholder': 'plc'
         }
         ret_val = {}
+        translated_text = ''
         try:
             response = requests.request("POST", self.url, headers=self.headers, data=payload, timeout=600)
             # print('Translation received: ', response.text)
@@ -122,6 +123,11 @@ class PipelineHandler:
                 error_stats['error'] += 1
             else:
                 ret_val = response.json()
+                if 'translated_text' not in ret_val:
+                    # throw exception
+                    raise ValueError('Received incomplete json response.')
+                else:
+                    translated_text = ret_val['translated_text']
                 #print('Json response: ', ret_val)
                 #print('Response type: ', type(ret_val))
                 # Adding the ID to the answer
@@ -130,7 +136,7 @@ class PipelineHandler:
             print('Following exception encountered for the query %s: %s' % (query, e))
             error_stats['exception'] += 1
 
-        return ret_val
+        return ret_val, translated_text
     # function that can be run in parallel
     def execute_pipeline(self, lang, pipeline, test, test_data):
         print('\nProcess started: test: %s\tlang: %s\tpipeline: %s'%(test, lang, pipeline))
@@ -146,9 +152,9 @@ class PipelineHandler:
                 # Get the prediction
                 # print('Pipeline:', pipeline)
                 query = test_data[lang][id]
-                resp_json = self.get_translation(id, query, pipeline, error_stats)
+                resp_json, translated_text = self.get_translation(id, query, pipeline, error_stats)
                 out_jsonl.write(str(resp_json) + '\n')
-                out_text.write(resp_json["translated_text"] + '\n')
+                out_text.write(translated_text + '\n')
         return (len(test_data[lang]), error_stats)
 
     def dummy_pipeline_executor(self, lang, pipeline, test, test_data):
