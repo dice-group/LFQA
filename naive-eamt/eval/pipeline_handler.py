@@ -122,6 +122,8 @@ class PipelineHandler:
                 error_stats['error'] += 1
             else:
                 ret_val = response.json()
+                #print('Json response: ', ret_val)
+                #print('Response type: ', type(ret_val))
                 # Adding the ID to the answer
                 ret_val['id'] = id
         except Exception as e:
@@ -138,14 +140,14 @@ class PipelineHandler:
         }
         # Create a prediction file
         pred_file = self.output_dir + test + '_' + self.get_pred_file_name(lang, pipeline)
-        with open(pred_file + 'txt', 'w') as out_text, open(pred_file + 'jsonl', 'w') as out_jsonl:
+        with open(pred_file + '.txt', 'w') as out_text, open(pred_file + '.jsonl', 'w') as out_jsonl:
             # For each test string
             for id in test_data[lang]:
                 # Get the prediction
                 # print('Pipeline:', pipeline)
                 query = test_data[lang][id]
                 resp_json = self.get_translation(id, query, pipeline, error_stats)
-                out_jsonl.write(resp_json + '\n')
+                out_jsonl.write(str(resp_json) + '\n')
                 out_text.write(resp_json["translated_text"] + '\n')
         return (len(test_data[lang]), error_stats)
 
