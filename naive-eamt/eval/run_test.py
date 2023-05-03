@@ -29,7 +29,7 @@ if len(args) == 4:
     url = args[0]
     output_dir = args[1]
     config_file = args[2]
-    num_procs = args[3]
+    num_procs = int(args[3])
 
 
 pool = Pool(processes=num_procs)
