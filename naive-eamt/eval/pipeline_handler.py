@@ -139,7 +139,7 @@ class PipelineHandler:
 
         return ret_val, translated_text
     # function that can be run in parallel
-    def execute_pipeline(self, lang, pipeline, test, test_data):
+    def execute_pipeline(self, lang, pipeline, test, test_data, bar_queue):
         print('\nProcess started: test: %s\tlang: %s\tpipeline: %s'%(test, lang, pipeline))
         error_stats = {
             'error': 0,
@@ -156,6 +156,8 @@ class PipelineHandler:
                 resp_json, translated_text = self.get_translation(id, lang, query, pipeline, error_stats)
                 out_jsonl.write(str(resp_json) + '\n')
                 out_text.write(translated_text + '\n')
+                # Update progress bar
+                bar_queue.put_nowait(1)
         return (len(test_data[lang]), error_stats)
 
     def dummy_pipeline_executor(self, lang, pipeline, test, test_data):

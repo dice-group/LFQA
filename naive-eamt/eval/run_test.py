@@ -7,6 +7,7 @@ import requests
 from pathlib import Path
 from tqdm import tqdm
 from multiprocessing import Pool
+import multiprocessing as mp
 from pipeline_handler import PipelineHandler
 
 '''
@@ -41,13 +42,25 @@ if __name__ == '__main__':
     # generate pipelines
     pipe_handler.gen_pipelines()
     # progress bar start
-    pbar = tqdm(total=pipe_handler.count['request'])
+    # pbar = tqdm(total=pipe_handler.count['request'])
     error_stat_arr = []
-    # Callback to update pbar
+    # Progress bar queue
+    bar_queue = mp.Queue()
+    # Function to update the progress bar
+    def update_bar(q):
+        pbar = tqdm(total=pipe_handler.count['request'])
+        while True:
+            x = q.get()
+            pbar.update(x)
+
+    # Start the progress bar as separate daemon process
+    bar_process = mp.Process(target=update_bar, args=(bar_queue,), daemon=True)
+    bar_process.start()
+    # Callback to update error stats
     def collect_result(result):
         error_stat_arr.append(result[1])
         # print(result)
-        pbar.update(result[0])
+        # pbar.update(result[0])
     # multithread results arr
     proc_res_arr = []
     # Arguments array
@@ -63,7 +76,7 @@ if __name__ == '__main__':
             # for each pipeline
             for pipeline in pipelines:
                 # queue pipeline execution to the pool
-                proc = pool.apply_async(pipe_handler.thread_wrapper, args=(pipe_handler.execute_pipeline, [lang, pipeline, test, test_data]), callback=collect_result)
+                proc = pool.apply_async(pipe_handler.thread_wrapper, args=(pipe_handler.execute_pipeline, [lang, pipeline, test, test_data, bar_queue]), callback=collect_result)
                 proc_res_arr.append(proc)
     
     pool.close()
