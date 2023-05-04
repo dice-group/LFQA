@@ -142,7 +142,7 @@ def get_input_dict(san_query, data):
         'replace_before': rep_before,
         'placeholder': placeholder
     }
-    # Passing all the params
+    # Passing on all the params that were not yet modified and are not in the exclusion list
     for entry in data:
         if (entry not in f_input) and (entry not in io_exc_list):
             f_input[entry] = data[entry]

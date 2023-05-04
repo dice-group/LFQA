@@ -103,13 +103,14 @@ class PipelineHandler:
 
 
     # Function to fetch the transation through a HTTP POST request
-    def get_translation(self, id, query, components, error_stats):
+    def get_translation(self, id, lang, query, components, error_stats):
         # print('Getting Translation for: ', query)
         payload = {
             'query': query,
             'components': ','.join(components),
             'replace_before': True,
-            'full_json': True
+            'full_json': True,
+            'lang': lang
             #'placeholder': 'plc'
         }
         ret_val = {}
@@ -152,7 +153,7 @@ class PipelineHandler:
                 # Get the prediction
                 # print('Pipeline:', pipeline)
                 query = test_data[lang][id]
-                resp_json, translated_text = self.get_translation(id, query, pipeline, error_stats)
+                resp_json, translated_text = self.get_translation(id, lang, query, pipeline, error_stats)
                 out_jsonl.write(str(resp_json) + '\n')
                 out_text.write(translated_text + '\n')
         return (len(test_data[lang]), error_stats)

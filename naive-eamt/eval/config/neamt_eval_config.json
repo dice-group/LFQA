@@ -1,6 +1,6 @@
 [
   {
-    "name": "QALD10-MT",
+    "name": "QALD10Train-MT",
     "file": "dataset/qald10/qald_10.json",
     "test_cfg": {
       "de": {
@@ -11,7 +11,7 @@
     }
   },
   {
-    "name": "QALD9Plus-MT",
+    "name": "QALD9PlusTest-MT",
     "file": "dataset/qald9plus/qald_9_plus_test_dbpedia.json",
     "test_cfg": {
       "de": {

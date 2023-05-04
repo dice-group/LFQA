@@ -19,8 +19,11 @@ class GenNER(ABC):
         '''
         logging.debug('Input received: %s' % input)
         query = input['text']
-        lang = c_util.detect_lang(query)
-        input['lang'] = lang
+        if 'lang' in input:
+            lang = input['lang']
+        else:
+            lang = c_util.detect_lang(query)
+            input['lang'] = lang
         # find the entity mentions
         ent_indexes = self.recognize_entities(query, lang, input)
         input['ent_mentions'] = ent_indexes
