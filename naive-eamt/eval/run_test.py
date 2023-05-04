@@ -44,8 +44,10 @@ if __name__ == '__main__':
     # progress bar start
     # pbar = tqdm(total=pipe_handler.count['request'])
     error_stat_arr = []
+    # Multiprocessing manager
+    mp_man = mp.Manager()
     # Progress bar queue
-    bar_queue = mp.Queue()
+    bar_queue = mp_man.Queue()
     # Function to update the progress bar
     def update_bar(q):
         pbar = tqdm(total=pipe_handler.count['request'])
