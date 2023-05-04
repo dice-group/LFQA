@@ -45,6 +45,8 @@ class PipelineHandler:
             test_data = []
             if 'QALD' in test_name:
                 test_data = self.get_qald_test_data(cfg['file'])
+            elif 'MINTAKA' in test_name:
+                test_data = self.get_mintaka_test_data(cfg['file'])
             # print data statistics
             for lang in test_data:
                 print('[%s] %s language entries: %d' % (test_name, lang, len(test_data[lang])))
@@ -84,6 +86,14 @@ class PipelineHandler:
 
     # Function to generate test data using QALD file
     def get_qald_test_data(self, filename):
+        """
+        Generate a json with the following format:
+        {
+        'en': { 12: 'Who is the first person to step on the moon?', 14: 'Where is ...' ..},
+        'de': {12: 'Wer ....', 14: '...'..},
+        ...
+        }
+        """
         qald_json = {}
         res_data = {}
         with open(filename, 'r') as qald_file:
@@ -96,7 +106,22 @@ class PipelineHandler:
                     res_data[lang] = {}
                 res_data[lang][id] = q_pair['string']
         return res_data
-    
+
+    def get_mintaka_test_data(self, filename):
+        mintaka_json = {}
+        # in mintaka english question is present separately from other languages
+        res_data = { 'en': {} }
+        with open(filename, 'r') as mintaka_file:
+            mintaka_json = json.load(mintaka_file)
+        for q_item in mintaka_json:
+            id = q_item['id']
+            # adding english question string
+            res_data['en'][id] = q_item['question']
+            for lang in q_item['translations']:
+                if lang not in res_data:
+                    res_data[lang] = {}
+                res_data[lang][id] = q_item['translations'][lang]
+        return res_data
     # function to create unique prediction file name
     def get_pred_file_name(self, lang, components):
         return lang + '-' + '-'.join(components)
