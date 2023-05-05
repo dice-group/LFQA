@@ -94,4 +94,4 @@ if __name__ == '__main__':
     # Exceptions in the test script
     print('Total exception count: %d' % exception_sum)
     # close progress bar
-    pbar.close()
+    # pbar.close()
