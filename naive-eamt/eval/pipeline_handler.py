@@ -150,7 +150,7 @@ class PipelineHandler:
                 ret_val = response.json()
                 if 'translated_text' not in ret_val:
                     # throw exception
-                    raise ValueError('Received incomplete json response.')
+                    raise ValueError('Received incomplete json response: %s' % str(ret_val))
                 else:
                     translated_text = ret_val['translated_text']
                 #logging.debug('Json response: %s' % ret_val)
