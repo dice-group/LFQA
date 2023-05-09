@@ -1,20 +1,18 @@
 # This script is to help generate the translations for the defined test configuration
 import sys
-import json
-import logging
-import time
-import requests
-from pathlib import Path
 from tqdm import tqdm
+import logging
 from multiprocessing import Pool
 import multiprocessing as mp
 from pipeline_handler import PipelineHandler
+import time
 
 '''
 Example usage:
 python run_test.py  "http://xyz:6100/custom-pipeline" "translation_output/" "config/eval_config.json" 6
 '''
-
+# Set logging format
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 args = sys.argv[1:]
 # Default values
 # URL to the custom NEAMT pipeline
@@ -37,7 +35,8 @@ pool = Pool(processes=num_procs)
     
 
 if __name__ == '__main__':
-    
+    # Logging start time
+    start_time = time.time()
     pipe_handler = PipelineHandler(url, output_dir, config_file)
     # generate pipelines
     pipe_handler.gen_pipelines()
@@ -90,8 +89,7 @@ if __name__ == '__main__':
         error_sum += item['error']
         exception_sum += item['exception']
     # Server errors
-    print('Total error count: %d' % error_sum)
+    logging.info('Total error count: %d' % error_sum)
     # Exceptions in the test script
-    print('Total exception count: %d' % exception_sum)
-    # close progress bar
-    # pbar.close()
+    logging.info('Total exception count: %d' % exception_sum)
+    logging.info('Time needed to finish: %s second(s)' % ((time.time() - start_time)))

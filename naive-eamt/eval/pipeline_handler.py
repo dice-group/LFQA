@@ -3,7 +3,6 @@ import logging
 import time
 import requests
 from pathlib import Path
-from tqdm import tqdm
 
 class PipelineHandler:
     
@@ -31,14 +30,14 @@ class PipelineHandler:
         self.output_dir = output_dir
         self.config_file = config_file
         # Create the directory(s) in the output path
-        print(self.output_dir)
+        logging.debug(self.output_dir)
         Path(self.output_dir).mkdir(parents=True, exist_ok=True)
         
     def gen_pipelines(self):
         with open(self.config_file, 'r') as ec:
             self.eval_cfg = json.load(ec)
         
-        print(self.eval_cfg)
+        logging.debug(self.eval_cfg)
         for cfg in self.eval_cfg:
             test_name = cfg['name']
             pipes = []
@@ -49,7 +48,7 @@ class PipelineHandler:
                 test_data = self.get_mintaka_test_data(cfg['file'])
             # print data statistics
             for lang in test_data:
-                print('[%s] %s language entries: %d' % (test_name, lang, len(test_data[lang])))
+                logging.debug('[%s] %s language entries: %d' % (test_name, lang, len(test_data[lang])))
             # iterate over languages in the current config
             for lang in cfg['test_cfg']:
                 ner_comps = cfg['test_cfg'][lang]['ner']
@@ -78,10 +77,10 @@ class PipelineHandler:
             self.test_pipelines[test_name]['pipelines'] = pipes
             self.test_pipelines[test_name]['data'] = test_data
 
-        print('Total request count:', self.count['request'])
+        logging.debug('Total request count: %d' % self.count['request'])
         
         for test in self.test_pipelines:
-            print('Test Pipelines for %s:\n' % test, self.test_pipelines[test]['pipelines'])
+            logging.debug('Test Pipelines for %s: %s\n' % (test, str(self.test_pipelines[test]['pipelines'])))
         
 
     # Function to generate test data using QALD file
@@ -129,7 +128,7 @@ class PipelineHandler:
 
     # Function to fetch the transation through a HTTP POST request
     def get_translation(self, id, lang, query, components, error_stats):
-        # print('Getting Translation for: ', query)
+        # logging.debug('Getting Translation for: %s' % query)
         payload = {
             'query': query,
             'components': ','.join(components),
@@ -142,9 +141,9 @@ class PipelineHandler:
         translated_text = ''
         try:
             response = requests.request("POST", self.url, headers=self.headers, data=payload, timeout=600)
-            # print('Translation received: ', response.text)
+            # logging.debug('Translation received: %s' % response.text)
             if response.status_code != 200:
-                print('error encountered for the query %s and components %s. Response: \n %s' % (
+                logging.debug('error encountered for the query %s and components %s. Response: \n %s' % (
                     query, payload['components'], response))
                 error_stats['error'] += 1
             else:
@@ -154,18 +153,18 @@ class PipelineHandler:
                     raise ValueError('Received incomplete json response.')
                 else:
                     translated_text = ret_val['translated_text']
-                #print('Json response: ', ret_val)
-                #print('Response type: ', type(ret_val))
+                #logging.debug('Json response: %s' % ret_val)
+                #logging.debug('Response type: %s' % type(ret_val))
                 # Adding the ID to the answer
                 ret_val['id'] = id
         except Exception as e:
-            print('Following exception encountered for the payload %s: %s' % (str(payload), e))
+            logging.debug('\nFollowing exception encountered for the payload %s: %s' % (str(payload), e))
             error_stats['exception'] += 1
 
         return ret_val, translated_text
     # function that can be run in parallel
     def execute_pipeline(self, lang, pipeline, test, test_data, bar_queue):
-        print('\nProcess started: test: %s\tlang: %s\tpipeline: %s'%(test, lang, pipeline))
+        logging.debug('\nProcess started: test: %s\tlang: %s\tpipeline: %s'%(test, lang, pipeline))
         error_stats = {
             'error': 0,
             'exception': 0
@@ -186,7 +185,7 @@ class PipelineHandler:
         return (len(test_data[lang]), error_stats)
 
     def dummy_pipeline_executor(self, lang, pipeline, test, test_data):
-        print('Process started: test: %s\tlang: %s\tpipeline: %s\tData length: %d'%(test, lang, pipeline, len(test_data[lang])))
+        logging.debug('Process started: test: %s\tlang: %s\tpipeline: %s\tData length: %d'%(test, lang, pipeline, len(test_data[lang])))
         error_stats = {
             'error': 0,
             'exception': 0
