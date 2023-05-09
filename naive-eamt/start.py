@@ -115,7 +115,7 @@ def process_cus_input(input_query, inst_list):
     for inst in inst_list:
         # Log start time
         start_time = time.time()
-        io_var = inst.process_input(io_var)
+        inst.process_input(io_var)
         # Print step time
         logging.debug('Time needed to process input using %s class: %s second(s)' % (type(inst).__name__, (time.time() - start_time)))
     # return the last output

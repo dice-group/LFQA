@@ -14,7 +14,8 @@ SPARQL_LANG_MAP = {
     'ru': 'RU',
     'fr': 'FR',
     'es': 'ES',
-    'pt': 'PT'
+    'pt': 'PT',
+    'it': 'IT'
 }
 
 sparql_wd = SPARQLWrapper("https://query.wikidata.org/sparql")
@@ -94,34 +95,30 @@ kb_info = {
     'swc': (sparql_swc, Template(SWC_QUERY_STR))
 }
 
-
-def put_placeholders(input):
+# TODO: Cache this function
+def put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_links):
     '''
     This method expects the input format as stated in the README for EL output
 
-    :param input: input dictionary containing text and its entity annotations + links
+    :param query: natural language query to put placeholders into
+    :param plc_token: placeholder prefix to use
+    :param replace_before: whether to replace the placeholders with their labels before translation
+    :param target_lang: target language ISO code
+    :param ent_links: entity annotations and links for the query
     :param kb: knowledge-base that the entities are linked to. Can only handle Wikidata and DBpedia for now
-    :return: input dictionary with append key-value pair mapping 'text_plc' to the text with placeholders.
+    :return: text with placeholders.
     '''
     # Maintain translated placeholder count
     stats_lock = stats_util.lock
     plc_count = stats_util.stats['placeholder_count']
     en_count = stats_util.stats['english_label_count']
-    query = input['text']
-    plc_token = input['placeholder']
-    replace_before = input['replace_before']
-    # Target language
-    target_lang = input['target_lang']
     if target_lang in SPARQL_LANG_MAP:
         target_lang = SPARQL_LANG_MAP[target_lang]
     else:
         target_lang = "EN"
-    if 'kb' not in input:
+    if not kb:
         logging.debug('No KB information found in the input.')
-        input['text_plc'] = query
-        return input
-    kb = input['kb']
-    ent_links = input['ent_mentions']
+        return query
     arr_ind = 1
     sparql = kb_info[kb][0]
     sparql_str = kb_info[kb][1]
@@ -166,27 +163,24 @@ def put_placeholders(input):
             arr_ind += 1
             last_ind = link['end']
     query_plc += query[last_ind:]
-    input['text_plc'] = query_plc
-    logging.debug('Injected placeholders: %s' % input)
-    return input
+    return query_plc
 
 
-def replace_placeholders(trans_text, input):
+def replace_placeholders(trans_text, replace_before, ent_links):
     '''
     This function replaces the placeholders in the translated text with their corresponding English labels.
 
     :param trans_text: translated English text with placeholders
-    :param input: input dictionary with details about mentions and placeholders + links
+    :param replace_before: flag with the value for replace placeholder before translation option
+    :param ent_links: all the entity mentions in the query
     :return: translated string with replaced placeholders
     '''
     # Maintain translated placeholder count
     stats_lock = stats_util.lock
     plc_count = stats_util.stats['placeholder_count']
     en_count = stats_util.stats['english_label_count']
-    replace_before = input['replace_before']
 
     res_query = trans_text
-    ent_links = input['ent_mentions']
     for link in ent_links:
         if 'link' not in link:
             continue

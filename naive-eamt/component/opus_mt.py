@@ -37,6 +37,6 @@ class OpusMt(GenMT):
         self.url = "http://opusmt:80/api/translate"
         logging.debug('OpusMt component initialized.')
     
-    def translate_text(self, trans_text, source_lang, target_lang):
+    def translate_text(self, trans_text, source_lang, target_lang, extra_args):
         trans_text = fetch_translation(trans_text, source_lang, target_lang, self.url)
         return trans_text

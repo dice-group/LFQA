@@ -3,6 +3,7 @@ import logging
 
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import pickle
+from el_abs import GenEL
 
 
 def get_rev_tuple(index, arr):
@@ -12,7 +13,7 @@ def get_rev_tuple(index, arr):
     return rev_tuple
 
 
-class MgenreEl:
+class MgenreEl(GenEL):
 
     def __init__(self):
         """
@@ -31,26 +32,25 @@ class MgenreEl:
         self.el_model = AutoModelForSeq2SeqLM.from_pretrained("facebook/mgenre-wiki").eval()
         logging.debug('MgenreEl component initialized.')
 
-    def process_input(self, input):
-        '''
-        Function to link the entities from an annotated text.
-
-        :param input:  formatted dictionary as stated in the README for NER output
-        :return:  formatted dictionary as stated in the README for EL output
-        '''
-        logging.debug('Input received: %s'%input)
-        # Extract custom parameter
-        num_return_sequences = 1
-        if 'mg_num_return_sequences' in input:
-            num_return_sequences = int(input['mg_num_return_sequences'])
+    def prep_input_args(self, input):
+        extra_args = {}
         # Setting knowledge base as Wikidata
         input['kb'] = 'wd'
-        ent_indexes = input['ent_mentions']
+        if 'mg_num_return_sequences' in input:
+            extra_args['mg_num_return_sequences'] = int(input['mg_num_return_sequences'])
+        return extra_args
+
+    def link_entities(self, query, lang, ent_indexes, extra_args):
+
+        # Extract custom parameter
+        num_return_sequences = 1
+        if 'mg_num_return_sequences' in extra_args:
+            num_return_sequences = extra_args['mg_num_return_sequences']
+
         # do not continue if no mentions are present
         if len(ent_indexes) == 0:
             logging.debug('No mentions found!')
-            return input
-        query = input['text']
+            return None
         sentences = []
         # Generate annotated sentence for each mention + placeholder
         for ent_mention in ent_indexes:
@@ -90,5 +90,3 @@ class MgenreEl:
                 j += 1
             result_index += num_return_sequences
             mention_index += 1
-        logging.debug('Output: %s'%input)
-        return input
