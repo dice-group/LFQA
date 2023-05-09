@@ -41,7 +41,7 @@ class MagEl(GenEL):
         # Setting knowledge base as Wikidata
         input['kb'] = 'dbp'
         return None
-    def link_entities(self, input, query, lang, ent_indexes, extra_args):
+    def link_entities(self, query, lang, ent_indexes, extra_args):
         # Check for supported languages
         if lang not in self.supported_langs:
             logging.debug('Language not supported by MAG: %s'%lang)
