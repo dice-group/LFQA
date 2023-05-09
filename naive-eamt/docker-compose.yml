@@ -13,6 +13,9 @@ services:
       - ./configuration.ini:/neamt/configuration.ini
       # Mount the downloaded data directory(s)
       - ./data:/neamt/data
+      # Mount cache
+      - ./cache/huggingface:/root/.cache/huggingface
+      - ./cache/flair:/root/.flair
     ports:
       - 6100:80
     networks:
