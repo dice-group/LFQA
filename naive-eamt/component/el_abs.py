@@ -18,7 +18,7 @@ class GenEL(ABC):
         Function to find the links for annotated entities
 
         :param input: input json containing natural language text to be annotated
-        :return:  formatted dictionary as stated in the README for NER output
+        :return: formatted dictionary as stated in the README for NER output
         '''
         logging.debug('Input received: %s' % input)
         query = input['text']
