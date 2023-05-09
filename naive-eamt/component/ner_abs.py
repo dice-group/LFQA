@@ -22,11 +22,8 @@ class GenNER(ABC):
         '''
         logging.debug('Input received: %s' % input)
         query = input['text']
-        if 'lang' in input:
-            lang = input['lang']
-        else:
-            lang = c_util.detect_lang(query)
-            input['lang'] = lang
+        lang = input['lang']
+
         # run the preprocessing function
         extra_args = self.prep_input_args(input)
         # find the entity mentions

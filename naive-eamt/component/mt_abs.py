@@ -37,10 +37,8 @@ class GenMT(ABC):
         query = input['text']
         plc_token = input['placeholder']
         replace_before = input['replace_before']
-        kb = None
-        if 'kb' in input:
-            kb = input['kb']
-        ent_links = input['ent_mentions']
+        kb = input.get('kb')
+        ent_links = input.get('ent_mentions', [])
         # putting placeholders
         input['text_plc'] = p_util.put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_links)
         logging.debug('Injected placeholders: %s' % input)

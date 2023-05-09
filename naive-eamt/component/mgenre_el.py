@@ -36,16 +36,13 @@ class MgenreEl(GenEL):
         extra_args = {}
         # Setting knowledge base as Wikidata
         input['kb'] = 'wd'
-        if 'mg_num_return_sequences' in input:
-            extra_args['mg_num_return_sequences'] = int(input['mg_num_return_sequences'])
+        extra_args['mg_num_return_sequences'] = int(input.get('mg_num_return_sequences', 1))
         return extra_args
 
     def link_entities(self, query, lang, ent_indexes, extra_args):
 
         # Extract custom parameter
-        num_return_sequences = 1
-        if 'mg_num_return_sequences' in extra_args:
-            num_return_sequences = extra_args['mg_num_return_sequences']
+        num_return_sequences = extra_args.get('mg_num_return_sequences')
 
         # do not continue if no mentions are present
         if len(ent_indexes) == 0:
