@@ -3,6 +3,7 @@ import logging
 import sys
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, '/neamt/util/')
+import cache_util
 import common_util as c_util
 
 class GenNER(ABC):
@@ -27,6 +28,6 @@ class GenNER(ABC):
         # run the preprocessing function
         extra_args = self.prep_input_args(input)
         # find the entity mentions
-        ent_indexes = self.recognize_entities(query, lang, extra_args)
+        ent_indexes = cache_util.call(self.recognize_entities, self.__class__.__qualname__, query, lang, extra_args)
         input['ent_mentions'] = ent_indexes
         logging.debug('Output: %s' % input)

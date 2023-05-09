@@ -4,6 +4,7 @@ import sys
 import time
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, '/neamt/util/')
+import cache_util
 import placeholder_util as p_util
 
 class GenMT(ABC):
@@ -54,7 +55,7 @@ class GenMT(ABC):
 
         # only translate if the source is not same as target language
         if source_lang != target_lang:
-            trans_text = self.translate_text(trans_text, source_lang, target_lang, extra_args)
+            trans_text = cache_util.call(self.translate_text, self.__class__.__qualname__, trans_text, source_lang, target_lang, extra_args)
         logging.debug('Translated text with the placeholders: %s'%trans_text)
         input['translated_text_plc'] = trans_text
         # replace placeholders in the translated text

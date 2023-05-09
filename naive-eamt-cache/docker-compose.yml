@@ -1,0 +1,11 @@
+version: "3.3"
+
+services:
+  # Caching
+  redis:
+    image: redis:7 # https://hub.docker.com/_/redis/
+    command: ['redis-server', '--save', '60', '1', '--loglevel', 'warning', '--maxmemory-policy', 'allkeys-lru']
+    ports:
+      - 6379:6379
+    volumes:
+      - ./cache:/data

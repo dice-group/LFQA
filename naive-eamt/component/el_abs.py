@@ -3,6 +3,7 @@ import logging
 import sys
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, '/neamt/util/')
+import cache_util
 
 class GenEL(ABC):
     # TODO: Cache this function (maybe you need to cache all the implementations?)
@@ -26,5 +27,5 @@ class GenEL(ABC):
         extra_args = self.prep_input_args(input)
         ent_indexes = input.get('ent_mentions', [])
         # find the entity links
-        self.link_entities(query, lang, ent_indexes, extra_args)
+        cache_util.call(self.link_entities, self.__class__.__qualname__, query, lang, ent_indexes, extra_args)
         logging.debug('Output: %s' % input)
