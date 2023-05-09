@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import logging
 import sys
+import time
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, '/neamt/util/')
 import placeholder_util as p_util
@@ -39,8 +40,14 @@ class GenMT(ABC):
         replace_before = input['replace_before']
         kb = input.get('kb')
         ent_links = input.get('ent_mentions', [])
+
+        # Logging start time
+        start_time = time.time()
         # putting placeholders
         input['text_plc'] = p_util.put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_links)
+        # Logging end time
+        logging.debug('Time needed to put the placeholders: %s second(s)' % ((time.time() - start_time)))
+
         logging.debug('Injected placeholders: %s' % input)
         # acquire text with placeholder
         trans_text = input['text_plc']
