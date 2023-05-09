@@ -207,3 +207,20 @@ def replace_placeholders(trans_text, input):
     logging.debug('Query after replaced placeholder: %s' % res_query)
     logging.debug('Stats: %s' % stats_util.stats)
     return res_query
+
+def fetch_placeholder_str(query, plc_token, ent_links):
+    arr_ind = 1
+    query_plc = ''
+    last_ind = 0
+    for link in ent_links:
+        if 'link' not in link:
+            continue
+        plchldr = '[%s%d]' % (plc_token, arr_ind)
+        link['placeholder'] = plchldr
+        # forming the placeholder query
+        if plchldr:
+            query_plc += query[last_ind:link['start']] + plchldr
+            arr_ind += 1
+            last_ind = link['end']
+    query_plc += query[last_ind:]
+    return query_plc

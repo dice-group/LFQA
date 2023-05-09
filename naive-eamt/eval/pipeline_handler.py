@@ -159,7 +159,7 @@ class PipelineHandler:
                 # Adding the ID to the answer
                 ret_val['id'] = id
         except Exception as e:
-            print('Following exception encountered for the query %s: %s' % (query, e))
+            print('Following exception encountered for the payload %s: %s' % (str(payload), e))
             error_stats['exception'] += 1
 
         return ret_val, translated_text
