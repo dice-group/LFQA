@@ -133,7 +133,7 @@ class PipelineHandler:
         payload = {
             'query': query,
             'components': ','.join(components),
-            'replace_before': True,
+            'replace_before': False, # This should be False usually
             'full_json': True,
             'lang': lang
             #'placeholder': 'plc'
