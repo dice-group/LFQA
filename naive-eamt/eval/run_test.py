@@ -12,7 +12,7 @@ Example usage:
 python run_test.py  "http://xyz:6100/custom-pipeline" "translation_output/" "config/eval_config.json" 6
 '''
 # Set logging format
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 args = sys.argv[1:]
 # Default values
 # URL to the custom NEAMT pipeline
