@@ -27,5 +27,5 @@ class GenEL(ABC):
         extra_args = self.prep_input_args(input)
         ent_indexes = input.get('ent_mentions', [])
         # find the entity links
-        cache_util.call(self.link_entities, self.__class__.__qualname__, query, lang, ent_indexes, extra_args)
+        input['ent_mentions'] = cache_util.call(self.link_entities, self.__class__.__qualname__, query, lang, ent_indexes, extra_args)
         logging.debug('Output: %s' % input)

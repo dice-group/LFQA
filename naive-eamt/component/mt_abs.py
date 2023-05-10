@@ -45,7 +45,8 @@ class GenMT(ABC):
         # Logging start time
         start_time = time.time()
         # putting placeholders
-        input['text_plc'] = p_util.put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_links)
+        # input['text_plc'] = p_util.put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_links)
+        input['text_plc'] = cache_util.call(p_util.put_placeholders, 'put_placeholders', query, plc_token, replace_before, target_lang, kb, ent_links)
         # Logging end time
         logging.debug('Time needed to put the placeholders: %s second(s)' % ((time.time() - start_time)))
 

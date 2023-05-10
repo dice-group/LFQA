@@ -19,4 +19,4 @@ class EmptyEl(GenEL):
         :return:  formatted dictionary as stated in the README for EL output
         '''
         # Do nothing
-        pass
+        return ent_indexes

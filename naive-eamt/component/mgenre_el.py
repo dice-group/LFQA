@@ -87,3 +87,5 @@ class MgenreEl(GenEL):
                 j += 1
             result_index += num_return_sequences
             mention_index += 1
+
+        return ent_indexes

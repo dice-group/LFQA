@@ -76,3 +76,5 @@ class MagEl(GenEL):
             if 'notinwiki' not in url.lower():
                 ent_indexes[arr_ind]['link'] = url
             arr_ind += 1
+
+        return ent_indexes
