@@ -171,7 +171,7 @@ def process_query(query, data, inst_list, full_json):
             return res['translated_text']
         return res
     except Exception as inst:
-        logging.error('Exception occurred for the query: %s\nException: %s' % (query, inst))
+        logging.exception('Exception occurred for the query: %s\nException: %s' % (query, inst))
         return {}
 
 

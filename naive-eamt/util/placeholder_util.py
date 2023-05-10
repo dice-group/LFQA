@@ -134,6 +134,7 @@ def put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_link
         sparql.setQuery(f_sparql)
         logging.debug('Formed SPARQL:\n %s' % f_sparql)
         ret = sparql.queryAndConvert()
+        logging.debug('SPARQL results:\n %s' % str(f_sparql))
         # Check if no results are retrieved
         if len(ret["results"]["bindings"]) == 0:
             stats_lock.acquire()
