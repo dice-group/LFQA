@@ -164,7 +164,9 @@ def put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_link
             arr_ind += 1
             last_ind = link['end']
     query_plc += query[last_ind:]
-    return query_plc, ent_links
+    # Do not change the return logic, a single object is required for caching
+    ret_tuple = (query_plc, ent_links)
+    return ret_tuple
 
 
 def replace_placeholders(trans_text, replace_before, ent_links):

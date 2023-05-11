@@ -46,7 +46,9 @@ class GenMT(ABC):
         start_time = time.time()
         # putting placeholders
         # input['text_plc'] = p_util.put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_links)
-        input['text_plc'], ent_links = cache_util.call(p_util.put_placeholders, 'put_placeholders', query, plc_token, replace_before, target_lang, kb, ent_links)
+        ret_tuple = cache_util.call(p_util.put_placeholders, 'put_placeholders', query, plc_token, replace_before, target_lang, kb, ent_links)
+        input['text_plc'] = ret_tuple[0]
+        ent_links = ret_tuple[1]
         # Refresh the ent_mentions
         input['ent_mentions'] = ent_links
         # Logging end time
