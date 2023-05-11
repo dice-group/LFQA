@@ -47,7 +47,7 @@ class MgenreEl(GenEL):
         # do not continue if no mentions are present
         if len(ent_indexes) == 0:
             logging.debug('No mentions found!')
-            return None
+            return ent_indexes
         sentences = []
         # Generate annotated sentence for each mention + placeholder
         for ent_mention in ent_indexes:

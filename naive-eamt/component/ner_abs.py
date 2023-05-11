@@ -7,7 +7,6 @@ import cache_util
 import common_util as c_util
 
 class GenNER(ABC):
-    # TODO: Cache this function (maybe you need to cache all the implementations?)
     @abstractmethod
     def recognize_entities(self, query, lang, extra_args):
         raise NotImplementedError
@@ -21,7 +20,7 @@ class GenNER(ABC):
         :param input: input json containing natural language text to be annotated
         :return:  formatted dictionary as stated in the README for NER output
         '''
-        logging.debug('Input received: %s' % input)
+        logging.debug('Input received at %s: %s' % (type(self).__name__, input))
         query = input['text']
         lang = input['lang']
 

@@ -6,7 +6,6 @@ sys.path.insert(1, '/neamt/util/')
 import cache_util
 
 class GenEL(ABC):
-    # TODO: Cache this function (maybe you need to cache all the implementations?)
     @abstractmethod
     def link_entities(self, query, lang, ent_indexes, extra_args):
         raise NotImplementedError
@@ -20,7 +19,7 @@ class GenEL(ABC):
         :param input: input json containing natural language text to be annotated
         :return: formatted dictionary as stated in the README for NER output
         '''
-        logging.debug('Input received: %s' % input)
+        logging.debug('Input received at %s: %s' % (type(self).__name__, input))
         query = input['text']
         lang = input['lang']
         # run the preprocessing function

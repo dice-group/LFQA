@@ -25,7 +25,7 @@ class GenMT(ABC):
         :return: translated text to English
         '''
         # Send input for processing to the placeholder util
-        logging.debug('Input received: %s' % input)
+        logging.debug('Input received at %s: %s' % (type(self).__name__, input))
         extra_args = self.prep_input_args(input)
         # Extract source and target language
         source_lang = input['lang']

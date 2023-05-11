@@ -45,12 +45,12 @@ class MagEl(GenEL):
         # Check for supported languages
         if lang not in self.supported_langs:
             logging.debug('Language not supported by MAG: %s'%lang)
-            return None
+            return ent_indexes
         endpoint = self.endpoint_format%lang
         # do not continue if non mentions are present
         if len(ent_indexes) == 0:
             logging.debug('No mentions found!')
-            return None
+            return ent_indexes
         sentence = ''
         last_ind = 0
         # Sorting according to the start
