@@ -21,6 +21,11 @@ SPARQL_LANG_MAP = {
 sparql_wd = SPARQLWrapper("https://query.wikidata.org/sparql")
 sparql_wd.setReturnFormat(JSON)
 
+# Temporary agent modifier
+agent_header = {'User-Agent': 'wiki_parser_online/0.17.1 (https://deeppavlov.ai;'
+                              ' info@deeppavlov.ai) deeppavlov/0.17.1'}
+sparql_wd.agent = str(agent_header)
+
 sparql_db = SPARQLWrapper("https://dbpedia.org/sparql")
 sparql_db.setReturnFormat(JSON)
 
@@ -108,6 +113,7 @@ def put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_link
     :param kb: knowledge-base that the entities are linked to. Can only handle Wikidata and DBpedia for now
     :return: text with placeholders.
     '''
+    ret_tuple = (query, ent_links)
     # Maintain translated placeholder count
     stats_lock = stats_util.lock
     plc_count = stats_util.stats['placeholder_count']
@@ -118,7 +124,7 @@ def put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_link
         target_lang = "EN"
     if not kb:
         logging.debug('No KB information found in the input.')
-        return query
+        return ret_tuple
     arr_ind = 1
     sparql = kb_info[kb][0]
     sparql_str = kb_info[kb][1]
