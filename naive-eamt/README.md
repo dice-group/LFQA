@@ -44,7 +44,7 @@ It comes already integrated with the following tools:
             <td>spacy_ner</td>
             <td>de, en, es, fr, it, nl, pl, pt, ru</td>
             <td>https://github.com/explosion/spacy-models/releases/tag/xx_ent_wiki_sm-3.4.0</td>
-            <td> </td>
+            <td>1 million character (spacy's default max_length) </td>
         </tr>
         <tr>
             <td rowspan=2>EL</td>
