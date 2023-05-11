@@ -81,7 +81,7 @@ It comes already integrated with the following tools:
             <td>nllb_mt</td>
             <td>Supports 196 languages</td>
             <td>https://github.com/facebookresearch/fairseq/tree/nllb/#multilingual-translation-models</td>
-            <td> </td>
+            <td>1024 tokens (as per <code>tokenizer.model_max_length</code> for "facebook/nllb-200-distilled-600M" on huggingface) </td>
         </tr>
         <tr>
             <td>MBart MT**</td>
