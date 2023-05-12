@@ -29,6 +29,8 @@ from mgenre_el import MgenreEl
 from spacy_ner import SpacyNer
 from empty_ner import EmptyNer
 from empty_el import EmptyEl
+from swc_ner_el import SwcNerEl
+from mbart_ep_mt import MbartEpMt
 
 sys.path.insert(1, '/neamt/util/')
 import stats_util
@@ -50,12 +52,14 @@ comp_map = {
     'nllb_mt': NllbMt,
     'mbart_mt': MbartMt,
     'no_ner': EmptyNer,
-    'no_el': EmptyEl
+    'no_el': EmptyEl,
+    'swc_ner_el': SwcNerEl,
+    'mbart_ep_mt': MbartEpMt
 }
 
 def_placeholder = '00'
 
-io_exc_list = ['query']
+io_exc_list = ['query', 'full_json']
 comp_inst_map = {}
 path_pipeline_map = {}
 
@@ -138,19 +142,24 @@ def get_input_dict(san_query, data):
         'replace_before': rep_before,
         'placeholder': placeholder
     }
-    # Passing all the params
+    # Passing on all the params that were not yet modified and are not in the exclusion list
     for entry in data:
         if (entry not in f_input) and (entry not in io_exc_list):
             f_input[entry] = data[entry]
 
     return f_input
-def clean_proc_query(query, data, inst_list):
+
+def process_query(query, data, inst_list, full_json):
     try:
         # Temporary workaround for placeholder, removing '?' from query
         logging.debug('Input query: %s' % query)
-        san_query = query.replace('?', '')
-        logging.debug('Sanitized input query: %s' % san_query)
-        return process_cus_input(get_input_dict(san_query, data), inst_list)
+        san_query = query
+        # san_query = query.replace('?', '')
+        # logging.debug('Sanitized input query: %s' % san_query)
+        res = process_cus_input(get_input_dict(san_query, data), inst_list)
+        if (not full_json) and ('translated_text' in res):
+            return res['translated_text']
+        return res
     except Exception as inst:
         logging.error('Exception occurred for the query: %s\nException: %s' % (query, inst))
         return {}
@@ -184,6 +193,9 @@ def cus_pipe():
     logging.info('Query received at custom-pipeline')
     logging.info('Data received for translation: %s' % data)
     comp_arr = data['components'].split(',')
+    full_json = False
+    if ('full_json' in data) and data['full_json']:
+        full_json = True
     inst_list = []
     for item in comp_arr:
         inst_list.append(comp_inst_map[item.strip()])
@@ -202,11 +214,11 @@ def cus_pipe():
             logging.debug('Processing query as a list.')
             output = []
             for query in data_q:
-                output.append(clean_proc_query(query, data, inst_list))
+                output.append(process_query(query, data, inst_list, full_json))
         # else process the single query
         else:
             logging.debug('Processing a single query.')
-            output = clean_proc_query(data_q, data, inst_list)
+            output = process_query(data_q, data, inst_list, full_json)
         return output
     else:
         return f'Invalid request'
