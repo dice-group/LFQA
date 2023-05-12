@@ -142,7 +142,8 @@ def put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_link
         ret = sparql.queryAndConvert()
         logging.debug('SPARQL results:\n %s' % str(ret))
         # Check if no results are retrieved
-        if len(ret["results"]["bindings"]) == 0:
+        # Empty results can look like this: {'head': {'vars': ['enlbl']}, 'results': {'bindings': [{}]}}
+        if len(ret["results"]["bindings"]) == 0 or (len(ret["results"]["bindings"]) == 1 and len(ret["results"]["bindings"][0]) == 0):
             stats_lock.acquire()
             en_count['not_found'] += 1
             stats_lock.release()
