@@ -6,6 +6,7 @@ import time
 sys.path.insert(1, '/neamt/util/')
 import cache_util
 import placeholder_util as p_util
+import stats_util
 
 class GenMT(ABC):
 
@@ -41,14 +42,26 @@ class GenMT(ABC):
         replace_before = input['replace_before']
         kb = input.get('kb')
         ent_links = input.get('ent_mentions', [])
+        cur_stats = {
+            'placeholder_count': {
+                'total': 0,
+                'translated': 0
+            },
+            'english_label_count': {
+                'total_found': 0,
+                'not_found': 0,
+                'trans_copied': 0
+            }
+        }
 
         # Logging start time
         start_time = time.time()
         # putting placeholders
         # input['text_plc'] = p_util.put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_links)
-        ret_tuple = cache_util.call(p_util.put_placeholders, 'put_placeholders', query, plc_token, replace_before, target_lang, kb, ent_links)
+        ret_tuple = cache_util.call(p_util.put_placeholders, 'put_placeholders', query, plc_token, replace_before, target_lang, kb, ent_links, cur_stats)
         input['text_plc'] = ret_tuple[0]
         ent_links = ret_tuple[1]
+        cur_stats = ret_tuple[3]
         # Refresh the ent_mentions
         input['ent_mentions'] = ent_links
         # Logging end time
@@ -64,7 +77,10 @@ class GenMT(ABC):
         logging.debug('Translated text with the placeholders: %s'%trans_text)
         input['translated_text_plc'] = trans_text
         # replace placeholders in the translated text
-        trans_text = p_util.replace_placeholders(trans_text, replace_before, ent_links)
+        trans_text, cur_stats = p_util.replace_placeholders(trans_text, replace_before, ent_links, cur_stats)
+        # Update global stats
+        stats_util.update_global_stats(cur_stats)
+        logging.debug('Stats: %s' % stats_util.stats)
         # putting trans text into the input json
         input['translated_text'] = trans_text
         logging.debug('Output: %s'%trans_text)

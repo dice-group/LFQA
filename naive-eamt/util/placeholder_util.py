@@ -2,8 +2,6 @@
 This python encapsulates the functions to deal with placeholders in the annotated natural language text.
 '''
 import logging
-import time
-import stats_util
 from string import Template
 
 from SPARQLWrapper import SPARQLWrapper, JSON
@@ -100,11 +98,11 @@ kb_info = {
     'swc': (sparql_swc, Template(SWC_QUERY_STR))
 }
 
-# TODO: Cache this function
-def put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_links):
+def put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_links, cur_stats):
     '''
     This method expects the input format as stated in the README for EL output
 
+    :param cur_stats: object with placeholder statistics for the current query
     :param query: natural language query to put placeholders into
     :param plc_token: placeholder prefix to use
     :param replace_before: whether to replace the placeholders with their labels before translation
@@ -113,11 +111,12 @@ def put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_link
     :param kb: knowledge-base that the entities are linked to. Can only handle Wikidata and DBpedia for now
     :return: text with placeholders.
     '''
-    ret_tuple = (query, ent_links)
+
+    ret_tuple = (query, ent_links, cur_stats)
     # Maintain translated placeholder count
-    stats_lock = stats_util.lock
-    plc_count = stats_util.stats['placeholder_count']
-    en_count = stats_util.stats['english_label_count']
+    plc_count = cur_stats['placeholder_count']
+    en_count = cur_stats['english_label_count']
+
     if target_lang in SPARQL_LANG_MAP:
         target_lang = SPARQL_LANG_MAP[target_lang]
     else:
@@ -145,17 +144,13 @@ def put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_link
         # Empty results can look like this: {'head': {'vars': ['enlbl']}, 'results': {'bindings': [{}]}}
         if len(ret["results"]["bindings"]) == 0 or (len(ret["results"]["bindings"]) == 1 and len(ret["results"]["bindings"][0]) == 0):
             ret["results"]["bindings"] = []
-            stats_lock.acquire()
             en_count['not_found'] += 1
-            stats_lock.release()
         # extracting English label
         eng_label = None
         for r in ret["results"]["bindings"]:
             link['en_label'] = r['enlbl']['value']
             eng_label = link['en_label']
-            stats_lock.acquire()
             en_count['total_found'] += 1
-            stats_lock.release()
             break
         if replace_before:
             plchldr = eng_label
@@ -163,9 +158,7 @@ def put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_link
             plchldr = '[%s%d]' % (plc_token, arr_ind)
             link['placeholder'] = plchldr
             # incrementing global placeholder count
-            stats_lock.acquire()
             plc_count['total'] += 1
-            stats_lock.release()
         # forming the placeholder query
         if plchldr:
             query_plc += query[last_ind:link['start']] + plchldr
@@ -173,23 +166,23 @@ def put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_link
             last_ind = link['end']
     query_plc += query[last_ind:]
     # Do not change the return logic, a single object is required for caching
-    ret_tuple = (query_plc, ent_links)
+    ret_tuple = (query_plc, ent_links, cur_stats)
     return ret_tuple
 
 
-def replace_placeholders(trans_text, replace_before, ent_links):
+def replace_placeholders(trans_text, replace_before, ent_links, cur_stats):
     '''
     This function replaces the placeholders in the translated text with their corresponding English labels.
 
+    :param cur_stats: object with placeholder statistics for the current query
     :param trans_text: translated English text with placeholders
     :param replace_before: flag with the value for replace placeholder before translation option
     :param ent_links: all the entity mentions in the query
     :return: translated string with replaced placeholders
     '''
     # Maintain translated placeholder count
-    stats_lock = stats_util.lock
-    plc_count = stats_util.stats['placeholder_count']
-    en_count = stats_util.stats['english_label_count']
+    plc_count = cur_stats['placeholder_count']
+    en_count = cur_stats['english_label_count']
 
     res_query = trans_text
     for link in ent_links:
@@ -200,18 +193,13 @@ def replace_placeholders(trans_text, replace_before, ent_links):
             label = link['en_label']
             # record label stats if replaced before
             if replace_before and (label.casefold() in trans_text.casefold()):
-                stats_lock.acquire()
                 en_count['trans_copied'] += 1
-                stats_lock.release()
         # check the number of properly translated placeholders
         if (not replace_before) and (link['placeholder'] in res_query):
-            stats_lock.acquire()
             plc_count['translated'] += 1
-            stats_lock.release()
             res_query = res_query.replace(link['placeholder'], label)
     logging.debug('Query after replaced placeholder: %s' % res_query)
-    logging.debug('Stats: %s' % stats_util.stats)
-    return res_query
+    return res_query, cur_stats
 
 def fetch_placeholder_str(query, plc_token, ent_links):
     arr_ind = 1
