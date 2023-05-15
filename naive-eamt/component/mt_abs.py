@@ -61,7 +61,7 @@ class GenMT(ABC):
         ret_tuple = cache_util.call(p_util.put_placeholders, 'put_placeholders', query, plc_token, replace_before, target_lang, kb, ent_links, cur_stats)
         input['text_plc'] = ret_tuple[0]
         ent_links = ret_tuple[1]
-        cur_stats = ret_tuple[3]
+        cur_stats = ret_tuple[2]
         # Refresh the ent_mentions
         input['ent_mentions'] = ent_links
         # Logging end time
