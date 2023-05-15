@@ -35,7 +35,7 @@ def update_global_stats(cur_stats):
     global lock
     lock.acquire()
     global stats
-    stats = add_nested_dictionaries(stats, cur_stats)
+    stats.update(add_nested_dictionaries(stats, cur_stats))
     lock.release()
 
 def add_nested_dictionaries(dict1, dict2):

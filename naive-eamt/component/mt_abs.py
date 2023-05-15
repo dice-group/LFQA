@@ -78,9 +78,11 @@ class GenMT(ABC):
         input['translated_text_plc'] = trans_text
         # replace placeholders in the translated text
         trans_text, cur_stats = p_util.replace_placeholders(trans_text, replace_before, ent_links, cur_stats)
+        # Logging current stats
+        logging.debug('Current Stats: %s' % cur_stats)
         # Update global stats
         stats_util.update_global_stats(cur_stats)
-        logging.debug('Stats: %s' % stats_util.stats)
+        logging.debug('Global Stats: %s' % stats_util.stats)
         # putting trans text into the input json
         input['translated_text'] = trans_text
         logging.debug('Output: %s'%trans_text)
