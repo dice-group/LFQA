@@ -19,7 +19,8 @@ class NllbMt(GenMT):
             'ru': 'rus_Cyrl',
             'fr': 'fra_Latn',
             'es': 'spa_Latn',
-            'pt': 'por_Latn'
+            'pt': 'por_Latn',
+            'it': 'ita_Latn'
         }
         logging.debug('NllbMt component initialized.')
     

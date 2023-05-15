@@ -21,7 +21,8 @@ class MbartMt(GenMT):
             'ru': 'ru_RU',
             'fr': 'fr_XX',
             'es': 'es_XX',
-            'pt': 'pt_XX'
+            'pt': 'pt_XX',
+            'it': 'it_IT'
         }
         logging.debug('MbartMt component initialized.')
     
