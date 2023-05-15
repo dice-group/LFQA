@@ -19,11 +19,6 @@ SPARQL_LANG_MAP = {
 sparql_wd = SPARQLWrapper("https://query.wikidata.org/sparql")
 sparql_wd.setReturnFormat(JSON)
 
-# Temporary agent modifier
-agent_header = {'User-Agent': 'wiki_parser_online/0.17.1 (https://deeppavlov.ai;'
-                              ' info@deeppavlov.ai) deeppavlov/0.17.1'}
-sparql_wd.agent = str(agent_header)
-
 sparql_db = SPARQLWrapper("https://dbpedia.org/sparql")
 sparql_db.setReturnFormat(JSON)
 
