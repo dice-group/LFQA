@@ -15,6 +15,15 @@
 import json
 from pathlib import Path
 import copy
+import logging
+import sys
+'''
+Example usage:
+python format_translated_qald.py  "translation_output/" "translated_qald/" "config/eval_config.json"
+'''
+# Set logging format
+logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+args = sys.argv[1:]
 
 # vars
 # error count
@@ -23,9 +32,17 @@ count = {
     'request': 0,
     'exception': 0
 }
-pred_dir = 'pred_results/'
+# directory with files generated using neamt
+pred_dir = 'translation_output/'
 # output directory
 output_dir = 'translated_qald/'
+# evaluation config file
+eval_config_file = 'config/eval_config.json'
+
+if len(args) == 3:
+    pred_dir = args[0]
+    output_dir = args[1]
+    eval_config_file = args[2]
 
 # Create the directory(s) in the output path
 Path(output_dir).mkdir(parents=True, exist_ok=True)
@@ -33,9 +50,9 @@ Path(output_dir).mkdir(parents=True, exist_ok=True)
 # Read Config for QALD file
 # Load config file
 eval_cfg = []
-with open('config/eval_config.json', 'r') as ec:
+with open(eval_config_file, 'r') as ec:
     eval_cfg = json.load(ec)
-print(eval_cfg)
+logging.info(eval_cfg)
 
 
 # function to create unique prediction file name
@@ -119,4 +136,4 @@ for cfg in eval_cfg:
             # write the translated QALD
             write_translated_qald(lang, pipe, pred_dir, test_name, output_dir, gold_translations)
 
-print('Done!')
+logging.info('QALD files generated into the directory: %s' % output_dir)
