@@ -112,7 +112,7 @@ for cfg in eval_cfg:
     # iterate over languages in the current config
     for lang in cfg['test_cfg']:
         # For each gold file
-        gold_file = test_name + '_%s-en_gold_file' % lang + '.txt'
+        gold_file = pred_dir + test_name + '_%s-en_gold_file' % lang + '.txt'
         # Read all lines to an array
         gold_translations = []
         with open(gold_file, 'r') as gold_fin:
