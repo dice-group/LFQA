@@ -178,7 +178,9 @@ class PipelineHandler:
                 # print('Pipeline:', pipeline)
                 query = test_data[lang][id]
                 resp_json, translated_text = self.get_translation(id, lang, query, pipeline, error_stats)
-                out_jsonl.write(str(resp_json) + '\n')
+                # out_jsonl.write(str(resp_json) + '\n')
+                json.dump(resp_json, out_jsonl)
+                out_jsonl.write('\n')
                 out_text.write(translated_text + '\n')
                 # Update progress bar
                 bar_queue.put_nowait(1)
