@@ -1,41 +1,47 @@
 from datasets import load_dataset
-from transformers import MBart50TokenizerFast
+from transformers import MBart50TokenizerFast, MBartForConditionalGeneration
 from transformers import DataCollatorForSeq2Seq
 import numpy as np
-from transformers import AutoModelForSeq2SeqLM, Seq2SeqTrainingArguments, Seq2SeqTrainer
+from transformers import Seq2SeqTrainingArguments, Seq2SeqTrainer
 import evaluate
-
+"""
+Script to fine-tune MT models
+Ref: https://huggingface.co/docs/transformers/tasks/translation
+"""
 model_name = "facebook/mbart-large-50-many-to-many-mmt"
 tokenizer_name = "facebook/mbart-large-50-many-to-many-mmt"
-dataset_dir = "data/"
-# load dataset
-dataset = load_dataset("europarl_bilingual", lang1="de", lang2="en")
-# splitting dataset
-dataset = dataset["train"].train_test_split(test_size=0.2)
+dataset_dir = "data/json/"
+output_dir = "ft_models/mbart50_mintaka_plc"
 # load model tokenizer
 tokenizer = MBart50TokenizerFast.from_pretrained(tokenizer_name)
+# load model
+model = MBartForConditionalGeneration.from_pretrained(model_name)
+
+# load dataset
+dataset = load_dataset("json", data_dir="data/json/")
+# splitting dataset
+dataset = dataset["train"].train_test_split(test_size=0.2)
 
 # Setup tokenization
-source_lang = "de"
-target_lang = "en"
+# source_lang = "de"
+# target_lang = "en"
 # prefix if any
 prefix = ""
 
+
 def preprocess_function(examples):
-    inputs = [prefix + example[source_lang] for example in examples["translation"]]
-    targets = [example[target_lang] for example in examples["translation"]]
+    inputs = [prefix + example['input'] for example in examples]
+    targets = [example['output'] for example in examples]
     model_inputs = tokenizer(inputs, text_target=targets, max_length=200, truncation=True, padding=True, return_tensors="pt")
     return model_inputs
+
 
 # tokenize the inputs
 tokenized_inputs = dataset.map(preprocess_function, batched=True)
 
-
-# load model
-model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-
 data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model)
 sacrebleu = evaluate.load("sacrebleu")
+
 
 # functions to compute SacreBleu score for the predictions
 def postprocess_text(preds, labels):
@@ -68,7 +74,7 @@ def compute_metrics(eval_preds):
 # Train setup
 
 training_args = Seq2SeqTrainingArguments(
-    output_dir="mbart50_europarl_de2en_model",
+    output_dir=output_dir,
     evaluation_strategy="epoch",
     learning_rate=2e-5,
     per_device_train_batch_size=8,
@@ -91,4 +97,4 @@ trainer = Seq2SeqTrainer(
     compute_metrics=compute_metrics,
 )
 
-trainer.train("mbart50_europarl_de2en_model/checkpoint-196000")
+trainer.train()
