@@ -16,3 +16,12 @@ def detect_lang(query):
     prefix from it. '''
     lang_iso_code = model.predict(query, k=1)[0][0][9:]
     return lang_iso_code
+
+# method to tokenize string
+def tokenize_query(query):
+    # TODO: Implement this function
+    pass
+# method to divide incoming string into sentences
+def split_sentences(query):
+    # TODO: Implement this function
+    pass
