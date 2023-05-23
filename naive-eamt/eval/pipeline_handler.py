@@ -67,11 +67,13 @@ class PipelineHandler:
                     lang_pipes.append(['no_ner', 'no_el', mt_item])
                 pipes.append((lang, lang_pipes))
                 self.count['request'] += (len(lang_pipes) * len(test_data[lang]))
+                gold_file_name = self.output_dir + test_name + '_%s-en_gold_file' % lang
                 # Write test data to a file for each lang -> en combination
-                with open(self.output_dir + test_name + '_%s-en_gold_file.txt' % lang, 'w') as out:
+                with open(gold_file_name + '.txt', 'w') as out, open(gold_file_name + '.tsv', 'w') as tsv_out:
                     # For each test string
                     for id in test_data[lang]:
                         out.write(test_data['en'][id] + '\n')
+                        tsv_out.write(id + '\t' + test_data['en'][id] + '\n')
 
             self.test_pipelines[test_name] = {}
             self.test_pipelines[test_name]['pipelines'] = pipes
@@ -119,6 +121,7 @@ class PipelineHandler:
             for lang in q_item['translations']:
                 if lang not in res_data:
                     res_data[lang] = {}
+                res_data[lang][id] = q_item['translations'][lang]
                 res_data[lang][id] = q_item['translations'][lang]
         return res_data
     # function to create unique prediction file name
