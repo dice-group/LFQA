@@ -1,8 +1,13 @@
 import fasttext
 import logging
+import spacy
+from transformers import AutoTokenizer
 # only works inside docker
 model = fasttext.load_model("/neamt/data/lid.176.ftz")
-
+# Spacy's multilingual Sentence boundaries model
+sent_nlp = spacy.load("xx_sent_ud_sm")
+# Commonly used SentencePiece based tokenizer (ref: https://huggingface.co/docs/transformers/tokenizer_summary)
+sp_tokenizer = AutoTokenizer.from_pretrained("xlnet-base-cased")
 
 def detect_lang(query):
     '''
@@ -17,11 +22,17 @@ def detect_lang(query):
     lang_iso_code = model.predict(query, k=1)[0][0][9:]
     return lang_iso_code
 
+
 # method to tokenize string
 def tokenize_query(query):
-    # TODO: Implement this function
-    pass
+    tokens = sp_tokenizer.tokenize(query)
+    return tokens
+
+
 # method to divide incoming string into sentences
 def split_sentences(query):
-    # TODO: Implement this function
-    pass
+    sentences = []
+    doc = sent_nlp(query)
+    for sent in doc.sents:
+        sentences.append(str(sent).strip())
+    return sentences
