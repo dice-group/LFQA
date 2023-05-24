@@ -4,13 +4,14 @@ from transformers import DataCollatorForSeq2Seq
 import numpy as np
 from transformers import Seq2SeqTrainingArguments, Seq2SeqTrainer
 import evaluate
+import logging
 """
 Script to fine-tune MT models
 Ref: https://huggingface.co/docs/transformers/tasks/translation
 
 To use: python hf_seq2seq_mt_ft.py
 """
-
+# Set this value according to your GPU
 BATCH_SIZE = 32
 
 
@@ -34,11 +35,15 @@ def fine_tune_mt_model(model_name, tokenizer_name, dataset_file, output_dir, loc
         # Modify tokenizer
         num_added_toks = tokenizer.add_tokens(extra_tokens_dict)
         model.resize_token_embeddings(len(tokenizer))
-        print("We have added", num_added_toks, "tokens:", extra_tokens_dict)
+        logging.info("We have added %d tokens: %s" % (num_added_toks, extra_tokens_dict))
+    # print model info
+    logging.info("Starting fine-tuning of '%s' with '%s', output will saved at '%s'" % (model.name_or_path, dataset_file, output_dir))
     # load dataset
     dataset = load_dataset("json", data_files=dataset_file)
     # splitting dataset
     dataset = dataset["train"].train_test_split(test_size=0.2, seed=42)
+    # print dataset info
+    logging.info("Dataset information: %s" % str(dataset))
     prefix = ""
 
 
@@ -90,7 +95,7 @@ def fine_tune_mt_model(model_name, tokenizer_name, dataset_file, output_dir, loc
     training_args = Seq2SeqTrainingArguments(
         output_dir=output_dir,
         evaluation_strategy="steps",
-        eval_steps=500,
+        eval_steps=100,
         learning_rate=2e-5,
         per_device_train_batch_size=BATCH_SIZE,
         per_device_eval_batch_size=BATCH_SIZE,

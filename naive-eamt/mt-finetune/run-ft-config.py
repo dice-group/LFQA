@@ -3,7 +3,6 @@ import json
 import logging
 import hf_seq2seq_mt_ft
 import shutil
-import os
 # Set logging format
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 # get input config file
@@ -15,7 +14,7 @@ else:
 # collect args from the input config file
 with open(config_file, 'r') as in_file:
     config_json = json.load(in_file)
-    logging.info("Training config received:\n%s " % config_json)
+    logging.info("Training config received: %s " % config_json)
 
 model_name = config_json["model_name"]
 tokenizer_name = config_json["tokenizer_name"]
@@ -29,9 +28,9 @@ for lang in config_json["lang_seq"]:
     src_lang = lang_map[lang]
     tgt_lang = lang_map["en"]
     # Source dataset
-    dataset_file = config_json["lang_seq"]["dataset_file_template"] % lang
+    dataset_file = config_json["dataset_file_template"] % lang
     # Output directory to save the model
-    output_dir = config_json["lang_seq"]["output_dir_template"] % lang
+    output_dir = config_json["output_dir_template"] % lang
     intermediate_dirs.append(intermediate_dirs)
     hf_seq2seq_mt_ft.fine_tune_mt_model(model_name, tokenizer_name, dataset_file, output_dir, local_model, local_model_path, src_lang, tgt_lang)
     # set local model for the next iteration
@@ -44,7 +43,7 @@ final_model = config_json["final_model"]
 # getting all the files in the source directory
 shutil.copytree(model_dir, final_model)
 # Check if intermediate models should be kept
-if not bool(config_json["save_intermediate_models"]):
+if not config_json["save_intermediate_models"]:
     for dirpath in intermediate_dirs:
         if dirpath.exists() and dirpath.is_dir():
             shutil.rmtree(dirpath)
