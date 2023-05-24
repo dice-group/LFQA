@@ -1,0 +1,10 @@
+{
+  "model_name" : "facebook/mbart-large-50-many-to-many-mmt",
+  "tokenizer_name" : "facebook/mbart-large-50-many-to-many-mmt",
+  "dataset_file_template" : "data/json/%s_en_placeholder.json",
+  "output_dir_template" : "ft_models/mbart50_mintaka_plc_$s_en",
+  "final_model": "ft_models/mbart50_mintaka_plc_final",
+  "lang_map": { "pt":  "pt_XX", "fr":  "fr_XX", "es":  "es_XX", "de":  "de_DE", "en":  "en_XX"},
+  "lang_seq" : [ "pt", "fr", "es", "de"],
+  "save_intermediate_models": true
+}
