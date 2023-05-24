@@ -186,6 +186,9 @@ def process_query(query, data, inst_list, full_json):
                     query_chunks.append(cur_chunk.strip())
                 # add current sentence
                 query_chunks.append(sentence)
+                # reset current chunk
+                cur_chunk = ''
+                cur_chunk_len = 0
             elif len(sentence_tokens) + cur_chunk_len <= TOKEN_LIMIT:
                 # add to current chunk with a whitespace
                 cur_chunk += ' ' + sentence
@@ -194,9 +197,14 @@ def process_query(query, data, inst_list, full_json):
                 continue
             else:
                 query_chunks.append(cur_chunk.strip())
-            # reset current chunk
-            cur_chunk = ''
-            cur_chunk_len = 0
+                # reset current chunk
+                cur_chunk = sentence
+                cur_chunk_len = len(sentence_tokens)
+        # flush remaining chunk
+        if cur_chunk_len > 0:
+            query_chunks.append(cur_chunk.strip())
+        # logging
+        logging.info('Total %d chunks formed: %s ' % (len(query_chunks), query_chunks))
         # loop through the chunks and process them as normal query
         results = []
         for chunk in query_chunks:
