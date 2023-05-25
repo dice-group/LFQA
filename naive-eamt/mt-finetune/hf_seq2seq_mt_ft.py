@@ -5,6 +5,10 @@ import numpy as np
 from transformers import Seq2SeqTrainingArguments, Seq2SeqTrainer
 import evaluate
 import logging
+import os
+# Select GPUs to train (usually trains faster on a single GPU)
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 """
 Script to fine-tune MT models
 Ref: https://huggingface.co/docs/transformers/tasks/translation
@@ -51,7 +55,8 @@ def fine_tune_mt_model(model_name, tokenizer_name, dataset_file, output_dir, loc
         #print('Printing examples: %s' % examples)
         inputs = [prefix + example for example in examples['input']]
         targets = [example for example in examples['output']]
-        model_inputs = tokenizer(inputs, text_target=targets, max_length=200, truncation=True, padding=True, return_tensors="pt")
+        # setting max length to 512
+        model_inputs = tokenizer(inputs, text_target=targets, max_length=512, truncation=True, padding=True, return_tensors="pt")
         return model_inputs
 
 
@@ -95,12 +100,12 @@ def fine_tune_mt_model(model_name, tokenizer_name, dataset_file, output_dir, loc
     training_args = Seq2SeqTrainingArguments(
         output_dir=output_dir,
         evaluation_strategy="steps",
-        eval_steps=100,
+        eval_steps=500,
         learning_rate=2e-5,
         per_device_train_batch_size=BATCH_SIZE,
         per_device_eval_batch_size=BATCH_SIZE,
         weight_decay=0.01,
-        save_total_limit=0,
+        save_total_limit=1,
         num_train_epochs=10,
         predict_with_generate=True,
         fp16=True,

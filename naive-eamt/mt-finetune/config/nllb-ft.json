@@ -1,0 +1,10 @@
+{
+  "model_name" : "facebook/nllb-200-distilled-600M",
+  "tokenizer_name" : "facebook/nllb-200-distilled-600M",
+  "dataset_file_template" : "data/json/%s_en_placeholder.json",
+  "output_dir_template" : "ft_models/nllb_mintaka_plc_%s_en",
+  "final_model": "ft_models/nllb_mintaka_plc_final",
+  "lang_map": { "pt":  "por_Latn", "fr":  "fra_Latn", "es":  "spa_Latn", "de":  "deu_Latn", "en":  "eng_Latn"},
+  "lang_seq" : [ "pt", "fr", "es", "de"],
+  "save_intermediate_models": true
+}
