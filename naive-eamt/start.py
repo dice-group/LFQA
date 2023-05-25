@@ -32,7 +32,7 @@ from empty_ner import EmptyNer
 from empty_el import EmptyEl
 from swc_ner_el import SwcNerEl
 from mbart_ep_mt import MbartEpMt
-from mbart_plc_mt import MbartPlcFtMt
+from mbart_plc_ft_mt import MbartPlcFtMt
 
 sys.path.insert(1, '/neamt/util/')
 import stats_util
@@ -57,7 +57,7 @@ comp_map = {
     'no_el': EmptyEl,
     'swc_ner_el': SwcNerEl,
     'mbart_ep_mt': MbartEpMt,
-    'mbart_plc_mt': MbartPlcFtMt
+    'mbart_plc_ft_mt': MbartPlcFtMt
 }
 
 def_placeholder = '00'
