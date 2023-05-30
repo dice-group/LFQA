@@ -4,7 +4,8 @@ services:
   # Caching
   redis:
     image: redis:7 # https://hub.docker.com/_/redis/
-    command: ['redis-server', '--save', '60', '1', '--loglevel', 'warning', '--maxmemory-policy', 'allkeys-lru']
+    command: ['redis-server', '--save', '60', '1', '--loglevel', 'warning', '--maxmemory', '32gb', '--maxmemory-policy', 'allkeys-lru']
+    restart: always
     ports:
       - 6379:6379
     volumes:
