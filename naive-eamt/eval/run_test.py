@@ -1,4 +1,4 @@
-# This script is to help generate the translations for the defined test configuration
+v# This script is to help generate the translations for the defined test configuration
 import sys
 from tqdm import tqdm
 import logging
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     bar_queue = mp_man.Queue()
     # Function to update the progress bar
     def update_bar(q):
-        pbar = tqdm(total=pipe_handler.count['request'])
+        pbar = tqdm(total=pipe_handler.count['request'], position=0, leave=True)
         while True:
             x = q.get()
             pbar.update(x)

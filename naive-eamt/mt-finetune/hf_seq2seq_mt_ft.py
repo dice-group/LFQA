@@ -8,7 +8,7 @@ import logging
 import os
 # Select GPUs to train (usually trains faster on a single GPU)
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 """
 Script to fine-tune MT models
 Ref: https://huggingface.co/docs/transformers/tasks/translation
@@ -17,9 +17,9 @@ To use: python hf_seq2seq_mt_ft.py
 """
 # Set this value according to your GPU
 BATCH_SIZE = 32
+TRAIN_EPOCHS = 30
 
-
-def fine_tune_mt_model(model_name, tokenizer_name, dataset_file, output_dir, local_model, local_model_path, src_lang, tgt_lang):
+def fine_tune_mt_model(model_name, tokenizer_name, dataset_files, output_dir, local_model, local_model_path, src_lang, tgt_lang):
 
     if local_model:
         # load tokenizer
@@ -41,9 +41,11 @@ def fine_tune_mt_model(model_name, tokenizer_name, dataset_file, output_dir, loc
         model.resize_token_embeddings(len(tokenizer))
         logging.info("We have added %d tokens: %s" % (num_added_toks, extra_tokens_dict))
     # print model info
-    logging.info("Starting fine-tuning of '%s' with '%s', output will saved at '%s'" % (model.name_or_path, dataset_file, output_dir))
+    logging.info("Starting fine-tuning of '%s' with '%s', output will saved at '%s'" % (model.name_or_path, dataset_files, output_dir))
     # load dataset
-    dataset = load_dataset("json", data_files=dataset_file)
+    dataset = load_dataset("json", data_files=dataset_files)
+    # shuffle dataset
+    dataset = dataset.shuffle(seed=42)
     # splitting dataset
     dataset = dataset["train"].train_test_split(test_size=0.2, seed=42)
     # print dataset info
@@ -106,7 +108,7 @@ def fine_tune_mt_model(model_name, tokenizer_name, dataset_file, output_dir, loc
         per_device_eval_batch_size=BATCH_SIZE,
         weight_decay=0.01,
         save_total_limit=1,
-        num_train_epochs=10,
+        num_train_epochs=TRAIN_EPOCHS,
         predict_with_generate=True,
         fp16=True,
         push_to_hub=False,
