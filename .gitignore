@@ -28,7 +28,7 @@ share/python-wheels/
 MANIFEST
 
 # custom
-gerbil/*_data/
+gerbil/*_data/*
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
