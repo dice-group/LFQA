@@ -30,12 +30,12 @@ def get_key(namespace, args, kwargs):
         serialized_data = str(base64.b64encode(serialized_data), 'utf-8')
     return f'{prefix}:{namespace}:{serialized_data}'
 
-def call(fn, namespace, *args, **kwargs):
+def call_with_cache(fn, namespace, *args, **kwargs):
+    result = None
     key = get_key(namespace, args, kwargs)
     try:
         result = client.get(key)
     except redis.exceptions.ConnectionError:
-        result = None
         logging.exception('Could not get a value from cache')
     keys_key = f'{prefix}:{namespace}:keys'
     if not result:
@@ -49,3 +49,8 @@ def call(fn, namespace, *args, **kwargs):
         result = deserializer(result)
         logging.debug('Cached result: %s → %s', key, result)
     return result
+
+def call_without_cache(fn, namespace, *args, **kwargs):
+    return fn(*args, **kwargs)
+
+call = call_with_cache if config['DEFAULT'].getboolean('redis_enabled', False) else call_without_cache
