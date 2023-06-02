@@ -13,6 +13,7 @@ services:
       - ./configuration.ini:/neamt/configuration.ini
       # Mount the downloaded data directory(s)
       - ./data:/neamt/data
+      - ./mt-finetune/ft_models:/neamt/ft_models
       # Mount cache
       - ./cache/huggingface:/root/.cache/huggingface
       - ./cache/flair:/root/.flair

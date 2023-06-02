@@ -73,7 +73,7 @@ class PipelineHandler:
                     # For each test string
                     for id in test_data[lang]:
                         out.write(test_data['en'][id] + '\n')
-                        tsv_out.write(id + '\t' + test_data['en'][id] + '\n')
+                        tsv_out.write(str(id) + '\t' + test_data['en'][id] + '\n')
 
             self.test_pipelines[test_name] = {}
             self.test_pipelines[test_name]['pipelines'] = pipes
