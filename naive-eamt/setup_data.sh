@@ -73,6 +73,16 @@ mkdir zh-en && cd "$_"
 wget https://object.pouta.csc.fi/Tatoeba-MT-models/zho-eng/opus-2020-07-14.zip
 unzip 'opus-2020-07-14.zip'
 rm -rf 'opus-2020-07-14.zip'
+cd ..
+mkdir it-en && cd "$_"
+wget https://object.pouta.csc.fi/OPUS-MT-models/it-en/opus-2019-12-05.zip
+unzip 'opus-2019-12-05.zip'
+rm -rf 'opus-2019-12-05.zip'
+cd ..
+mkdir pt-en && cd "$_"
+wget https://object.pouta.csc.fi/OPUS-MT-models/pt-en/opus-2019-12-05.zip
+unzip 'opus-2019-12-05.zip'
+rm -rf 'opus-2019-12-05.zip'
 cd ../..
 docker build . -t opus-mt
 cd ..
