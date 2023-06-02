@@ -11,8 +11,8 @@ class GenHuggingfaceMt(GenMT):
         It helps keep the framework from unnecessarily occupying the memory.
         """
         # Only accessible inside the docker network
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name, **model_kwargs)
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(tokenizer_name, **tokenizer_kwargs)
+        self.model = AutoModelForSeq2SeqLM.from_pretrained(model_name, **model_kwargs)
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name, **tokenizer_kwargs)
         self.lang_code_map = lang_code_map
 
         logging.debug('%s component initialized.' % type(self).__name__)
