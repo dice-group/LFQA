@@ -171,6 +171,13 @@ curl --location --request POST 'http://porque.cs.upb.de:6100/custom-pipeline' \
 --data-urlencode 'replace_before=False' \
 --data-urlencode 'target_lang=ru'
 ```
+
+### Caching
+To enable caching, set `redis_enabled` in `configuration.ini` to `yes`.
+Then, `start_docker_containers.sh` should start up `redis` automatically.
+If Redis is running separately, set the address of Redis instance in the option `redis_host`.
+Outputs of components in pipelines are cached independently and would be reused as long as the input to the component stays exactly the same.
+
 ## Customized Components
 ### Component I/O Formatting
 <a id="NER">__NER__:</a> For the components that strictly perform the task of named entity recognition, the expected input is a dictionary containing text in natural language (en,de,fr,es). The output should be a dictionary containing the string and information of annotated entities. Following is an example:
