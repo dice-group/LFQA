@@ -27,7 +27,7 @@ if 'libre_mt' in component_set:
     profile_arr.append('libre_mt')
 if 'opus_mt' in component_set:
     profile_arr.append('opus_mt')
-if config['DEFAULT'].getboolean('redis_enabled'):
+if config['DEFAULT'].getboolean('redis_enabled') and config['DEFAULT'].get('redis_host') == 'redis':
     profile_arr.append('redis')
 # Should be comma separated string of docker profiles
 profile_str = ','.join(profile_arr)
