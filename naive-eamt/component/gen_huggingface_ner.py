@@ -1,16 +1,11 @@
 # This class demonstrates how each component should look like
 import logging
-import os
-import sys
-
+import threading
 from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
-# importing util (make sure to run python as module: 'python -m start.py')
-# from ..util import common_util as c_util
 import sys
 
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, '/neamt/util/')
-import common_util as c_util
 from ner_abs import GenNER
 
 def fetch_ent_indexes(ner_results, query):
@@ -62,11 +57,27 @@ class GenHuggingfaceNer(GenNER):
         It helps keep the framework from unnecessarily occupying the memory.
         """
         # Load NER model
-        self.ner_tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+        # self.ner_tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+        self.tokenizer_name = tokenizer_name
         self.ner_model = AutoModelForTokenClassification.from_pretrained(model_name)
-        self.nlp = pipeline("ner", model=self.ner_model, tokenizer=self.ner_tokenizer)
+        # self.nlp = pipeline("ner", model=self.ner_model, tokenizer=self.ner_tokenizer)
         logging.debug('%s component initialized.' % model_name)
-        
+
+    """
+    Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
+    Implementing a workaround mentioned in: https://github.com/huggingface/tokenizers/issues/537#issuecomment-1372231603    
+    """
+    NLP = {}
+
+    def get_nlp(self):
+        _id = threading.get_ident()
+        nlp = self.NLP.get(_id, None)
+        if nlp is None:
+            ner_tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_name)
+            nlp = pipeline("ner", model=self.ner_model, tokenizer=ner_tokenizer)
+            self.NLP[_id] = nlp
+        return nlp
+
     def recognize_entities(self, query, lang, extra_args):
         '''
         Function to annotate entities in a given natural language text.
@@ -76,7 +87,8 @@ class GenHuggingfaceNer(GenNER):
         
         :return:  list of entity mentions found in the provided query
         '''
-        ner_results = self.nlp(query)
+        # Get thread safe NLP/tokenizer
+        ner_results = self.get_nlp()(query)
         logging.debug(ner_results)
         # find the start and end indexes
         ent_indexes = fetch_ent_indexes(ner_results, query)

@@ -1,6 +1,6 @@
 # This class demonstrates how each component should look like
 import logging
-
+import threading
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import pickle
 from el_abs import GenEL
@@ -28,9 +28,25 @@ class MgenreEl(GenEL):
         with open("/neamt/data/mgenre_data/lang_title2wikidataID-normalized_with_redirect.pkl", "rb") as f:
             self.lang_title2wikidataID = pickle.load(f)
         # Load the tokenizer and model
-        self.el_tokenizer = AutoTokenizer.from_pretrained("facebook/mgenre-wiki")
+        # self.el_tokenizer = AutoTokenizer.from_pretrained("facebook/mgenre-wiki")
+        self.tokenizer_name = "facebook/mgenre-wiki"
+        self.tokenizer_kwargs = {}
         self.el_model = AutoModelForSeq2SeqLM.from_pretrained("facebook/mgenre-wiki").eval()
         logging.debug('MgenreEl component initialized.')
+
+    """
+        Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
+        Implementing a workaround mentioned in: https://github.com/huggingface/tokenizers/issues/537#issuecomment-1372231603    
+        """
+    TOKENIZER = {}
+
+    def get_tokenizer(self):
+        _id = threading.get_ident()
+        tokenizer = self.TOKENIZER.get(_id, None)
+        if tokenizer is None:
+            tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_name, **self.tokenizer_kwargs)
+            self.TOKENIZER[_id] = tokenizer
+        return tokenizer
 
     def prep_input_args(self, input):
         extra_args = {}
@@ -40,7 +56,8 @@ class MgenreEl(GenEL):
         return extra_args
 
     def link_entities(self, query, lang, ent_indexes, extra_args):
-
+        # Get thread safe tokenizer
+        el_tokenizer = self.get_tokenizer()
         # Extract custom parameter
         num_return_sequences = extra_args.get('mg_num_return_sequences')
 
@@ -57,14 +74,14 @@ class MgenreEl(GenEL):
         print(sentences)
         # Step 2: Run Entity Linking on the annotated sentence(s)
         outputs = self.el_model.generate(
-            **self.el_tokenizer(sentences, return_tensors="pt", padding=True),
+            **el_tokenizer(sentences, return_tensors="pt", padding=True),
             num_beams=5,
             num_return_sequences=num_return_sequences,
             # OPTIONAL: use constrained beam search
             # prefix_allowed_tokens_fn=lambda batch_id, sent: trie.get(sent.tolist())
         )
 
-        res_arr = self.el_tokenizer.batch_decode(outputs, skip_special_tokens=True)
+        res_arr = el_tokenizer.batch_decode(outputs, skip_special_tokens=True)
         logging.debug('model output: %s'%str(res_arr))
         mention_index = 0
         result_index = 0
