@@ -21,11 +21,12 @@ class MbartMt(GenMT):
             'ru': 'ru_RU',
             'fr': 'fr_XX',
             'es': 'es_XX',
-            'pt': 'pt_XX'
+            'pt': 'pt_XX',
+            'it': 'it_IT'
         }
         logging.debug('MbartMt component initialized.')
     
-    def translate_text(self, trans_text, source_lang, target_lang):
+    def translate_text(self, trans_text, source_lang, target_lang, extra_args):
         self.tokenizer.src_lang = self.lang_code_map[source_lang]
         encoded_ar = self.tokenizer(trans_text, return_tensors="pt")
         generated_tokens = self.model.generate(

@@ -20,13 +20,12 @@ class SpacyNer(GenNER):
         self.nlp = spacy.load("xx_ent_wiki_sm")
         logging.debug('SpacyNer component initialized.')
         
-    def recognize_entities(self, query, lang, input):
+    def recognize_entities(self, query, lang, extra_args):
         '''
         Function to annotate entities in a given natural language text.
 
         :param query: input natural language text to be annotated
         :param lang: language of the query
-        :param input: input json to use/provide extra information
         
         :return:  list of entity mentions found in the provided query
         '''

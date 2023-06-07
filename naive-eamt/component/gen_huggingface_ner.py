@@ -67,13 +67,12 @@ class GenHuggingfaceNer(GenNER):
         self.nlp = pipeline("ner", model=self.ner_model, tokenizer=self.ner_tokenizer)
         logging.debug('%s component initialized.' % model_name)
         
-    def recognize_entities(self, query, lang, input):
+    def recognize_entities(self, query, lang, extra_args):
         '''
         Function to annotate entities in a given natural language text.
 
         :param query: input natural language text to be annotated
         :param lang: language of the query
-        :param input: input json to use/provide extra information
         
         :return:  list of entity mentions found in the provided query
         '''

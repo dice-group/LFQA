@@ -52,5 +52,23 @@
             "host": "0.0.0.0",
             "port": "10006"
         }
+    },
+     "it": {
+        "en": {
+            "configuration": "./models/it-en/decoder.yml",
+            "sourcebpe": "./models/it-en/source.bpe",
+            "targetbpe": "./models/it-en/target.bpe",
+            "host": "0.0.0.0",
+            "port": "10007"
+        }
+    },
+     "pt": {
+        "en": {
+            "configuration": "./models/pt-en/decoder.yml",
+            "sourcebpe": "./models/pt-en/source.bpe",
+            "targetbpe": "./models/pt-en/target.bpe",
+            "host": "0.0.0.0",
+            "port": "10008"
+        }
     }
 }

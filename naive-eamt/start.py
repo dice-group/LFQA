@@ -14,6 +14,7 @@ from flask import request
 # importing the flask Module
 from flask import Flask
 import sys
+import common_util as c_util
 
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, '/neamt/component/')
@@ -111,16 +112,25 @@ def process_cus_input(input_query, inst_list):
     logging.debug('Pipeline Info:\n%s' % inst_list)
     # Persist the input/output for the pipeline components
     io_var = input_query
+    # Check the input language
+    check_lang(io_var)
     # Loop through pipeline components and pass it the previous output as an input
     for inst in inst_list:
         # Log start time
         start_time = time.time()
-        io_var = inst.process_input(io_var)
+        inst.process_input(io_var)
         # Print step time
         logging.debug('Time needed to process input using %s class: %s second(s)' % (type(inst).__name__, (time.time() - start_time)))
     # return the last output
     logging.info('final output: %s' % io_var)
     return io_var
+
+
+def check_lang(input):
+    query = input['text']
+    if 'lang' not in input:
+        lang = c_util.detect_lang(query)
+        input['lang'] = lang
 
 
 # logging.info('Started')
@@ -161,9 +171,9 @@ def process_query(query, data, inst_list, full_json):
             return res['translated_text']
         return res
     except Exception as inst:
-        logging.error('Exception occurred for the query: %s\nException: %s' % (query, inst))
+        logging.exception('Exception occurred for the query: %s\nException: %s' % (query, inst))
         return {}
-    
+
 
 @app.route('/<string:path>', methods=['POST'])
 def gen_pipe(path):

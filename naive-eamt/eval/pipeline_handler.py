@@ -3,7 +3,6 @@ import logging
 import time
 import requests
 from pathlib import Path
-from tqdm import tqdm
 
 class PipelineHandler:
     
@@ -31,14 +30,14 @@ class PipelineHandler:
         self.output_dir = output_dir
         self.config_file = config_file
         # Create the directory(s) in the output path
-        print(self.output_dir)
+        logging.info(self.output_dir)
         Path(self.output_dir).mkdir(parents=True, exist_ok=True)
         
     def gen_pipelines(self):
         with open(self.config_file, 'r') as ec:
             self.eval_cfg = json.load(ec)
         
-        print(self.eval_cfg)
+        logging.info(self.eval_cfg)
         for cfg in self.eval_cfg:
             test_name = cfg['name']
             pipes = []
@@ -49,7 +48,7 @@ class PipelineHandler:
                 test_data = self.get_mintaka_test_data(cfg['file'])
             # print data statistics
             for lang in test_data:
-                print('[%s] %s language entries: %d' % (test_name, lang, len(test_data[lang])))
+                logging.info('[%s] %s language entries: %d' % (test_name, lang, len(test_data[lang])))
             # iterate over languages in the current config
             for lang in cfg['test_cfg']:
                 ner_comps = cfg['test_cfg'][lang]['ner']
@@ -68,20 +67,22 @@ class PipelineHandler:
                     lang_pipes.append(['no_ner', 'no_el', mt_item])
                 pipes.append((lang, lang_pipes))
                 self.count['request'] += (len(lang_pipes) * len(test_data[lang]))
+                gold_file_name = self.output_dir + test_name + '_%s-en_gold_file' % lang
                 # Write test data to a file for each lang -> en combination
-                with open(self.output_dir + test_name + '_%s-en_gold_file.txt' % lang, 'w') as out:
+                with open(gold_file_name + '.txt', 'w') as out, open(gold_file_name + '.tsv', 'w') as tsv_out:
                     # For each test string
                     for id in test_data[lang]:
                         out.write(test_data['en'][id] + '\n')
+                        tsv_out.write(str(id) + '\t' + test_data['en'][id] + '\n')
 
             self.test_pipelines[test_name] = {}
             self.test_pipelines[test_name]['pipelines'] = pipes
             self.test_pipelines[test_name]['data'] = test_data
 
-        print('Total request count:', self.count['request'])
+        logging.info('Total request count: %d' % self.count['request'])
         
         for test in self.test_pipelines:
-            print('Test Pipelines for %s:\n' % test, self.test_pipelines[test]['pipelines'])
+            logging.info('Test Pipelines for %s: %s\n' % (test, str(self.test_pipelines[test]['pipelines'])))
         
 
     # Function to generate test data using QALD file
@@ -121,6 +122,7 @@ class PipelineHandler:
                 if lang not in res_data:
                     res_data[lang] = {}
                 res_data[lang][id] = q_item['translations'][lang]
+                res_data[lang][id] = q_item['translations'][lang]
         return res_data
     # function to create unique prediction file name
     def get_pred_file_name(self, lang, components):
@@ -129,7 +131,7 @@ class PipelineHandler:
 
     # Function to fetch the transation through a HTTP POST request
     def get_translation(self, id, lang, query, components, error_stats):
-        # print('Getting Translation for: ', query)
+        # logging.info('Getting Translation for: %s' % query)
         payload = {
             'query': query,
             'components': ','.join(components),
@@ -142,30 +144,30 @@ class PipelineHandler:
         translated_text = ''
         try:
             response = requests.request("POST", self.url, headers=self.headers, data=payload, timeout=600)
-            # print('Translation received: ', response.text)
+            # logging.info('Translation received: %s' % response.text)
             if response.status_code != 200:
-                print('error encountered for the query %s and components %s. Response: \n %s' % (
+                logging.info('error encountered for the query %s and components %s. Response: \n %s' % (
                     query, payload['components'], response))
                 error_stats['error'] += 1
             else:
                 ret_val = response.json()
                 if 'translated_text' not in ret_val:
                     # throw exception
-                    raise ValueError('Received incomplete json response.')
+                    raise ValueError('Received incomplete json response: %s' % str(ret_val))
                 else:
                     translated_text = ret_val['translated_text']
-                #print('Json response: ', ret_val)
-                #print('Response type: ', type(ret_val))
+                #logging.info('Json response: %s' % ret_val)
+                #logging.info('Response type: %s' % type(ret_val))
                 # Adding the ID to the answer
                 ret_val['id'] = id
         except Exception as e:
-            print('Following exception encountered for the payload %s: %s' % (str(payload), e))
+            logging.info('\nFollowing exception encountered for the payload %s: %s' % (str(payload), e))
             error_stats['exception'] += 1
 
         return ret_val, translated_text
     # function that can be run in parallel
     def execute_pipeline(self, lang, pipeline, test, test_data, bar_queue):
-        print('\nProcess started: test: %s\tlang: %s\tpipeline: %s'%(test, lang, pipeline))
+        logging.info('\nProcess started: test: %s\tlang: %s\tpipeline: %s'%(test, lang, pipeline))
         error_stats = {
             'error': 0,
             'exception': 0
@@ -179,14 +181,16 @@ class PipelineHandler:
                 # print('Pipeline:', pipeline)
                 query = test_data[lang][id]
                 resp_json, translated_text = self.get_translation(id, lang, query, pipeline, error_stats)
-                out_jsonl.write(str(resp_json) + '\n')
+                # out_jsonl.write(str(resp_json) + '\n')
+                json.dump(resp_json, out_jsonl)
+                out_jsonl.write('\n')
                 out_text.write(translated_text + '\n')
                 # Update progress bar
                 bar_queue.put_nowait(1)
         return (len(test_data[lang]), error_stats)
 
     def dummy_pipeline_executor(self, lang, pipeline, test, test_data):
-        print('Process started: test: %s\tlang: %s\tpipeline: %s\tData length: %d'%(test, lang, pipeline, len(test_data[lang])))
+        logging.info('Process started: test: %s\tlang: %s\tpipeline: %s\tData length: %d'%(test, lang, pipeline, len(test_data[lang])))
         error_stats = {
             'error': 0,
             'exception': 0

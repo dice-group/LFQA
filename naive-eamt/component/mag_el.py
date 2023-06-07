@@ -2,6 +2,7 @@
 import logging
 
 import requests
+from el_abs import GenEL
 
 def fetch_start(elem):
     return elem['start']
@@ -25,7 +26,7 @@ def fetch_response(text, url):
     resp = response.json()
     return resp
 
-class MagEl:
+class MagEl(GenEL):
     def __init__(self):
         """
         Load the resources needed for your component onto the memory only in this block.
@@ -35,29 +36,21 @@ class MagEl:
         self.supported_langs = ['en', 'de', 'fr', 'es', 'it', 'ja', 'nl']
         self.endpoint_format = 'http://mag-%s:8080/AGDISTIS'
         logging.debug('MagEl component initialized.')
-
-    def process_input(self, input):
-        '''
-        Function to link the entities from an annotated text.
-
-        :param input:  formatted dictionary as stated in the README for NER output
-        :return:  formatted dictionary as stated in the README for EL output
-        '''
-        logging.debug('Input received: %s'%input)
-        lang = input['lang']
+    def prep_input_args(self, input):
+        extra_args = {}
+        # Setting knowledge base as Wikidata
+        input['kb'] = 'dbp'
+        return None
+    def link_entities(self, query, lang, ent_indexes, extra_args):
         # Check for supported languages
         if lang not in self.supported_langs:
             logging.debug('Language not supported by MAG: %s'%lang)
-            return input
-        input['kb'] = 'dbp'
+            return ent_indexes
         endpoint = self.endpoint_format%lang
-        # Setting knowledge base as Wikidata
-        ent_indexes = input['ent_mentions']
         # do not continue if non mentions are present
         if len(ent_indexes) == 0:
             logging.debug('No mentions found!')
-            return input
-        query = input['text']
+            return ent_indexes
         sentence = ''
         last_ind = 0
         # Sorting according to the start
@@ -76,12 +69,12 @@ class MagEl:
         mag_resp.sort(key=fetch_start)
         # There's always one entry for each mention that was annotated
         logging.debug('Response from MAG: %s'%mag_resp)
-        
+
         arr_ind = 0
         for item in mag_resp:
             url = item['disambiguatedURL']
             if 'notinwiki' not in url.lower():
                 ent_indexes[arr_ind]['link'] = url
             arr_ind += 1
-        logging.debug('Output: %s'%input)
-        return input
+
+        return ent_indexes

@@ -13,6 +13,9 @@ services:
       - ./configuration.ini:/neamt/configuration.ini
       # Mount the downloaded data directory(s)
       - ./data:/neamt/data
+      # Mount cache
+      - ./cache/huggingface:/root/.cache/huggingface
+      - ./cache/flair:/root/.flair
     ports:
       - 6100:80
     networks:
@@ -175,5 +178,16 @@ services:
       - AGDISTIS_EDGE_TYPE=http://dbpedia.org/ontology/
       - AGDISTIS_BASE_URI=http://dbpedia.org
       - AGDISTIS_CONTEXT=False
+  redis:
+    profiles: ["redis"]
+    image: redis:7 # https://hub.docker.com/_/redis/
+    command: ['redis-server', '--save', '60', '1', '--loglevel', 'warning', '--maxmemory', '24gb', '--maxmemory-policy', 'allkeys-lru']
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - neamt-net
+    volumes:
+      - ./cache:/data
 networks:
   neamt-net:

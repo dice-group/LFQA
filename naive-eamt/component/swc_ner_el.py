@@ -72,13 +72,17 @@ class SwcNerEl(GenNER):
         self.supported_langs = ['en', 'de']
         logging.debug('SwcNerEl component initialized.')
 
-    def recognize_entities(self, query, lang, input):
+    def prep_input_args(self, input):
+        # set the KB
+        input['kb'] = 'swc'
+        return None
+
+    def recognize_entities(self, query, lang, extra_args):
         '''
         Function to annotate entities in a given natural language text.
 
         :param query: input natural language text to be annotated
         :param lang: language of the query
-        :param input: input json to use/provide extra information
         
         :return:  list of entity mentions found in the provided query
         '''
@@ -86,6 +90,4 @@ class SwcNerEl(GenNER):
         # checking for supported languages
         if lang in self.supported_langs:
             ent_indexes.extend(fetch_entlinks(query, self.url, self.auth, self.pid))
-        # set the KB to query
-        input['kb'] = 'swc'
         return ent_indexes

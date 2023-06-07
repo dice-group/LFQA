@@ -19,11 +19,12 @@ class NllbMt(GenMT):
             'ru': 'rus_Cyrl',
             'fr': 'fra_Latn',
             'es': 'spa_Latn',
-            'pt': 'por_Latn'
+            'pt': 'por_Latn',
+            'it': 'ita_Latn'
         }
         logging.debug('NllbMt component initialized.')
     
-    def translate_text(self, trans_text, source_lang, target_lang):
+    def translate_text(self, trans_text, source_lang, target_lang, extra_args):
         self.tokenizer.src_lang = self.lang_code_map[source_lang]
         encoded_ar = self.tokenizer(trans_text, return_tensors="pt")
         generated_tokens = self.model.generate(
