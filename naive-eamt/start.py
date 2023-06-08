@@ -42,7 +42,7 @@ import stats_util
 stat_dict = stats_util.stats
 # configuring logging
 logging.basicConfig(filename='/neamt/logs/neamt.log', level=logging.DEBUG,
-                    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+                    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s', filemode='w')
 # Read the configuration file and find the relevant components
 comp_map = {
     'flair_ner': FlairNer,
@@ -85,6 +85,7 @@ def detect_components(config):
             pipeline_path = config.get(section, 'path')
             # extract pipeline components
             comp_list = json.loads(config.get(section, 'components'))
+            logging.info("list of components to be loaded: %s" % str(comp_list))
             # find/add components in the instance map
             inst_list = []
             for comp in comp_list:
