@@ -1,4 +1,4 @@
-v# This script is to help generate the translations for the defined test configuration
+# This script is to help generate the translations for the defined test configuration
 import sys
 from tqdm import tqdm
 import logging
