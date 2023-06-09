@@ -20,15 +20,14 @@ class OpusPlcFtMt(GenMT):
         "model_name_langs": [ "it", "fr", "es", "de"]
     }
 
-    model_tok_map = {}
-
-    TOKENIZER = {}
     def __init__(self):
         """
         Load the resources needed for your component onto the memory only in this block.
         It helps keep the framework from unnecessarily occupying the memory.
         """
         self.lang_code_map = self.init_args["lang_code_map"]
+        self.model_tok_map = {}
+        self.TOKENIZER = {}
         for lang in self.init_args["model_name_langs"]:
             model_name = self.init_args["model_name_template"] % lang
             model_kwargs = self.init_args["model_kwargs"]

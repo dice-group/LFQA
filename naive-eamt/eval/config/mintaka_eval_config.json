@@ -6,27 +6,27 @@
       "de": {
         "ner": [ "babelscape_ner", "flair_ner", "davlan_ner", "spacy_ner"],
         "el": ["mgenre_el", "mag_el"],
-        "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
+        "mt": ["opus_plc_ft_mt", "nllb_plc_ft_mt", "mbart_plc_ft_mt", "libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       },
       "pt": {
         "ner": [ "babelscape_ner", "davlan_ner", "spacy_ner"],
         "el": ["mgenre_el"],
-        "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
+        "mt": ["nllb_plc_ft_mt", "mbart_plc_ft_mt", "libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       },
       "es": {
         "ner": [ "babelscape_ner", "flair_ner", "davlan_ner", "spacy_ner"],
         "el": ["mgenre_el", "mag_el"],
-        "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
+        "mt": ["opus_plc_ft_mt", "nllb_plc_ft_mt", "mbart_plc_ft_mt", "libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       },
       "it": {
         "ner": [ "babelscape_ner", "davlan_ner", "spacy_ner"],
         "el": ["mgenre_el", "mag_el"],
-        "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
+        "mt": ["opus_plc_ft_mt", "nllb_plc_ft_mt", "mbart_plc_ft_mt", "libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       },
       "fr": {
         "ner": [ "babelscape_ner", "davlan_ner", "spacy_ner"],
         "el": ["mgenre_el", "mag_el"],
-        "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
+        "mt": ["opus_plc_ft_mt", "nllb_plc_ft_mt", "mbart_plc_ft_mt", "libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       }
     }
   },
@@ -37,27 +37,27 @@
       "de": {
         "ner": [ "babelscape_ner", "flair_ner", "davlan_ner", "spacy_ner"],
         "el": ["mgenre_el", "mag_el"],
-        "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
+        "mt": ["opus_plc_ft_mt", "nllb_plc_ft_mt", "mbart_plc_ft_mt", "libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       },
       "pt": {
         "ner": [ "babelscape_ner", "davlan_ner", "spacy_ner"],
         "el": ["mgenre_el"],
-        "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
+        "mt": ["nllb_plc_ft_mt", "mbart_plc_ft_mt", "libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       },
       "es": {
         "ner": [ "babelscape_ner", "flair_ner", "davlan_ner", "spacy_ner"],
         "el": ["mgenre_el", "mag_el"],
-        "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
+        "mt": ["opus_plc_ft_mt", "nllb_plc_ft_mt", "mbart_plc_ft_mt", "libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       },
       "it": {
         "ner": [ "babelscape_ner", "davlan_ner", "spacy_ner"],
         "el": ["mgenre_el", "mag_el"],
-        "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
+        "mt": ["opus_plc_ft_mt", "nllb_plc_ft_mt", "mbart_plc_ft_mt", "libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       },
       "fr": {
         "ner": [ "babelscape_ner", "davlan_ner", "spacy_ner"],
         "el": ["mgenre_el", "mag_el"],
-        "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
+        "mt": ["opus_plc_ft_mt", "nllb_plc_ft_mt", "mbart_plc_ft_mt", "libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       }
     }
   },
@@ -68,27 +68,27 @@
       "de": {
         "ner": [ "babelscape_ner", "flair_ner", "davlan_ner", "spacy_ner"],
         "el": ["mgenre_el", "mag_el"],
-        "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
+        "mt": ["opus_plc_ft_mt", "nllb_plc_ft_mt", "mbart_plc_ft_mt", "libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       },
       "pt": {
         "ner": [ "babelscape_ner", "davlan_ner", "spacy_ner"],
         "el": ["mgenre_el"],
-        "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
+        "mt": ["nllb_plc_ft_mt", "mbart_plc_ft_mt", "libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       },
       "es": {
         "ner": [ "babelscape_ner", "flair_ner", "davlan_ner", "spacy_ner"],
         "el": ["mgenre_el", "mag_el"],
-        "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
+        "mt": ["opus_plc_ft_mt", "nllb_plc_ft_mt", "mbart_plc_ft_mt", "libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       },
       "it": {
         "ner": [ "babelscape_ner", "davlan_ner", "spacy_ner"],
         "el": ["mgenre_el", "mag_el"],
-        "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
+        "mt": ["opus_plc_ft_mt", "nllb_plc_ft_mt", "mbart_plc_ft_mt", "libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       },
       "fr": {
         "ner": [ "babelscape_ner", "davlan_ner", "spacy_ner"],
         "el": ["mgenre_el", "mag_el"],
-        "mt": ["libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
+        "mt": ["opus_plc_ft_mt", "nllb_plc_ft_mt", "mbart_plc_ft_mt", "libre_mt", "opus_mt", "nllb_mt", "mbart_mt"]
       }
     }
   }

@@ -18,13 +18,13 @@ class GenHuggingfaceMt(GenMT):
         self.tokenizer_kwargs = tokenizer_kwargs
         self.lang_code_map = lang_code_map
 
-        logging.debug('%s component initialized.' % type(self).__name__)
+        """
+        Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
+        Implementing a workaround mentioned in: https://github.com/huggingface/tokenizers/issues/537#issuecomment-1372231603    
+        """
+        self.TOKENIZER = {}
 
-    """
-    Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
-    Implementing a workaround mentioned in: https://github.com/huggingface/tokenizers/issues/537#issuecomment-1372231603    
-    """
-    TOKENIZER = {}
+        logging.debug('%s component initialized.' % type(self).__name__)
 
     def get_tokenizer(self):
         _id = threading.get_ident()
