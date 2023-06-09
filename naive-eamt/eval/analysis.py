@@ -48,6 +48,15 @@ def jaccard(got, expected):
     i = len(got_set & expected_set)
     return i / u if u != 0 else 0 if i != 0 else 1
 
+def labels(got, expected):
+    'Check if any of entity labels from expected result are found in the translated text we got'
+    mentions = [m for m in expected.get('ent_mentions', []) if len(m.get('labels', [])) != 0]
+    if (l := len(mentions)) != 0:
+        t = got.get('translated_text', '')
+        return sum(1 for m in mentions if any(s.lower() in t for s in m['labels'])) / l
+    else:
+        return 1
+
 def wd_resolve(local_name):
     # may need urllib.parse.urljoin
     return WD + local_name
@@ -76,7 +85,10 @@ def neamt(item):
 
 def mintaka(dataset_file):
     def mintaka_mentions(mentions):
-        return [{'canonical_uri': WD + m['name']} for m in mentions if m['entityType'] == 'entity' and m['name'] is not None]
+        return [{
+            'canonical_uri': WD + m['name'],
+            'labels': {m['label'], m['mention']},
+        } for m in mentions if m['entityType'] == 'entity' and m['name'] is not None]
     questions = dict()
     for df in dataset_file:
         with open(df) as f:
@@ -133,7 +145,7 @@ def main(*, path, gold_file_suffix, metric, dataset_file, dataset_format, redis_
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
-    metrics = {f.__name__: f for f in [bleu2, bleu3, bleu4, jaccard]}
+    metrics = {f.__name__: f for f in [bleu2, bleu3, bleu4, jaccard, labels]}
     class MetricAction(argparse.Action):
         def __call__(s, p, n, v, o=None): setattr(n, s.dest, metrics[v])
 
