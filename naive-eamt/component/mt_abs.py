@@ -80,6 +80,8 @@ class GenMT(ABC):
         trans_text, cur_stats = p_util.replace_placeholders(trans_text, replace_before, ent_links, cur_stats)
         # Logging current stats
         logging.debug('Current Stats: %s' % cur_stats)
+        # include current stats to the json
+        input['cur_stats'] = cur_stats
         # Update global stats
         stats_util.update_global_stats(cur_stats)
         logging.debug('Global Stats: %s' % stats_util.stats)
