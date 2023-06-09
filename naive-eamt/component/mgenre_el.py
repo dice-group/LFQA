@@ -32,13 +32,13 @@ class MgenreEl(GenEL):
         self.tokenizer_name = "facebook/mgenre-wiki"
         self.tokenizer_kwargs = {}
         self.el_model = AutoModelForSeq2SeqLM.from_pretrained("facebook/mgenre-wiki").eval()
-        logging.debug('MgenreEl component initialized.')
-
-    """
+        """
         Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
         Implementing a workaround mentioned in: https://github.com/huggingface/tokenizers/issues/537#issuecomment-1372231603    
         """
-    TOKENIZER = {}
+        self.TOKENIZER = {}
+        logging.debug('MgenreEl component initialized.')
+
 
     def get_tokenizer(self):
         _id = threading.get_ident()

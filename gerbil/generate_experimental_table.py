@@ -10,7 +10,7 @@ def get_ld_json(url: str) -> dict:
     soup = BeautifulSoup(req.text, parser)
     return json.loads("".join(soup.find("script", {"type":"application/ld+json"}).contents))
 
-df_exp = pd.read_csv("experiments_missing_manual.log", sep="\t", header=None)
+df_exp = pd.read_csv("experiments.log", sep="\t", header=None)
 df_exp.columns = ["Annotator", "Dataset", "Language", "Experiment URI", "Time"]
 
 exp_dict = {

@@ -60,14 +60,15 @@ class GenHuggingfaceNer(GenNER):
         # self.ner_tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
         self.tokenizer_name = tokenizer_name
         self.ner_model = AutoModelForTokenClassification.from_pretrained(model_name)
+        """
+        Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
+        Implementing a workaround mentioned in: https://github.com/huggingface/tokenizers/issues/537#issuecomment-1372231603    
+        """
+        self.NLP = {}
         # self.nlp = pipeline("ner", model=self.ner_model, tokenizer=self.ner_tokenizer)
         logging.debug('%s component initialized.' % model_name)
 
-    """
-    Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
-    Implementing a workaround mentioned in: https://github.com/huggingface/tokenizers/issues/537#issuecomment-1372231603    
-    """
-    NLP = {}
+
 
     def get_nlp(self):
         _id = threading.get_ident()
