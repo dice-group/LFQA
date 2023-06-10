@@ -43,7 +43,7 @@ class OpusPlcFtMt(GenMT):
             Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
             """
             def tokenizer_gen():
-                return AutoTokenizer.from_pretrained(self.tokenizer_name, **self.tokenizer_kwargs)
+                return AutoTokenizer.from_pretrained(tokenizer_name, **tokenizer_kwargs)
             bucket_name = type(self).__name__ + '_' + lang
             self.model_tok_map[lang] = (model, (bucket_name, tokenizer_gen))
 
