@@ -78,7 +78,7 @@ class GenHuggingfaceNer(GenNER):
             nlp = pipeline("ner", model=self.ner_model, tokenizer=ner_tokenizer)
             self.NLP[_id] = nlp
         logging.debug("%s nlp map size: %d" % (type(self).__name__, len(self.NLP)))
-        logging.debug("%s nlp map: %s" % (type(self).__name__, self.NLP))
+        logging.debug("%s nlp map keys: %s" % (type(self).__name__, self.NLP.keys()))
         return nlp
 
     def recognize_entities(self, query, lang, extra_args):
