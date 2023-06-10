@@ -6,6 +6,7 @@ import sys
 
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, '/neamt/util/')
+import threadsafe_resource_pool_util as trp_util
 from ner_abs import GenNER
 
 def fetch_ent_indexes(ner_results, query):
@@ -62,24 +63,16 @@ class GenHuggingfaceNer(GenNER):
         self.ner_model = AutoModelForTokenClassification.from_pretrained(model_name)
         """
         Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
-        Implementing a workaround mentioned in: https://github.com/huggingface/tokenizers/issues/537#issuecomment-1372231603    
         """
         self.NLP = {}
-        # self.nlp = pipeline("ner", model=self.ner_model, tokenizer=self.ner_tokenizer)
-        logging.debug('%s component initialized.' % model_name)
-
-
-
-    def get_nlp(self):
-        _id = threading.get_ident()
-        nlp = self.NLP.get(_id, None)
-        if nlp is None:
+        def nlp_gen():
             ner_tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_name)
             nlp = pipeline("ner", model=self.ner_model, tokenizer=ner_tokenizer)
-            self.NLP[_id] = nlp
-        logging.debug("%s nlp map size: %d" % (type(self).__name__, len(self.NLP)))
-        logging.debug("%s nlp map keys: %s" % (type(self).__name__, self.NLP.keys()))
-        return nlp
+            return nlp
+
+        self.nlp_generator = nlp_gen
+        # self.nlp = pipeline("ner", model=self.ner_model, tokenizer=self.ner_tokenizer)
+        logging.debug('%s component initialized.' % model_name)
 
     def recognize_entities(self, query, lang, extra_args):
         '''
@@ -90,9 +83,13 @@ class GenHuggingfaceNer(GenNER):
         
         :return:  list of entity mentions found in the provided query
         '''
-        # Get thread safe NLP/tokenizer
-        ner_results = self.get_nlp()(query)
-        logging.debug(ner_results)
-        # find the start and end indexes
-        ent_indexes = fetch_ent_indexes(ner_results, query)
-        return ent_indexes
+        nlp = trp_util.get_threadsafe_object(type(self).__name__, self.nlp_generator)
+        try:
+            # Get thread safe NLP/tokenizer
+            ner_results = nlp(query)
+            logging.debug(ner_results)
+            # find the start and end indexes
+            ent_indexes = fetch_ent_indexes(ner_results, query)
+            return ent_indexes
+        finally:
+            trp_util.release_threadsafe_object(type(self).__name__, nlp)

@@ -4,6 +4,9 @@ from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 import threading
 from mt_abs import GenMT
 
+sys.path.insert(1, '/neamt/util/')
+import threadsafe_resource_pool_util as trp_util
+
 class OpusPlcFtMt(GenMT):
     init_args = {
         "model_name_template": "/neamt/ft_models/opusmt/opusmt_mintaka_plc_%s_en",
@@ -36,36 +39,28 @@ class OpusPlcFtMt(GenMT):
             # initializing tokenizer and model
             model = AutoModelForSeq2SeqLM.from_pretrained(model_name, **model_kwargs)
             # tokenizer = AutoTokenizer.from_pretrained(tokenizer_name, **tokenizer_kwargs)
-            self.model_tok_map[lang] = (model, (tokenizer_name, tokenizer_kwargs))
+            """
+            Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
+            """
+            def tokenizer_gen():
+                return AutoTokenizer.from_pretrained(self.tokenizer_name, **self.tokenizer_kwargs)
+            bucket_name = type(self).__name__ + '_' + lang
+            self.model_tok_map[lang] = (model, (bucket_name, tokenizer_gen))
 
         logging.debug('%s component initialized.' % type(self).__name__)
 
-    """
-    Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
-    Implementing a workaround mentioned in: https://github.com/huggingface/tokenizers/issues/537#issuecomment-1372231603    
-    """
-
-    def get_tokenizer(self, lang):
-        _id = str(threading.get_ident())
-        tokenizer = self.TOKENIZER.get(_id + lang, None)
-        if tokenizer is None:
-            tok_info = self.model_tok_map[lang][1]
-            tokenizer_name = tok_info[0]
-            tokenizer_kwargs = tok_info[1]
-            tokenizer = AutoTokenizer.from_pretrained(tokenizer_name, **tokenizer_kwargs)
-            self.TOKENIZER[_id + lang] = tokenizer
-
-        logging.debug("%s tokenizer map size: %d" % (type(self).__name__, len(self.TOKENIZER)))
-        logging.debug("%s tokenizer map keys: %s" % (type(self).__name__, self.TOKENIZER.keys()))
-        return tokenizer
 
     def translate_text(self, trans_text, source_lang, target_lang, extra_args):
+        model_tok_info = self.model_tok_map[source_lang]
         # fetch model and tokenizer
-        model = self.model_tok_map[source_lang][0]
-        tokenizer = self.get_tokenizer(source_lang)
-
-        tokenizer.src_lang = self.lang_code_map[source_lang]
-        encoded_ar = tokenizer(trans_text, return_tensors="pt")
-        generated_tokens = model.generate(**encoded_ar)
-        trans_text = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)[0]
-        return trans_text
+        model = model_tok_info[0]
+        tok_info = model_tok_info[1]
+        tokenizer = trp_util.get_threadsafe_object(tok_info[0], tok_info[1])
+        try:
+            tokenizer.src_lang = self.lang_code_map[source_lang]
+            encoded_ar = tokenizer(trans_text, return_tensors="pt")
+            generated_tokens = model.generate(**encoded_ar)
+            trans_text = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)[0]
+            return trans_text
+        finally:
+            trp_util.release_threadsafe_object(tok_info[0], tokenizer)
