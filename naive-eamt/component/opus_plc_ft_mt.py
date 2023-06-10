@@ -47,13 +47,16 @@ class OpusPlcFtMt(GenMT):
 
     def get_tokenizer(self, lang):
         _id = threading.get_ident()
-        tokenizer = self.TOKENIZER.get(_id, None)
+        tokenizer = self.TOKENIZER.get(_id + lang, None)
         if tokenizer is None:
             tok_info = self.model_tok_map[lang][1]
             tokenizer_name = tok_info[0]
             tokenizer_kwargs = tok_info[1]
             tokenizer = AutoTokenizer.from_pretrained(tokenizer_name, **tokenizer_kwargs)
-            self.TOKENIZER[_id] = tokenizer
+            self.TOKENIZER[_id + lang] = tokenizer
+
+        logging.debug("%s tokenizer map size: %d" % (type(self).__name__, len(self.TOKENIZER)))
+        logging.debug("%s tokenizer map: %s" % (type(self).__name__, self.TOKENIZER))
         return tokenizer
 
     def translate_text(self, trans_text, source_lang, target_lang, extra_args):

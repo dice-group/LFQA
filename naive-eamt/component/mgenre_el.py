@@ -37,7 +37,7 @@ class MgenreEl(GenEL):
         Implementing a workaround mentioned in: https://github.com/huggingface/tokenizers/issues/537#issuecomment-1372231603    
         """
         self.TOKENIZER = {}
-        logging.debug('MgenreEl component initialized.')
+        logging.debug('%s component initialized.' % type(self).__name__)
 
 
     def get_tokenizer(self):
@@ -46,6 +46,8 @@ class MgenreEl(GenEL):
         if tokenizer is None:
             tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_name, **self.tokenizer_kwargs)
             self.TOKENIZER[_id] = tokenizer
+        logging.debug("%s tokenizer map size: %d" % (type(self).__name__, len(self.TOKENIZER)))
+        logging.debug("%s tokenizer map: %s" % (type(self).__name__, self.TOKENIZER))
         return tokenizer
 
     def prep_input_args(self, input):
