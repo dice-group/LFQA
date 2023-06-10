@@ -3,7 +3,6 @@ import logging
 import threading
 from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
 import sys
-
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, '/neamt/util/')
 import threadsafe_resource_pool_util as trp_util
