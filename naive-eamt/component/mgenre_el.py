@@ -4,6 +4,9 @@ import threading
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import pickle
 from el_abs import GenEL
+import sys
+sys.path.insert(1, '/neamt/util/')
+import threadsafe_resource_pool_util as trp_util
 
 
 def get_rev_tuple(index, arr):
@@ -34,19 +37,14 @@ class MgenreEl(GenEL):
         self.el_model = AutoModelForSeq2SeqLM.from_pretrained("facebook/mgenre-wiki").eval()
         """
         Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
-        Implementing a workaround mentioned in: https://github.com/huggingface/tokenizers/issues/537#issuecomment-1372231603    
         """
-        self.TOKENIZER = {}
-        logging.debug('MgenreEl component initialized.')
+        def tokenizer_gen():
+            return AutoTokenizer.from_pretrained(self.tokenizer_name, **self.tokenizer_kwargs)
 
+        self.tokenizer_generator = tokenizer_gen
 
-    def get_tokenizer(self):
-        _id = threading.get_ident()
-        tokenizer = self.TOKENIZER.get(_id, None)
-        if tokenizer is None:
-            tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_name, **self.tokenizer_kwargs)
-            self.TOKENIZER[_id] = tokenizer
-        return tokenizer
+        logging.debug('%s component initialized.' % type(self).__name__)
+
 
     def prep_input_args(self, input):
         extra_args = {}
@@ -57,52 +55,55 @@ class MgenreEl(GenEL):
 
     def link_entities(self, query, lang, ent_indexes, extra_args):
         # Get thread safe tokenizer
-        el_tokenizer = self.get_tokenizer()
-        # Extract custom parameter
-        num_return_sequences = extra_args.get('mg_num_return_sequences')
+        el_tokenizer = trp_util.get_threadsafe_object(type(self).__name__, self.tokenizer_generator)
+        try:
+            # Extract custom parameter
+            num_return_sequences = extra_args.get('mg_num_return_sequences')
 
-        # do not continue if no mentions are present
-        if len(ent_indexes) == 0:
-            logging.debug('No mentions found!')
-            return ent_indexes
-        sentences = []
-        # Generate annotated sentence for each mention + placeholder
-        for ent_mention in ent_indexes:
-            cur_sent = query[:ent_mention['start']] + '[START] ' + query[ent_mention['start']:ent_mention[
-                'end']] + ' [END]' + query[ent_mention['end']:]
-            sentences.append(cur_sent)
-        print(sentences)
-        # Step 2: Run Entity Linking on the annotated sentence(s)
-        outputs = self.el_model.generate(
-            **el_tokenizer(sentences, return_tensors="pt", padding=True),
-            num_beams=5,
-            num_return_sequences=num_return_sequences,
-            # OPTIONAL: use constrained beam search
-            # prefix_allowed_tokens_fn=lambda batch_id, sent: trie.get(sent.tolist())
-        )
+            # do not continue if no mentions are present
+            if len(ent_indexes) == 0:
+                logging.debug('No mentions found!')
+                return ent_indexes
+            sentences = []
+            # Generate annotated sentence for each mention + placeholder
+            for ent_mention in ent_indexes:
+                cur_sent = query[:ent_mention['start']] + '[START] ' + query[ent_mention['start']:ent_mention[
+                    'end']] + ' [END]' + query[ent_mention['end']:]
+                sentences.append(cur_sent)
+            print(sentences)
+            # Step 2: Run Entity Linking on the annotated sentence(s)
+            outputs = self.el_model.generate(
+                **el_tokenizer(sentences, return_tensors="pt", padding=True),
+                num_beams=5,
+                num_return_sequences=num_return_sequences,
+                # OPTIONAL: use constrained beam search
+                # prefix_allowed_tokens_fn=lambda batch_id, sent: trie.get(sent.tolist())
+            )
 
-        res_arr = el_tokenizer.batch_decode(outputs, skip_special_tokens=True)
-        logging.debug('model output: %s'%str(res_arr))
-        mention_index = 0
-        result_index = 0
-        while result_index < len(res_arr):
-            rev_tuple = get_rev_tuple(result_index, res_arr)
-            if rev_tuple in self.lang_title2wikidataID:
-                temp_link = max(self.lang_title2wikidataID[rev_tuple])
-                logging.debug('link found %s for the tuple %s' % (temp_link, str(rev_tuple)))
-                ent_indexes[mention_index]['link'] = temp_link
-            # Find all candidates
-            ent_indexes[mention_index]['link_candidates'] = []
-            j = result_index
-            while j < result_index + num_return_sequences:
-                rev_tuple = get_rev_tuple(j, res_arr)
-                temp_link = ''
+            res_arr = el_tokenizer.batch_decode(outputs, skip_special_tokens=True)
+            logging.debug('model output: %s'%str(res_arr))
+            mention_index = 0
+            result_index = 0
+            while result_index < len(res_arr):
+                rev_tuple = get_rev_tuple(result_index, res_arr)
                 if rev_tuple in self.lang_title2wikidataID:
                     temp_link = max(self.lang_title2wikidataID[rev_tuple])
                     logging.debug('link found %s for the tuple %s' % (temp_link, str(rev_tuple)))
-                ent_indexes[mention_index]['link_candidates'].append((rev_tuple[1], rev_tuple[0], temp_link))
-                j += 1
-            result_index += num_return_sequences
-            mention_index += 1
+                    ent_indexes[mention_index]['link'] = temp_link
+                # Find all candidates
+                ent_indexes[mention_index]['link_candidates'] = []
+                j = result_index
+                while j < result_index + num_return_sequences:
+                    rev_tuple = get_rev_tuple(j, res_arr)
+                    temp_link = ''
+                    if rev_tuple in self.lang_title2wikidataID:
+                        temp_link = max(self.lang_title2wikidataID[rev_tuple])
+                        logging.debug('link found %s for the tuple %s' % (temp_link, str(rev_tuple)))
+                    ent_indexes[mention_index]['link_candidates'].append((rev_tuple[1], rev_tuple[0], temp_link))
+                    j += 1
+                result_index += num_return_sequences
+                mention_index += 1
 
-        return ent_indexes
+            return ent_indexes
+        finally:
+            trp_util.release_threadsafe_object(type(self).__name__, el_tokenizer)
