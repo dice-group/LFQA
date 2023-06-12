@@ -248,7 +248,10 @@ if __name__ == '__main__':
     class FormatAction(argparse.Action):
         def __call__(s, p, n, v, o=None): setattr(n, s.dest, formats[v])
 
-    parser = argparse.ArgumentParser(description='Analyze evaluation files generated with NEAMT')
+    parser = argparse.ArgumentParser(
+        description='Analyze evaluation files generated with NEAMT',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
     parser.add_argument('--path', default='translation_output_all', help='directory with gold and jsonl files')
     parser.add_argument('--gold-file-suffix', default='_gold_file.tsv', help='suffix for distinguishing gold files')
     parser.add_argument('--metric', choices=metrics.keys(), default=bleu4, action=MetricAction, help='which metric to use')
