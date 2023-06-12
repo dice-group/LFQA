@@ -79,6 +79,16 @@ def wd_resolve(local_name):
     # may need urllib.parse.urljoin
     return WD + local_name
 
+wd_sparql = None
+def wd_labels(uri, lang):
+    global wd_sparql
+    if wd_sparql is None:
+        wd_sparql = SPARQLWrapper.SPARQLWrapper('https://query.wikidata.org/bigdata/namespace/wdq/sparql')
+        wd_sparql.setReturnFormat(SPARQLWrapper.JSON)
+    wd_sparql.setQuery('SELECT DISTINCT ?label WHERE {<' + uri + '> rdfs:label ?label. FILTER(langMatches(lang(?label), "' + lang + '"))}')
+    while True:
+        return [binding['label']['value'] for binding in wd_sparql.queryAndConvert()['results']['bindings']]
+
 def dbpedia_endpoint_uri(dbp_uri):
     if dbp_uri.startswith('http://dbpedia.org/'):
         return 'https://dbpedia.org/sparql'
@@ -143,9 +153,11 @@ def neamt(item):
     return item
 
 def qald_qae(dataset_file):
+    'Read and preprocess dataset(s) and return a function to access by id'
     def qae_mentions(mentions):
         return [{
             'canonical_uri': uri,
+            'labels': wd_labels(uri, 'en'),
         } for uri in (resolve(m['link']) for m in mentions) if uri is not None]
     questions = dict()
     for df in tqdm.tqdm(dataset_file, desc='Reading datasets'):
@@ -158,6 +170,7 @@ def qald_qae(dataset_file):
     return lambda q_id: questions.get(q_id)
 
 def mintaka(dataset_file):
+    'Read and preprocess dataset(s) and return a function to access by id'
     def mintaka_mentions(mentions):
         return [{
             'canonical_uri': wd_resolve(m['name']),
@@ -204,9 +217,10 @@ def process_task(task, headers, pipelines, metric, output, dataset_lu):
         o_best_count.writelines('\t'.join(map(str, item)) + '\n' for item in sorted(best_count.items(), key=lambda item: item[1], reverse=True))
 
 def main(*, path, gold_file_suffix, metric, dataset_file, dataset_format, redis_address):
-    global dbp_to_wd
+    global wd_labels, dbp_to_wd
     if redis_address is not None:
         cache = redis_cache.RedisCache(redis_client=redis.StrictRedis(host=redis_address, decode_responses=True))
+        wd_labels = cache.cache(namespace='neamt-eval-analysis')(wd_labels)
         dbp_to_wd = cache.cache(namespace='neamt-eval-analysis')(dbp_to_wd)
     files = sorted(os.listdir(path))
     tasks = [f[:-17] for f in files if f.endswith(gold_file_suffix)]
