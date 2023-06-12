@@ -88,15 +88,21 @@ def dbpedia_endpoint_uri(dbp_uri):
         raise Exception('Unknown DBPedia URI: ' + dbp_uri)
 
 dbp_to_wd_sparql = {}
-def dbp_to_wd(dbp_uri):
+def dbp_to_wd_query(dbp_uri, endpoint_uri, query):
     global dbp_to_wd_sparql
-    endpoint_uri = dbpedia_endpoint_uri(dbp_uri)
     if endpoint_uri not in dbp_to_wd_sparql:
         dbp_to_wd_sparql[endpoint_uri] = SPARQLWrapper.SPARQLWrapper(endpoint_uri)
         dbp_to_wd_sparql[endpoint_uri].setReturnFormat(SPARQLWrapper.JSON)
-    dbp_to_wd_sparql[endpoint_uri].setQuery('SELECT DISTINCT ?uri WHERE {<' + dbp_uri + '> owl:sameAs ?uri. FILTER(strstarts(str(?uri), "http://www.wikidata.org/entity/"))}')
+    dbp_to_wd_sparql[endpoint_uri].setQuery(query)
     bindings = dbp_to_wd_sparql[endpoint_uri].queryAndConvert()['results']['bindings']
     return bindings[0]['uri']['value'] if len(bindings) != 0 else None
+
+def dbp_to_wd(dbp_uri):
+    res = dbp_to_wd_query(dbp_uri, 'https://dbpedia.org/sparql', 'SELECT DISTINCT ?uri WHERE {{<' + dbp_uri + '> owl:sameAs ?uri. FILTER(strstarts(str(?uri), "http://www.wikidata.org/entity/"))} UNION {[owl:sameAs <' + dbp_uri + '>, ?uri] FILTER(strstarts(str(?uri), "http://www.wikidata.org/entity/"))}}')
+    if res is not None:
+        return res
+    else:
+        return dbp_to_wd_query(dbp_uri, dbpedia_endpoint_uri(dbp_uri), 'SELECT DISTINCT ?uri WHERE {<' + dbp_uri + '> owl:sameAs ?uri. FILTER(strstarts(str(?uri), "http://www.wikidata.org/entity/"))}')
 
 def resolve(link):
     'Automatically detect and resolve links, outputs WD entity link or None'
