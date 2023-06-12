@@ -14,9 +14,11 @@ input_gold_file.METRIC.best - the best pipeline for each question. If several pi
 
 Examples:
 
-./analysis.py --redis-address localhost --path translation_output_all/QALD9Plus --metric entitiesfound --dataset-format=qald_qae --dataset-file ~/.local/share/datasets/qald-9-plus-query-entities.json
+./analysis.py --redis-address localhost --path qald9plus --metric entitiesfound --dataset-format=qald_qae --dataset-file ~/.local/share/datasets/qald-9-plus-query-entities.json
 
-./analysis.py --redis-address localhost --path translation_output_all/QALD10 --metric entitiesfound --dataset-format=qald_qae --dataset-file ~/.local/share/datasets/qald-10-query-entities.json
+./analysis.py --redis-address localhost --path qald10 --metric entitiesfound --dataset-format=qald_qae --dataset-file ~/.local/share/datasets/qald-10-query-entities.json
+
+./analysis.py --redis-address localhost --path mintaka --metric labels --dataset-format=mintaka --dataset-file ~/.local/share/datasets/Mintaka/v1.1/mintaka_{dev,test,train}.json
 '''
 import argparse
 import collections
@@ -177,12 +179,13 @@ def mintaka(dataset_file):
             'labels': {m['label'], m['mention']},
         } for m in mentions if m['entityType'] == 'entity' and m['name'] is not None]
     questions = dict()
-    for df in dataset_file:
+    logging.info('files: %s', dataset_file)
+    for df in tqdm.tqdm(dataset_file, desc='Reading datasets'):
         with open(df) as f:
             questions |= {q['id']: {
                 'text': q['question'],
                 'ent_mentions': mintaka_mentions(q['questionEntity']),
-            } for q in tqdm.tqdm(json.load(f))}
+            } for q in tqdm.tqdm(json.load(f), desc=df)}
     logging.info('%d questions in the dataset', len(questions))
     return lambda q_id: questions.get(q_id)
 
