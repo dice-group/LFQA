@@ -207,7 +207,8 @@ def process_task(task, headers, pipelines, metric, output, dataset_lu):
             q_id, q_text = inputs[0]
             if dataset_lu is not None and q_id is not None:
                 expected = dataset_lu(q_id)
-                assert expected is not None
+                if expected is None:
+                    raise Exception('Question from evaluation not found in dataset: ' + q_id)
             else:
                 expected = {'text': q_text}
             scores = list(metric(neamt(json.loads(inp)), expected) for inp in inputs[1:])
