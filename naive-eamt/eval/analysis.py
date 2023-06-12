@@ -110,6 +110,10 @@ def dbp_to_wd_query(dbp_uri, endpoint_uri, query):
     return bindings[0]['uri']['value'] if len(bindings) != 0 else None
 
 def dbp_to_wd(dbp_uri):
+    # FIXME
+    if dbp_uri.startswith('http://it.dbpedia.org/'):
+        return None
+
     res = dbp_to_wd_query(dbp_uri, 'https://dbpedia.org/sparql', 'SELECT DISTINCT ?uri WHERE {{<' + dbp_uri + '> owl:sameAs ?uri. FILTER(strstarts(str(?uri), "http://www.wikidata.org/entity/"))} UNION {[owl:sameAs <' + dbp_uri + '>, ?uri] FILTER(strstarts(str(?uri), "http://www.wikidata.org/entity/"))}}')
     if res is not None:
         return res
