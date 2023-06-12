@@ -62,12 +62,16 @@ def entitiesfound(got, expected):
     expected_len = len(expected_set)
     return len(got_set & expected_set) / expected_len if expected_len != 0 else 1
 
+def labels_pre(s):
+    'Simple label and text preprocessing for label matching'
+    return s.lower()
+
 def labels(got, expected):
     'Check if any of entity labels from expected result are found in the translated text we got'
     mentions = [m for m in expected.get('ent_mentions', []) if len(m.get('labels', [])) != 0]
     if (l := len(mentions)) != 0:
-        t = got.get('translated_text', '')
-        return sum(1 for m in mentions if any(s.lower() in t for s in m['labels'])) / l
+        t = labels_pre(got.get('translated_text', ''))
+        return sum(1 for m in mentions if any(labels_pre(s) in t for s in m['labels'])) / l
     else:
         return 1
 
