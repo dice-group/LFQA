@@ -35,13 +35,6 @@ class MgenreEl(GenEL):
         self.tokenizer_name = "facebook/mgenre-wiki"
         self.tokenizer_kwargs = {}
         self.el_model = AutoModelForSeq2SeqLM.from_pretrained("facebook/mgenre-wiki").eval()
-        """
-        Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
-        """
-        def tokenizer_gen():
-            return AutoTokenizer.from_pretrained(self.tokenizer_name, **self.tokenizer_kwargs)
-
-        self.tokenizer_generator = tokenizer_gen
 
         logging.debug('%s component initialized.' % type(self).__name__)
 
@@ -54,8 +47,11 @@ class MgenreEl(GenEL):
         return extra_args
 
     def link_entities(self, query, lang, ent_indexes, extra_args):
+        """
+        Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
+        """
         # Get thread safe tokenizer
-        el_tokenizer = trp_util.get_threadsafe_object(type(self).__name__, self.tokenizer_generator)
+        el_tokenizer = trp_util.get_threadsafe_object(type(self).__name__, AutoTokenizer.from_pretrained, [self.tokenizer_name], self.tokenizer_kwargs)
         try:
             # Extract custom parameter
             num_return_sequences = extra_args.get('mg_num_return_sequences')

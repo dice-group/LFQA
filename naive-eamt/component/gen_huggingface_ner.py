@@ -50,6 +50,10 @@ def fetch_ent_indexes(ner_results, query):
     return ent_indexes
 
 
+def nlp_gen(tokenizer_name, ner_model):
+    ner_tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+    nlp = pipeline("ner", model=ner_model, tokenizer=ner_tokenizer)
+    return nlp
 class GenHuggingfaceNer(GenNER):
     def __init__(self, tokenizer_name, model_name):
         """
@@ -60,16 +64,6 @@ class GenHuggingfaceNer(GenNER):
         # self.ner_tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
         self.tokenizer_name = tokenizer_name
         self.ner_model = AutoModelForTokenClassification.from_pretrained(model_name)
-        """
-        Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
-        """
-        self.NLP = {}
-        def nlp_gen():
-            ner_tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_name)
-            nlp = pipeline("ner", model=self.ner_model, tokenizer=ner_tokenizer)
-            return nlp
-
-        self.nlp_generator = nlp_gen
         # self.nlp = pipeline("ner", model=self.ner_model, tokenizer=self.ner_tokenizer)
         logging.debug('%s component initialized.' % model_name)
 
@@ -82,7 +76,11 @@ class GenHuggingfaceNer(GenNER):
         
         :return:  list of entity mentions found in the provided query
         '''
-        nlp = trp_util.get_threadsafe_object(type(self).__name__, self.nlp_generator)
+
+        """
+        Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
+        """
+        nlp = trp_util.get_threadsafe_object(type(self).__name__, nlp_gen, [self.tokenizer_name, self.ner_model])
         try:
             # Get thread safe NLP/tokenizer
             ner_results = nlp(query)
