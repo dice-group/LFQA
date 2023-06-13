@@ -7,13 +7,14 @@ pools = {}
 # Lock for thread-safe access to the `pools` dictionary
 lock = threading.Lock()
 
-def get_threadsafe_object(bucket_name, object_generator):
+def get_threadsafe_object(bucket_name, object_generator, obj_gen_args = ()):
     """
     Retrieves an object from the resource pool associated with the specified bucket name.
     If no object is available, a new object is created using the provided object_generator function.
 
     :param bucket_name: The name of the bucket associated with the resource pool.
     :param object_generator: A function that generates a new object if the pool is empty.
+    :param obj_gen_args: args for the object generator.
     :return: The retrieved or newly created object.
     """
     with lock:
@@ -26,7 +27,7 @@ def get_threadsafe_object(bucket_name, object_generator):
         obj = pools[bucket_name].get(timeout=1)
     except queue.Empty:
         # If the pool is empty, generate a new object using the object_generator function
-        obj = object_generator()
+        obj = object_generator(*obj_gen_args)
 
     return obj
 
