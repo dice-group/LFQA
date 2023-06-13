@@ -8,8 +8,6 @@ sys.path.insert(1, '/neamt/util/')
 import threadsafe_resource_pool_util as trp_util
 
 
-def tokenizer_gen(tokenizer_name, tokenizer_kwargs):
-    return AutoTokenizer.from_pretrained(tokenizer_name, **tokenizer_kwargs)
 class OpusPlcFtMt(GenMT):
     init_args = {
         "model_name_template": "/neamt/ft_models/opusmt/opusmt_mintaka_plc_%s_en",
@@ -46,7 +44,7 @@ class OpusPlcFtMt(GenMT):
             Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
             """
             bucket_name = type(self).__name__ + '_' + lang
-            self.model_tok_map[lang] = (model, (bucket_name, (tokenizer_name, tokenizer_kwargs)))
+            self.model_tok_map[lang] = (model, (bucket_name, [tokenizer_name], tokenizer_kwargs))
 
         logging.debug('%s component initialized.' % type(self).__name__)
 
@@ -56,7 +54,7 @@ class OpusPlcFtMt(GenMT):
         # fetch model and tokenizer
         model = model_tok_info[0]
         tok_info = model_tok_info[1]
-        tokenizer = trp_util.get_threadsafe_object(tok_info[0], tokenizer_gen, tok_info[1])
+        tokenizer = trp_util.get_threadsafe_object(tok_info[0], AutoTokenizer.from_pretrained, tok_info[1], tok_info[2])
         try:
             tokenizer.src_lang = self.lang_code_map[source_lang]
             encoded_ar = tokenizer(trans_text, return_tensors="pt")
