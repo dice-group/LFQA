@@ -46,7 +46,7 @@ class OpusPlcFtMt(GenMT):
             Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
             """
             bucket_name = type(self).__name__ + '_' + lang
-            self.model_tok_map[lang] = (model, (bucket_name, tokenizer_gen, (tokenizer_name, tokenizer_kwargs)))
+            self.model_tok_map[lang] = (model, (bucket_name, (tokenizer_name, tokenizer_kwargs)))
 
         logging.debug('%s component initialized.' % type(self).__name__)
 
@@ -56,7 +56,7 @@ class OpusPlcFtMt(GenMT):
         # fetch model and tokenizer
         model = model_tok_info[0]
         tok_info = model_tok_info[1]
-        tokenizer = trp_util.get_threadsafe_object(tok_info[0], tok_info[1], tok_info[2])
+        tokenizer = trp_util.get_threadsafe_object(tok_info[0], tokenizer_gen, tok_info[1])
         try:
             tokenizer.src_lang = self.lang_code_map[source_lang]
             encoded_ar = tokenizer(trans_text, return_tensors="pt")
