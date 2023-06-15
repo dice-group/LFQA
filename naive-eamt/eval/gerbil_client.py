@@ -37,7 +37,12 @@ class BENG():
             bs = BeautifulSoup(r.text, 'html.parser')
             data = json.loads(bs.find('script', type='application/ld+json').string)
             observation = next(res for res in data['@graph'] if res['@type'] == 'qb:Observation')
-            if observation['statusCode'] == '0':
+            ok = observation['statusCode'] == '0'
+            if any(k not in observation for k in ['BLEU', 'BLEU_NLTK', 'METEOR', 'TER']):
+                # FIXME: wait until all the results are present in the response
+                logging.warn('GERBIL returned statusCode = 0 but no experiment results')
+                ok = False
+            if ok:
                 # FIXME: proper result handling, through @context?
                 observation['BLEU'] = float(observation['BLEU'])
                 observation['BLEU_NLTK'] = float(observation['BLEU_NLTK'])
