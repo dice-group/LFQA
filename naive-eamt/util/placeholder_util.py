@@ -3,7 +3,7 @@ This python encapsulates the functions to deal with placeholders in the annotate
 '''
 import logging
 from string import Template
-
+import cache_util
 from SPARQLWrapper import SPARQLWrapper, JSON
 
 SPARQL_LANG_MAP = {
@@ -120,20 +120,16 @@ def put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_link
         logging.debug('No KB information found in the input.')
         return ret_tuple
     arr_ind = 1
-    sparql = kb_info[kb][0]
-    sparql_str = kb_info[kb][1]
 
     query_plc = ''
     last_ind = 0
-    for link in ent_links:
-        if 'link' not in link:
+    for mention_item in ent_links:
+        if 'link' not in mention_item:
             continue
         # sleep the thread to avoid spamming SPARQL endpoint
         # time.sleep(2)
-        f_sparql = sparql_str.substitute(link=link['link'], lang=target_lang)
-        sparql.setQuery(f_sparql)
-        logging.debug('Formed SPARQL:\n %s' % f_sparql)
-        ret = sparql.queryAndConvert()
+        # ret = compose_execute_sparql(kb, mention_item['link'], target_lang)
+        ret = cache_util.call(compose_execute_sparql, 'compose_execute_sparql', kb, mention_item['link'], target_lang)
         logging.debug('SPARQL results:\n %s' % str(ret))
         # Check if no results are retrieved
         # Empty results can look like this: {'head': {'vars': ['enlbl']}, 'results': {'bindings': [{}]}}
@@ -143,26 +139,35 @@ def put_placeholders(query, plc_token, replace_before, target_lang, kb, ent_link
         # extracting English label
         eng_label = None
         for r in ret["results"]["bindings"]:
-            link['en_label'] = r['enlbl']['value']
-            eng_label = link['en_label']
+            mention_item['en_label'] = r['enlbl']['value']
+            eng_label = mention_item['en_label']
             en_count['total_found'] += 1
             break
         if replace_before:
             plchldr = eng_label
         else:
             plchldr = '[%s%d]' % (plc_token, arr_ind)
-            link['placeholder'] = plchldr
+            mention_item['placeholder'] = plchldr
             # incrementing global placeholder count
             plc_count['total'] += 1
         # forming the placeholder query
         if plchldr:
-            query_plc += query[last_ind:link['start']] + plchldr
+            query_plc += query[last_ind:mention_item['start']] + plchldr
             arr_ind += 1
-            last_ind = link['end']
+            last_ind = mention_item['end']
     query_plc += query[last_ind:]
     # Do not change the return logic, a single object is required for caching
     ret_tuple = (query_plc, ent_links, cur_stats)
     return ret_tuple
+
+def compose_execute_sparql(kb, link, target_lang):
+    sparql = kb_info[kb][0]
+    sparql_str = kb_info[kb][1]
+    f_sparql = sparql_str.substitute(link=link, lang=target_lang)
+    sparql.setQuery(f_sparql)
+    logging.debug('Formed SPARQL:\n %s' % f_sparql)
+    return sparql.queryAndConvert()
+
 
 
 def replace_placeholders(trans_text, replace_before, ent_links, cur_stats):
