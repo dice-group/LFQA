@@ -13,6 +13,7 @@ It comes already integrated with the following tools:
             <th>ID</th>
             <th>Supported Lang.</th>
             <th>Link</th>
+            <th>Maximum input sequence length</th>
         </tr>
     </thead>
     <tbody>
@@ -22,24 +23,28 @@ It comes already integrated with the following tools:
             <td>babelscape_ner</td>
             <td>de, en, es, fr, it, nl, pl, pt, ru</td>
             <td>https://huggingface.co/Babelscape/wikineural-multilingual-ner</td>
+            <td>512 tokens (Based on BERT)</td>
         </tr>
         <tr>
             <td>Flair NER</td>
             <td>flair_ner</td>
             <td>de, en, es, nl</td>
             <td>https://github.com/flairNLP/flair</td>
+            <td>512 tokens (Based on BERT)</td>
         </tr>
         <tr>
             <td>Davlan NER</td>
             <td>davlan_ner</td>
             <td>ar, de, en, es, fr, it, lv, nl, pt, zh</td>
             <td>https://huggingface.co/Davlan/bert-base-multilingual-cased-ner-hrl</td>
+            <td>512 tokens (Based on mBERT)</td>
         </tr>
         <tr>
             <td>Spacy NER</td>
             <td>spacy_ner</td>
             <td>de, en, es, fr, it, nl, pl, pt, ru</td>
             <td>https://github.com/explosion/spacy-models/releases/tag/xx_ent_wiki_sm-3.4.0</td>
+            <td>1 million character (spacy's default max_length) </td>
         </tr>
         <tr>
             <td rowspan=2>EL</td>
@@ -47,12 +52,14 @@ It comes already integrated with the following tools:
             <td>mag_el</td>
             <td>en, de, fr, es, it, ja, nl</td>
             <td>https://github.com/dice-group/AGDISTIS/wiki/5---New-Capabilities---MAG</td>
+            <td> </td>
         </tr>
         <tr>
             <td>mGenre</td>
             <td>mgenre_el</td>
             <td>Supports 105 languages (Table 10: https://arxiv.org/pdf/2103.12528.pdf)</td>
             <td>https://github.com/facebookresearch/GENRE</td>
+            <td>512 tokens (Based on mBART)</td>
         </tr>
         <tr>
             <td rowspan=4>MT</td>
@@ -60,24 +67,28 @@ It comes already integrated with the following tools:
             <td>libre_mt</td>
             <td>ar, az, zh, cs, da, nl, en, eo, fi, fr, de, el, he, hi, hu, id, ga, it, ja, ko, fa, pl, pt, ru, sk, es, sv, tr, uk</td>
             <td>https://github.com/LibreTranslate/LibreTranslate</td>
+            <td>512 tokens ()</td>
         </tr>
         <tr>
             <td>Opus MT*</td>
             <td>opus_mt</td>
             <td>Supports 203 languages for translation to English (https://opus.nlpl.eu/Opus-MT/)</td>
             <td>https://github.com/Helsinki-NLP/Opus-MT</td>
+            <td>512 tokens (https://huggingface.co/Helsinki-NLP)</td>
         </tr>
         <tr>
             <td>NLLB MT**</td>
             <td>nllb_mt</td>
             <td>Supports 196 languages</td>
             <td>https://github.com/facebookresearch/fairseq/tree/nllb/#multilingual-translation-models</td>
+            <td>1024 tokens (as per <code>tokenizer.model_max_length</code> for "facebook/nllb-200-distilled-600M" on huggingface) </td>
         </tr>
         <tr>
             <td>MBart MT**</td>
             <td>mbart_mt</td>
             <td>Supports 53 languages</td>
             <td>https://huggingface.co/facebook/mbart-large-50-many-to-many-mmt</td>
+            <td>mBART - 512 tokens, mBART50 - 1024 tokens (https://huggingface.co/facebook/mbart-large-50-many-to-many-mmt)</td>
         </tr>
     </tbody>
 </table>

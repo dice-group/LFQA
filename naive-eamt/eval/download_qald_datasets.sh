@@ -7,3 +7,5 @@ wget https://raw.githubusercontent.com/KGQA/QALD_10/main/data/qald_10/qald_10.js
 # Download qald9
 wget https://raw.githubusercontent.com/KGQA/QALD_9_plus/main/data/qald_9_plus_test_dbpedia.json -P dataset/qald9plus/
 wget https://raw.githubusercontent.com/KGQA/QALD_9_plus/main/data/qald_9_plus_train_dbpedia.json -P dataset/qald9plus/
+wget https://raw.githubusercontent.com/KGQA/QALD_9_plus/main/data/qald_9_plus_test_wikidata.json -P dataset/qald9plus/
+wget https://raw.githubusercontent.com/KGQA/QALD_9_plus/main/data/qald_9_plus_train_wikidata.json -P dataset/qald9plus/

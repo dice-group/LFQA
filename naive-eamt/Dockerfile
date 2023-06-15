@@ -18,6 +18,8 @@ RUN python setup.py build
 RUN python setup.py install
 # Downloading spacy's multilingual entity recognition model
 RUN python -m spacy download xx_ent_wiki_sm
+# Downloading spacy's multilingual Sentence boundaries model
+RUN python -m spacy download xx_sent_ud_sm
 # COPY SRC
 WORKDIR /neamt
 COPY start.py .

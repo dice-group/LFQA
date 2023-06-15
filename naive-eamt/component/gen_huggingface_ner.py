@@ -1,16 +1,11 @@
 # This class demonstrates how each component should look like
 import logging
-import os
-import sys
-
+import threading
 from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
-# importing util (make sure to run python as module: 'python -m start.py')
-# from ..util import common_util as c_util
 import sys
-
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, '/neamt/util/')
-import common_util as c_util
+import threadsafe_resource_pool_util as trp_util
 from ner_abs import GenNER
 
 def fetch_ent_indexes(ner_results, query):
@@ -55,6 +50,10 @@ def fetch_ent_indexes(ner_results, query):
     return ent_indexes
 
 
+def nlp_gen(tokenizer_name, ner_model):
+    ner_tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+    nlp = pipeline("ner", model=ner_model, tokenizer=ner_tokenizer)
+    return nlp
 class GenHuggingfaceNer(GenNER):
     def __init__(self, tokenizer_name, model_name):
         """
@@ -62,11 +61,12 @@ class GenHuggingfaceNer(GenNER):
         It helps keep the framework from unnecessarily occupying the memory.
         """
         # Load NER model
-        self.ner_tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+        # self.ner_tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+        self.tokenizer_name = tokenizer_name
         self.ner_model = AutoModelForTokenClassification.from_pretrained(model_name)
-        self.nlp = pipeline("ner", model=self.ner_model, tokenizer=self.ner_tokenizer)
+        # self.nlp = pipeline("ner", model=self.ner_model, tokenizer=self.ner_tokenizer)
         logging.debug('%s component initialized.' % model_name)
-        
+
     def recognize_entities(self, query, lang, extra_args):
         '''
         Function to annotate entities in a given natural language text.
@@ -76,8 +76,17 @@ class GenHuggingfaceNer(GenNER):
         
         :return:  list of entity mentions found in the provided query
         '''
-        ner_results = self.nlp(query)
-        logging.debug(ner_results)
-        # find the start and end indexes
-        ent_indexes = fetch_ent_indexes(ner_results, query)
-        return ent_indexes
+
+        """
+        Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
+        """
+        nlp = trp_util.get_threadsafe_object(type(self).__name__, nlp_gen, [self.tokenizer_name, self.ner_model])
+        try:
+            # Get thread safe NLP/tokenizer
+            ner_results = nlp(query)
+            logging.debug(ner_results)
+            # find the start and end indexes
+            ent_indexes = fetch_ent_indexes(ner_results, query)
+            return ent_indexes
+        finally:
+            trp_util.release_threadsafe_object(type(self).__name__, nlp)
