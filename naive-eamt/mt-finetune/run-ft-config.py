@@ -4,6 +4,11 @@ import logging
 import hf_seq2seq_mt_ft
 import shutil
 from pathlib import Path
+
+"""
+To run (make sure your python environment has the requirements installed):
+python run-ft-config.py config/opus-ft.json
+"""
 # Set logging format
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 # get input config file
