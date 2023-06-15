@@ -32,6 +32,9 @@ from empty_ner import EmptyNer
 from empty_el import EmptyEl
 from swc_ner_el import SwcNerEl
 from mbart_ep_mt import MbartEpMt
+from mbart_plc_ft_mt import MbartPlcFtMt
+from nllb_plc_ft_mt import NllbPlcFtMt
+from opus_plc_ft_mt import OpusPlcFtMt
 
 sys.path.insert(1, '/neamt/util/')
 import stats_util
@@ -39,7 +42,7 @@ import stats_util
 stat_dict = stats_util.stats
 # configuring logging
 logging.basicConfig(filename='/neamt/logs/neamt.log', level=logging.DEBUG,
-                    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+                    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s', filemode='w')
 # Read the configuration file and find the relevant components
 comp_map = {
     'flair_ner': FlairNer,
@@ -55,7 +58,10 @@ comp_map = {
     'no_ner': EmptyNer,
     'no_el': EmptyEl,
     'swc_ner_el': SwcNerEl,
-    'mbart_ep_mt': MbartEpMt
+    'mbart_ep_mt': MbartEpMt,
+    'mbart_plc_ft_mt': MbartPlcFtMt,
+    'nllb_plc_ft_mt': NllbPlcFtMt,
+    'opus_plc_ft_mt': OpusPlcFtMt
 }
 
 def_placeholder = '00'
@@ -65,12 +71,11 @@ comp_inst_map = {}
 path_pipeline_map = {}
 
 
-def detect_components(config_file):
+def detect_components(config):
     """
     Function to detect required components in the configuration files.
     """
-    config = configparser.ConfigParser()
-    config.read(config_file)
+
     for section in config:
         # Check if section is an EAMT Pipeline
         if section.strip().lower().startswith("eamt pipeline"):
@@ -80,6 +85,7 @@ def detect_components(config_file):
             pipeline_path = config.get(section, 'path')
             # extract pipeline components
             comp_list = json.loads(config.get(section, 'components'))
+            logging.info("list of components to be loaded: %s" % str(comp_list))
             # find/add components in the instance map
             inst_list = []
             for comp in comp_list:
@@ -96,9 +102,14 @@ def detect_components(config_file):
 
 
 logging.info('Reading configuration file..')
+# Init config
+config_file = '/neamt/configuration.ini'
+config = configparser.ConfigParser()
+config.read(config_file)
 # Initialize the requested components
-detect_components('/neamt/configuration.ini')
+detect_components(config)
 
+TOKEN_LIMIT = int(config['DEFAULT'].get('token_limit', '400'))
 
 # Process requests
 def process_input(input_query, path):
@@ -160,10 +171,65 @@ def get_input_dict(san_query, data):
     return f_input
 
 def process_query(query, data, inst_list, full_json):
+    # Check if query exceeds the default token length limit
+    query_tokens = c_util.tokenize_query(query)
+    if len(query_tokens) < TOKEN_LIMIT:
+        # proceed normally
+        return process_normal_query(query, data, inst_list, full_json)
+    else:
+        logging.info('Query length %d exceeds the default limit %d. Splitting query into smaller chunks.' % (len(query_tokens), TOKEN_LIMIT))
+        # divide query into sentences
+        query_sentences = c_util.split_sentences(query)
+        # Form chunks of sentences combined together smaller than default token limit
+        query_chunks = []
+        cur_chunk = ''
+        cur_chunk_len = 0
+        for sentence in query_sentences:
+            sentence_tokens = c_util.tokenize_query(sentence)
+            # if sentence itself is bigger than token limit then create it's own chunk
+            if len(sentence_tokens) > TOKEN_LIMIT:
+                # flush the previous chunk to query chunks
+                if cur_chunk_len > 0:
+                    query_chunks.append(cur_chunk.strip())
+                # add current sentence
+                query_chunks.append(sentence)
+                # reset current chunk
+                cur_chunk = ''
+                cur_chunk_len = 0
+            elif len(sentence_tokens) + cur_chunk_len <= TOKEN_LIMIT:
+                # add to current chunk with a whitespace
+                cur_chunk += ' ' + sentence
+                cur_chunk_len += len(sentence_tokens)
+                # continue loop to avoid resetting cur_chunk
+                continue
+            else:
+                query_chunks.append(cur_chunk.strip())
+                # reset current chunk
+                cur_chunk = sentence
+                cur_chunk_len = len(sentence_tokens)
+        # flush remaining chunk
+        if cur_chunk_len > 0:
+            query_chunks.append(cur_chunk.strip())
+        # logging
+        logging.info('Total %d chunks formed: %s ' % (len(query_chunks), query_chunks))
+        # loop through the chunks and process them as normal query
+        results = []
+        for chunk in query_chunks:
+            ret_val = process_normal_query(chunk, data, inst_list, full_json)
+            # If the retured json is empty, something went wrong, hence stop processing and return the same
+            if len(ret_val) == 0 and isinstance(ret_val, dict):
+                return ret_val
+            results.append(ret_val)
+        # Merge the results together if they are string
+        sample_res = results[0]
+        if isinstance(sample_res, str):
+            results = ' '.join(results)
+        return results
+def process_normal_query(query, data, inst_list, full_json):
     try:
         # Temporary workaround for placeholder, removing '?' from query
         logging.debug('Input query: %s' % query)
-        san_query = query
+        san_query = query.replace('\n', '')
         # san_query = query.replace('?', '')
         # logging.debug('Sanitized input query: %s' % san_query)
         res = process_cus_input(get_input_dict(san_query, data), inst_list)
@@ -173,7 +239,6 @@ def process_query(query, data, inst_list, full_json):
     except Exception as inst:
         logging.exception('Exception occurred for the query: %s\nException: %s' % (query, inst))
         return {}
-
 
 @app.route('/<string:path>', methods=['POST'])
 def gen_pipe(path):

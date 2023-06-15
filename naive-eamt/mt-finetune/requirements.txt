@@ -1,0 +1,17 @@
+torch
+torchvision
+torchaudio
+pandas
+protobuf==3.20.2
+python-redis-cache
+redis
+SPARQLWrapper
+flask
+fasttext
+flair
+spacy
+marisa-trie
+transformers[torch]
+evaluate
+datasets
+sacrebleu

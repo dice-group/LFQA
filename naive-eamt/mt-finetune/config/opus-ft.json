@@ -1,0 +1,9 @@
+{
+  "model_type": "one2one",
+  "model_name" : "Helsinki-NLP/opus-mt-%s-%s",
+  "tokenizer_name" : "Helsinki-NLP/opus-mt-%s-%s",
+  "dataset_files_template" : "data/json/%s_en*.json",
+  "output_dir_template" : "ft_models/opusmt/opusmt_mintaka_plc_%s_en",
+  "lang_map": { "it":  "it", "pt":  "pt", "fr":  "fr", "es":  "es", "de":  "de", "en":  "en"},
+  "lang_seq" : [ "it", "fr", "es", "de"]
+}
