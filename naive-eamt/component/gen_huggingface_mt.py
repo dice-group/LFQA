@@ -19,20 +19,15 @@ class GenHuggingfaceMt(GenMT):
         self.tokenizer_kwargs = tokenizer_kwargs
         self.lang_code_map = lang_code_map
 
-        """
-        Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537). 
-        """
-        def tokenizer_gen():
-            return AutoTokenizer.from_pretrained(self.tokenizer_name, **self.tokenizer_kwargs)
-
-        self.tokenizer_generator = tokenizer_gen
-
         logging.debug('%s component initialized.' % type(self).__name__)
 
 
     def translate_text(self, trans_text, source_lang, target_lang, extra_args):
+        """
+        Huggingface's tokenizers have an issue with parallel thread access (https://github.com/huggingface/tokenizers/issues/537).
+        """
         # Get thread safe tokenizer
-        tokenizer = trp_util.get_threadsafe_object(type(self).__name__, self.tokenizer_generator)
+        tokenizer = trp_util.get_threadsafe_object(type(self).__name__, AutoTokenizer.from_pretrained, [self.tokenizer_name], self.tokenizer_kwargs)
         try:
             tokenizer.src_lang = self.lang_code_map[source_lang]
             encoded_ar = tokenizer(trans_text, return_tensors="pt")
