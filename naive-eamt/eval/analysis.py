@@ -51,6 +51,10 @@ def bleu4(got, expected):
     'Returns BLEU score with n_gram=4 (default in torchmetrics)'
     return torchmetrics.functional.bleu_score([got.get('translated_text', '')], [[expected['text']]], n_gram=4).item()
 
+def sacrebleu(got, expected):
+    'Returns SacreBLEU score with default parameters from torchmetrics'
+    return torchmetrics.functional.sacre_bleu_score([got.get('translated_text', '')], [[expected['text']]], n_gram=4).item()
+
 def jaccard(got, expected):
     'Jaccard similarity coefficient for sets'
     got_set = set(m['canonical_uri'] for m in got.get('ent_mentions', []) if 'canonical_uri' in m)
@@ -258,7 +262,7 @@ def main(*, path, gold_file_suffix, metric, dataset_file, dataset_format, redis_
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
-    metrics = {f.__name__: f for f in [bleu2, bleu3, bleu4, jaccard, entitiesfound, labels]}
+    metrics = {f.__name__: f for f in [bleu2, bleu3, bleu4, sacrebleu, jaccard, entitiesfound, labels]}
     class MetricAction(argparse.Action):
         def __call__(s, p, n, v, o=None): setattr(n, s.dest, metrics[v])
 
@@ -272,7 +276,7 @@ if __name__ == '__main__':
     )
     parser.add_argument('--path', default='translation_output_all', help='directory with gold and jsonl files')
     parser.add_argument('--gold-file-suffix', default='_gold_file.tsv', help='suffix for distinguishing gold files')
-    parser.add_argument('--metric', choices=metrics.keys(), default=bleu4, action=MetricAction, help='which metric to use')
+    parser.add_argument('--metric', choices=metrics.keys(), required=True, action=MetricAction, help='which metric to use')
     parser.add_argument('--dataset-file', nargs='*', default=[], help='original dataset file(s)')
     parser.add_argument('--dataset-format', choices=formats.keys(), default=mintaka, action=FormatAction, help='original dataset format')
     parser.add_argument('--redis-address', help='Redis address for caching')
