@@ -84,13 +84,16 @@ def wd_resolve(local_name):
     return WD + local_name
 
 wd_sparql = None
-def wd_labels(uri, lang):
+def wd_labels(uri, langs):
     global wd_sparql
     if wd_sparql is None:
         wd_sparql = SPARQLWrapper.SPARQLWrapper('https://query.wikidata.org/bigdata/namespace/wdq/sparql')
         wd_sparql.setReturnFormat(SPARQLWrapper.JSON)
-    wd_sparql.setQuery('SELECT DISTINCT ?label WHERE {<' + uri + '> rdfs:label ?label. FILTER(langMatches(lang(?label), "' + lang + '"))}')
+    if not isinstance(langs, list): langs = [langs]
+    filters = ' || '.join('langMatches(lang(?label), "' + lang + '")' for lang in langs)
+    wd_sparql.setQuery('SELECT DISTINCT ?label WHERE {<' + uri + '> rdfs:label ?label. FILTER(' + filters + ')}')
     while True:
+        # FIXME return languages too
         return [binding['label']['value'] for binding in wd_sparql.queryAndConvert()['results']['bindings']]
 
 def dbpedia_endpoint_uri(dbp_uri):

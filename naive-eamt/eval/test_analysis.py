@@ -31,10 +31,19 @@ class AnalysisTestCase(unittest.TestCase):
         wd_uri = resolve(self.wd_example)
         self.assertEqual(wd_uri, self.wd_example)
 
-    def test_wd_labels(self):
+    def test_wd_labels_with_one_lang(self):
         labels = wd_labels(self.wd_example, 'en')
         self.assertIsInstance(labels, list)
         self.assertIn('Moscow', labels)
+        self.assertNotIn('Москва', labels)
+        self.assertNotIn('Moskau', labels)
+
+    def test_wd_labels_with_lang_list(self):
+        labels = wd_labels(self.wd_example, ['en', 'ru'])
+        self.assertIsInstance(labels, list)
+        self.assertIn('Moscow', labels)
+        self.assertIn('Москва', labels)
+        self.assertNotIn('Moskau', labels)
 
     def test_entitiesfound(self):
         def e(s): return {'ent_mentions': [{'canonical_uri': x} for x in s]}
