@@ -142,8 +142,10 @@ def resolve(link):
     else:
         raise Exception('Unknown link: ' + link)
 
+unresolved = set()
 def neamt(item):
     'Fixes WD links in NEAMT output items from jsonl, and changes DBP links to WD links'
+    global unresolved
     if 'ent_mentions' in item and 'kb' in item:
         if item['kb'] == 'wd':
             resolver = wd_resolve
@@ -155,9 +157,11 @@ def neamt(item):
             if 'link' in mention:
                 uri = resolver(mention['link'])
                 if uri is not None:
-                    mention['canonical_uri']= uri
+                    mention['canonical_uri'] = uri
                 else:
-                    logging.warn('Could not resolve link: %s', mention['link'])
+                    if mention['link'] not in unresolved:
+                        logging.warn('Could not resolve link: %s', mention['link'])
+                        unresolved.add(mention['link'])
     return item
 
 def qald_qae(dataset_file):
