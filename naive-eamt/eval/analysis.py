@@ -220,7 +220,7 @@ def process_task(task, headers, pipelines, metric, output, dataset_lu):
         t = itertools.zip_longest((), map(str.rstrip, open(task)))
     ps = map(open, pipelines)
     with open(output, 'w') as o, open(output + '.best', 'w') as o_best:
-        o.write('\t'.join(headers) + '\n')
+        o.write('\t' + '\t'.join(headers) + '\n')
         for inputs in zip(t, *ps):
             q_id, q_text = inputs[0]
             if dataset_lu is not None and q_id is not None:
@@ -230,7 +230,7 @@ def process_task(task, headers, pipelines, metric, output, dataset_lu):
             else:
                 expected = {'text': q_text}
             scores = list(metric(neamt(json.loads(inp)), expected) for inp in inputs[1:])
-            o.write('\t'.join(map(str, scores)) + '\n')
+            o.write('\t'.join(map(str, [q_id] + scores)) + '\n')
             max_score = max(scores)
             for header in (headers[index] for index, score in enumerate(scores) if score == max_score):
                 o_best.write('\t'.join((q_id, expected['text'], header, str(max_score))) + '\n')
