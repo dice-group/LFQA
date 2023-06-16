@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 '''
+Analyze evaluation files generated with NEAMT
+
 Input file format:
 
 gold files - text with one question per line
@@ -257,7 +259,7 @@ if __name__ == '__main__':
         def __call__(s, p, n, v, o=None): setattr(n, s.dest, formats[v])
 
     parser = argparse.ArgumentParser(
-        description='Analyze evaluation files generated with NEAMT',
+        description=__doc__.lstrip().split('\n', 2)[0],
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument('--path', default='translation_output_all', help='directory with gold and jsonl files')
