@@ -93,6 +93,8 @@ def wd_labels(uri, langs):
     if wd_sparql is None:
         wd_sparql = SPARQLWrapper.SPARQLWrapper('https://query.wikidata.org/bigdata/namespace/wdq/sparql')
         wd_sparql.setReturnFormat(SPARQLWrapper.JSON)
+        if ua := os.getenv('WD_USER_AGENT'):
+            wd_sparql.agent = str({'User-Agent': ua})
     if not isinstance(langs, list): langs = [langs]
     filters = ' || '.join('langMatches(lang(?label), "' + lang + '")' for lang in langs)
     wd_sparql.setQuery('SELECT DISTINCT ?label WHERE {<' + uri + '> rdfs:label ?label. FILTER(' + filters + ')}')
