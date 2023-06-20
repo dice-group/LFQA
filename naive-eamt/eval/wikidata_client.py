@@ -23,3 +23,7 @@ def wd_labels(uri, langs):
     res = wd_query('SELECT DISTINCT ?label {<' + uri + '> rdfs:label ?label. FILTER(' + filters + ')}')
     # FIXME return languages too
     return [binding['label']['value'] for binding in res['results']['bindings']]
+
+def wd_classes(uri):
+    res = wd_query('SELECT ?class (sample(?labels) as ?label) {{SELECT DISTINCT ?class ?labels {<' + uri + '> <http://www.wikidata.org/prop/direct/P31> ?class OPTIONAL {?class rdfs:label ?labels FILTER(langMatches(lang(?labels), "en"))}}}} GROUP BY ?class')
+    return [{'class': b['class']['value'], 'label': b['label']['value'] if 'label' in b else None} for b in res['results']['bindings']]

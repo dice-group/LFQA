@@ -2,7 +2,7 @@
 import unittest
 
 from analysis import dbp_to_wd, entitiesfound, resolve
-from wikidata_client import wd_labels
+from wikidata_client import wd_labels, wd_classes
 
 class AnalysisTestCase(unittest.TestCase):
     dbp_example = 'http://dbpedia.org/resource/Moscow'
@@ -45,6 +45,10 @@ class AnalysisTestCase(unittest.TestCase):
         self.assertIn('Moscow', labels)
         self.assertIn('Москва', labels)
         self.assertNotIn('Moskau', labels)
+
+    def test_wd_classes(self):
+        classes = wd_classes(self.wd_example)
+        self.assertIn({'class': 'http://www.wikidata.org/entity/Q7930989', 'label': 'city or town'}, classes)
 
     def test_entitiesfound(self):
         def e(s): return {'ent_mentions': [{'canonical_uri': x} for x in s]}
