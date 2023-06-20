@@ -61,7 +61,7 @@ def write_translated_qald(lang, pipe, pred_dir, test_name, output_dir, gold_tran
     for i in range(len(gold_translations)):
         # find the QALD object for gold english text
         # gold_str = gold_translations[i][1]
-        id = gold_translations[i][2]
+        id = gold_translations[i][0]
         qald_obj = copy.deepcopy(q_map[id.strip()])
         # extract language specific string to keep for reference
         lang_spec_q = None
