@@ -22,6 +22,7 @@ Examples:
 
 ./analysis.py --redis-address localhost --path mintaka --metric labels --dataset-format=mintaka --dataset-file ~/.local/share/datasets/Mintaka/v1.1/mintaka_{dev,test,train}.json
 '''
+from wikidata_client import wd_labels
 import argparse
 import collections
 import itertools
@@ -86,21 +87,6 @@ def labels(got, expected):
 def wd_resolve(local_name):
     # may need urllib.parse.urljoin
     return WD + local_name
-
-wd_sparql = None
-def wd_labels(uri, langs):
-    global wd_sparql
-    if wd_sparql is None:
-        wd_sparql = SPARQLWrapper.SPARQLWrapper('https://query.wikidata.org/bigdata/namespace/wdq/sparql')
-        wd_sparql.setReturnFormat(SPARQLWrapper.JSON)
-        if ua := os.getenv('WD_USER_AGENT'):
-            wd_sparql.agent = str({'User-Agent': ua})
-    if not isinstance(langs, list): langs = [langs]
-    filters = ' || '.join('langMatches(lang(?label), "' + lang + '")' for lang in langs)
-    wd_sparql.setQuery('SELECT DISTINCT ?label WHERE {<' + uri + '> rdfs:label ?label. FILTER(' + filters + ')}')
-    while True:
-        # FIXME return languages too
-        return [binding['label']['value'] for binding in wd_sparql.queryAndConvert()['results']['bindings']]
 
 def dbpedia_endpoint_uri(dbp_uri):
     if dbp_uri.startswith('http://dbpedia.org/'):

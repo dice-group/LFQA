@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import unittest
 
-from analysis import dbp_to_wd, entitiesfound, jaccard, resolve, wd_labels
+from analysis import dbp_to_wd, entitiesfound, resolve
+from wikidata_client import wd_labels
 
 class AnalysisTestCase(unittest.TestCase):
     dbp_example = 'http://dbpedia.org/resource/Moscow'
