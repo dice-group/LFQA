@@ -30,7 +30,7 @@ def main(*, path, problematicity_file, problematicity_threshold, metric='labels'
                     rows += 1
             for i, val in list(enumerate(s))[1:]: data[headers[i]][file] = val / rows
     pipelines = list(pipelines)
-    with open(path + '/' + metric + '.average', 'w', newline='') as of:
+    with open(path + '/' + metric + '.thr-' + str(problematicity_threshold) + '.average', 'w', newline='') as of:
         writer = csv.writer(of, delimiter='\t', quoting=csv.QUOTE_NONE)
         writer.writerow([''] + pipelines)
         for file in files:
@@ -40,7 +40,7 @@ def main(*, path, problematicity_file, problematicity_threshold, metric='labels'
         ('no_ner-no_el-no_ft', lambda p: 'no_ner-no_el-' in p and '_plc_ft_mt' not in p),
         ('ner-el', lambda p: 'no_ner-no_el-' not in p),
     ]
-    with open(path + '/' + metric + '.average.groups', 'w', newline='') as of:
+    with open(path + '/' + metric + '.thr-' + str(problematicity_threshold) + '.average.groups', 'w', newline='') as of:
         writer = csv.writer(of, delimiter='\t', quoting=csv.QUOTE_NONE)
         writer.writerow([''] + [name for name, _ in groups])
         for file in files:
