@@ -25,19 +25,22 @@ def process_task(input_file):
     classes_questions = collections.Counter()
     classes_labels = {}
     classcount_entities = collections.Counter()
-    for q in tqdm.tqdm(input_data, desc=input_file):
-        question_classes = []
-        for uri in mintaka_entities(q):
-            classes = wd_classes(uri)
-            classcount_entities[len(classes)] += 1
-            question_classes += classes
-        if len(question_classes) != 0:
-            for cls in question_classes:
-                classes_questions[cls['class']] += 1
-                classes_labels[cls['class']] = cls['label']
-        else:
-            classes_questions[''] += 1
-            classes_labels[''] = 'no class'
+    with open(input_file + '.classes', 'w') as question_classes_o:
+        for q in tqdm.tqdm(input_data, desc=input_file):
+            question_classes = set()
+            for uri in mintaka_entities(q):
+                classes = wd_classes(uri)
+                classcount_entities[len(classes)] += 1
+                question_classes |= {c['class'] for c in classes}
+                for cls in classes:
+                    classes_labels[cls['class']] = cls['label'] if cls['label'] is not None else '(None)'
+                question_classes_o.write('\t'.join([q['id']] + sorted(question_classes)) + '\n')
+            if len(question_classes) != 0:
+                for cls in question_classes:
+                    classes_questions[cls] += 1
+            else:
+                classes_questions[''] += 1
+                classes_labels[''] = '(no class)'
     with open(input_file + '.classes.questions_per_class', 'w') as of:
         of.writelines('\t'.join(map(str, item + (classes_labels[item[0]],))) + '\n' for item in sorted(classes_questions.items(), key=lambda item: item[1], reverse=True))
     with open(input_file + '.classes.classes_per_entity', 'w') as of:
