@@ -5,29 +5,25 @@ import requests
 from pathlib import Path
 
 class PipelineHandler:
-    
-    # error count
-    count = {
-        'request': 0
-    }
-    # Read Config file
-    eval_cfg = []
-    # Go through the configuration to form the translation pipelines
-    test_pipelines = {}
+
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
 
-    # URL to the custom NEAMT pipeline
-    url = None
-    # Output directory to store the translation files to
-    output_dir = None
-    # Config file to read the pipeline config from
-    config_file=None
-    
     def __init__(self, url, output_dir, config_file):
+        # error count
+        self.count = {
+            'request': 0
+        }
+        # Read Config file
+        self.eval_cfg = []
+        # Go through the configuration to form the translation pipelines
+        self.test_pipelines = {}
+        # URL to the custom NEAMT pipeline
         self.url = url
+        # Output directory to store the translation files to
         self.output_dir = output_dir
+        # Config file to read the pipeline config from
         self.config_file = config_file
         # Create the directory(s) in the output path
         logging.info(self.output_dir)
