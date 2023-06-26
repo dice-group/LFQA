@@ -149,7 +149,7 @@ nonzip() {
     echo "$file_name is present"
   fi
 }
-nonzip "wget https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz" "data"
+nonzip "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz" "data"
 #wget https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz
 # download libre repo
 cd data
