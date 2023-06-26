@@ -149,7 +149,7 @@ nonzip() {
     echo "$file_name is present"
   fi
 }
-nonzip "wget https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz" "data"
+nonzip "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz" "data"
 #wget https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz
 # download libre repo
 cd data
@@ -180,6 +180,8 @@ cp ../../helsinki_opusmt_services.json ./services.json
 mkdir -p models
 cd models
 
+
+
 declare -A model_urls=(
   ["de-en"]="https://object.pouta.csc.fi/OPUS-MT-models/de-en/opus-2020-02-26.zip"
   ["es-en"]="https://object.pouta.csc.fi/OPUS-MT-models/es-en/opus-2019-12-04.zip"
@@ -191,8 +193,19 @@ declare -A model_urls=(
   ["pt-en"]="https://object.pouta.csc.fi/OPUS-MT-models/pt-en/opus-2019-12-05.zip"
 )
 
-# Download and extract the models
+
+# Exclude models passed as command line arguments
+excluded_models=()
+for excluded_model in "$@"; do
+  excluded_models+=("$excluded_model")
+done
+
+# Download and extract the models (excluding the ones passed as arguments)
 for lang_pair in "${!model_urls[@]}"; do
+  if [[ " ${excluded_models[@]} " =~ " ${lang_pair} " ]]; then
+    echo "Skipping download for $lang_pair"
+    continue
+  fi
   if [[ ! -d "$lang_pair" ]]
   then
     mkdir -p "$lang_pair" && cd "$lang_pair" 
@@ -257,3 +270,5 @@ nonzip "http://dl.fbaipublicfiles.com/GENRE/titles_lang_all105_marisa_trie_with_
 #wget https://raw.githubusercontent.com/KGQA/QALD_9_plus/main/data/qald_9_plus_test_dbpedia.json
 #wget https://raw.githubusercontent.com/KGQA/QALD_9_plus/main/data/qald_9_plus_train_dbpedia.json
 echo "Downloads finished!"
+
+
