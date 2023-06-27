@@ -7,7 +7,7 @@ pools = {}
 # Lock for thread-safe access to the `pools` dictionary
 lock = threading.Lock()
 
-def get_threadsafe_object(bucket_name, object_generator, obj_gen_args = (), obj_gen_kwargs = ()):
+def get_threadsafe_object(bucket_name, object_generator, obj_gen_args = (), obj_gen_kwargs = {}):
     """
     Retrieves an object from the resource pool associated with the specified bucket name.
     If no object is available, a new object is created using the provided object_generator function.
