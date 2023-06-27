@@ -60,8 +60,9 @@ def write_translated_qald(lang, pipe, pred_dir, test_name, output_dir, gold_tran
     # starting with index 0
     for i in range(len(gold_translations)):
         # find the QALD object for gold english text
-        gold_str = gold_translations[i]
-        qald_obj = copy.deepcopy(q_map[gold_str.strip()])
+        # gold_str = gold_translations[i][1]
+        id = gold_translations[i][0]
+        qald_obj = copy.deepcopy(q_map[id.strip()])
         # extract language specific string to keep for reference
         lang_spec_q = None
         for qstr_pair in qald_obj['question']:
@@ -89,8 +90,9 @@ def write_translated_mintaka(lang, pipe, pred_dir, test_name, output_dir, gold_t
     # starting with index 0
     for i in range(len(gold_translations)):
         # find the QALD object for gold english text
-        gold_str = gold_translations[i]
-        mintaka_obj = copy.deepcopy(q_map[gold_str.strip()])
+        # gold_str = gold_translations[i][1]
+        id = gold_translations[i][0]
+        mintaka_obj = copy.deepcopy(q_map[id.strip()])
         # extract language specific string to keep for reference
         lang_spec_q = None
         mintaka_obj['translations'] = { lang :  mintaka_obj['translations'][lang] }
@@ -112,12 +114,7 @@ def fetch_qald_question_map(qald_file_path):
     res_map = {}
     # For each QALD question
     for q_item in qald_json['questions']:
-        for q_pair in q_item['question']:
-            lang = q_pair['language']
-            if lang == 'en':
-                # map the english text against the object
-                res_map[q_pair['string']] = q_item
-                break
+        res_map[str(q_item['id'])] = q_item
     return res_map
 
 def fetch_mintaka_question_map(mintaka_file_path):
@@ -126,7 +123,7 @@ def fetch_mintaka_question_map(mintaka_file_path):
         mintaka_json = json.load(file)
     res_map = {}
     for q_item in mintaka_json:
-        res_map[q_item['question']] = q_item
+        res_map[str(q_item['id'])] = q_item
     return res_map
 
 
@@ -145,11 +142,11 @@ for cfg in eval_cfg:
     # iterate over languages in the current config
     for lang in cfg['test_cfg']:
         # For each gold file
-        gold_file = pred_dir + test_name + '_%s-en_gold_file' % lang + '.txt'
+        gold_file = pred_dir + test_name + '_%s-en_gold_file' % lang + '.tsv'
         # Read all lines to an array
         gold_translations = []
         with open(gold_file, 'r') as gold_fin:
-            gold_translations = gold_fin.readlines()
+            gold_translations = [ line.strip().split('\t') for line in gold_fin.readlines()]
         ner_comps = cfg['test_cfg'][lang]['ner']
         el_comps = cfg['test_cfg'][lang]['el']
         mt_comps = cfg['test_cfg'][lang]['mt']
