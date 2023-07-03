@@ -41,9 +41,13 @@ def process_task(input_file):
             else:
                 classes_questions[''] += 1
                 classes_labels[''] = '(no class)'
-    with open(input_file + '.classes.questions_per_class', 'w') as of:
+    of_path = input_file + '.classes.questions_per_class'
+    logging.info('Writing file: %s', of_path)
+    with open(of_path, 'w') as of:
         of.writelines('\t'.join(map(str, item + (classes_labels[item[0]],))) + '\n' for item in sorted(classes_questions.items(), key=lambda item: item[1], reverse=True))
-    with open(input_file + '.classes.classes_per_entity', 'w') as of:
+    of_path = input_file + '.classes.classes_per_entity'
+    logging.info('Writing file: %s', of_path)
+    with open(of_path, 'w') as of:
         of.writelines('\t'.join(map(str, (i, classcount_entities[i]))) + '\n' for i in range(max(classcount_entities.keys()) + 1))
 
 def main(*, dataset_file, redis_address):
