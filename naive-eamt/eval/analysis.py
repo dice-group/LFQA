@@ -161,7 +161,7 @@ def neamt(item):
     return item
 
 def qald_qae(dataset_file):
-    'Read and preprocess dataset(s) and return a function to access by id'
+    'Read and preprocess dataset(s)'
     def qae_mentions(mentions):
         return [{
             'canonical_uri': uri,
@@ -175,10 +175,10 @@ def qald_qae(dataset_file):
                 'ent_mentions': qae_mentions(q['query_ent_mentions'] or []),
             } for q in tqdm.tqdm(json.load(f), desc=df)}
     logging.info('%d questions in the dataset', len(questions))
-    return lambda q_id: questions.get(q_id)
+    return questions
 
 def mintaka(dataset_file):
-    'Read and preprocess dataset(s) and return a function to access by id'
+    'Read and preprocess dataset(s)'
     def mintaka_mentions(mentions):
         return [{
             'canonical_uri': wd_resolve(m['name']),
@@ -193,7 +193,7 @@ def mintaka(dataset_file):
                 'ent_mentions': mintaka_mentions(q['questionEntity']),
             } for q in tqdm.tqdm(json.load(f), desc=df)}
     logging.info('%d questions in the dataset', len(questions))
-    return lambda q_id: questions.get(q_id)
+    return questions
 
 def process_task(task, headers, pipelines, metric, output, dataset_lu):
     #logging.info('Processing: %s', task)
@@ -212,7 +212,7 @@ def process_task(task, headers, pipelines, metric, output, dataset_lu):
         for inputs in zip(t, *ps):
             q_id, q_text = inputs[0]
             if dataset_lu is not None and q_id is not None:
-                expected = dataset_lu(q_id)
+                expected = dataset_lu.get(q_id)
                 if expected is None:
                     raise Exception('Question from evaluation not found in dataset: ' + q_id)
             else:
