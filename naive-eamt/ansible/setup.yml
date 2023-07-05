@@ -1,0 +1,58 @@
+#!/usr/bin/ansible-playbook
+---
+  - hosts: all
+    become: yes
+    tasks:
+      - file:
+          state: directory
+          path: "/data/docker"
+      - file:
+          state: link
+          src: "/data/docker"
+          dest: "/var/lib/docker"
+      - file:
+          path: "/data"
+          mode: "0777"
+      - file:
+          state: directory
+          path: "/upb/users"
+          mode: "0777"
+      - file:
+          state: directory
+          path: "/root/.docker/cli-plugins"
+      - get_url:
+          url: "https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-linux-x86_64"
+          dest: "/root/.docker/cli-plugins/docker-compose"
+          mode: "0770"
+  - hosts: all
+    tasks:
+      # - git:
+      #     repo: "https://github.com/dice-group/LFQA"
+      #     dest: "/data/lfqa"
+      - lineinfile:
+          path: "/data/lfqa/naive-eamt/configuration.ini"
+          regexp: "^redis_enabled ="
+          line: "redis_enabled = yes"
+      - lineinfile:
+          path: "/data/lfqa/naive-eamt/configuration.ini"
+          regexp: "^redis_host ="
+          line: "redis_host = neamt-cache.cs.upb.de"
+      - lineinfile:
+          path: "/data/lfqa/naive-eamt/configuration.ini"
+          regexp: "^token_limit ="
+          line: "token_limit = 400"
+  - hosts: all
+    become: yes
+    tasks:
+      - apt:
+          pkg:
+            - docker.io
+      #- command:
+      #    chdir: "/data/lfqa/naive-eamt"
+      #    cmd: "./setup_data.sh"
+      - command:
+          chdir: "/data/lfqa/naive-eamt"
+          cmd: "docker build -t naive-eamt ."
+      - command:
+          chdir: "/data/lfqa/naive-eamt"
+          cmd: "./start_docker_containers.sh"
