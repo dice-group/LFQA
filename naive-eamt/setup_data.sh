@@ -5,22 +5,18 @@ cd "${BASH_SOURCE%/*}"||echo "$(pwd)"
 
 # Download and unzip files
 download_unzip_files() {
-  readarray -d / -t file_name <<< "$1"
-  readarray -d . -t file_name <<< "${file_name[-1]}"
+  readarray -d / -t FILE <<< "$1"
+  #readarray -d . -t file_name <<< "${file_name[-1]}"
   #file_ext="${file_name[-1]}"
-  read -a file_ext <<< "${file_name[-1]}"
+  #read -a file_ext <<< "${file_name[-1]}"
+  file_name="${FILE[-1]%%.*}"
+  file_ext="${FILE[-1]#*.}"
+  file_ext="${file_ext%$'\n'}"
   if [[ "$4" = "no" ]] 
   then
     file_name="$2/$file_name"
   else
     file_name="$4"
-  fi
-  if [[ "$file_ext" = "ftz" ]]
-  then
-    file_name="$file_name.176"
-  elif [[ "$file_ext" = "gz" ]]
-  then
-    file_name="$file_name.tar"
   fi
   if [[ ! -d "$file_name" ]] && [[ -f "$file_name.$file_ext" ]]
   then
