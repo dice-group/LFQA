@@ -30,7 +30,7 @@ def process_task(input_file, input_format):
                 question_classes |= {c['class'] for c in classes}
                 for cls in classes:
                     classes_labels[cls['class']] = cls['label'] if cls['label'] is not None else '(None)'
-                question_classes_o.write('\t'.join([q_id] + sorted(question_classes)) + '\n')
+            question_classes_o.write('\t'.join([q_id] + sorted(question_classes)) + '\n')
             if len(question_classes) != 0:
                 for cls in question_classes:
                     classes_questions[cls] += 1
