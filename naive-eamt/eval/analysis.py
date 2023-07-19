@@ -75,14 +75,22 @@ def labels_pre(s):
     'Simple label and text preprocessing for label matching'
     return s.lower()
 
+labels_by_length = collections.Counter()
+questions_without_labels = 0
 def labels(got, expected):
     'Check if any of entity labels from expected result are found in the translated text we got'
+    global labels_by_length, questions_without_labels
+    for m in expected.get('ent_mentions', []):
+        for label in m.get('labels', []):
+            labels_by_length[len(label)] += 1
+
     mentions = [m for m in expected.get('ent_mentions', []) if len(m.get('labels', [])) != 0]
     if (l := len(mentions)) != 0:
         t = labels_pre(got.get('translated_text', ''))
         return sum(1 for m in mentions if any(labels_pre(s) in t for s in m['labels'])) / l
     else:
-        return 1
+        questions_without_labels += 1
+        return -1
 
 def wd_resolve(local_name):
     # may need urllib.parse.urljoin
@@ -222,7 +230,8 @@ def process_task(task, headers, pipelines, metric, output, dataset_lu):
             max_score = max(scores)
             for header in (headers[index] for index, score in enumerate(scores) if score == max_score):
                 o_best.write('\t'.join((q_id, expected['text'], header, str(max_score))) + '\n')
-                best_count[header] += 1
+                if max_score >= 0:
+                    best_count[header] += 1
     with open(output + '.best.count', 'w') as o_best_count:
         o_best_count.writelines('\t'.join(map(str, item)) + '\n' for item in sorted(best_count.items(), key=lambda item: item[1], reverse=True))
 
@@ -270,3 +279,6 @@ if __name__ == '__main__':
     parser.add_argument('--redis-address', help='Redis address for caching')
     args = parser.parse_args()
     main(**vars(args))
+
+    logging.info('Label counts by length: %s', sorted(labels_by_length.items(), key=lambda item: item[0]))
+    logging.info('Questions without labels: %i', questions_without_labels)
