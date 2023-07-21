@@ -69,7 +69,9 @@ def_placeholder = '00'
 io_exc_list = ['query', 'full_json']
 comp_inst_map = {}
 path_pipeline_map = {}
-
+with open('components.json') as json_file:
+    comp_det = json.load(json_file)
+comp_data ={}
 
 def detect_components(config):
     """
@@ -91,6 +93,14 @@ def detect_components(config):
             for comp in comp_list:
                 if comp not in comp_inst_map:
                     comp_inst_map[comp] = comp_map[comp]()
+                    comp_data[comp] = {
+                      'label' : comp_det['label'],
+                      'type' : comp_det['type'],
+                      'supported_langs' : comp_det['supported_langs'],
+                      'max_seq_length' : comp_det['max_seq_length'],
+                      'uri' : comp_det['uri'],
+                      'description' : comp_det['description']
+                    }
                 inst_list.append(comp_inst_map[comp])
             # map the pipeline path to pipeline name + pipeline instance list
             path_pipeline_map[pipeline_path] = {
@@ -108,7 +118,7 @@ config = configparser.ConfigParser()
 config.read(config_file)
 # Initialize the requested components
 detect_components(config)
-
+print(comp_data)
 TOKEN_LIMIT = int(config['DEFAULT'].get('token_limit', '400'))
 
 # Process requests
