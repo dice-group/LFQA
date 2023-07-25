@@ -264,7 +264,14 @@ def cus_pipe():
     global stat_dict
     # incrementing query count
     stat_dict['query_count'] += 1
-    data = request.form
+
+    #debug
+    logging.debug(request)
+
+    if request.get('form'):
+        data = request.get('form')
+    elif request.get('json'):
+        data = request.get('json')
     logging.info('Query received at custom-pipeline')
     logging.info('Data received for translation: %s' % data)
     comp_arr = data['components'].split(',')
