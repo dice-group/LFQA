@@ -211,22 +211,34 @@ MGENRE() {
 }
 
 
-
+modules_included=0
 for included_module in "$@"; do
   if [[ "$included_module" = "MAG" ]]
   then
     MAG
+    ((modules_included++))
   elif [[ "$included_module" = "LIBRE" ]]
   then
     LIBRE
+    ((modules_included++))
   elif [[ "$included_module" = "OPUSMT" ]]
   then
     OPUSMT
+    ((modules_included++))
   elif [[ "$included_module" = "MGENRE" ]]
   then
     MGENRE
+    ((modules_included++))
   fi
 done
+
+if [[ "$modules_included" = 0 ]]
+then
+  MAG
+  LIBRE
+  OPUSMT
+  MGENRE
+fi
 
 
 # Download evaluation data
