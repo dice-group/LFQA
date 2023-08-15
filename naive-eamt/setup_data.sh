@@ -1,4 +1,7 @@
 #!/bin/bash
+# This script is to setup the 
+# Sample Usage
+# Help
 set -eu
 # This might take some hours. Around 150 GB of storage space will be needed.
 cd "${BASH_SOURCE%/*}"||echo "$(pwd)"
