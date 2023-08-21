@@ -1,139 +1,139 @@
 {
-	'babelscape_ner': {
-		'label': 'Babelscape',
-		'type': 'NER',
-		'supported_langs': ['de', 'en', 'es', 'fr', 'it', 'nl', 'pl', 'pt', 'ru'],
-		'max_seq_length': 512,
-		'uri': 'https://huggingface.co/Babelscape/wikineural-multilingual-ner',
-		'description': '...'
+	"babelscape_ner": {
+			"label": "BabelscapeNer",
+			"type": "NER",
+			"supported_langs": ["de", "en", "es", "fr", "it", "nl", "pl", "pt", "ru"],
+			"max_seq_length": 512,
+			"uri": "https://huggingface.co/Babelscape/wikineural-multilingual-ner",
+			"description": "..."
 	},
-	'flair_ner': {
-		'label': 'Flair',
-		'type': 'NER',
-		'supported_langs': ['de', 'en', 'es', 'nl'],
-		'max_seq_length': 512,
-		'uri': 'https://github.com/flairNLP/flair',
-		'description': '...'
+	"flair_ner": {
+			"label": "FlairNer",
+			"type": "NER",
+			"supported_langs": ["de", "en", "es", "nl"],
+			"max_seq_length": 512,
+			"uri": "https://github.com/flairNLP/flair",
+			"description": "..."
 	},
-	'davlan_ner': {
-		'label': 'Davlan',
-		'type': 'NER',
-		'supported_langs': ['ar', 'de', 'en', 'es', 'fr', 'it', 'lv', 'nl', 'pt', 'zh'],
-		'max_seq_length': 512,
-		'uri': 'https://huggingface.co/Davlan/bert-base-multilingual-cased-ner-hrl',
-		'description': '...'
+	"davlan_ner": {
+			"label": "DavlanNer",
+			"type": "NER",
+			"supported_langs": ["ar", "de", "en", "es", "fr", "it", "lv", "nl", "pt", "zh"],
+			"max_seq_length": 512,
+			"uri": "https://huggingface.co/Davlan/bert-base-multilingual-cased-ner-hrl",
+			"description": "..."
 	},
-	'spacy_ner': {
-		'label': 'Spacy',
-		'type': 'NER',
-		'supported_langs': ['de', 'en', 'es', 'fr', 'it', 'nl', 'pl', 'pt', 'ru'],
-		'max_seq_length': '1 million character (spacy's default max_length)',
-		'uri': 'https://github.com/explosion/spacy-models/releases/tag/xx_ent_wiki_sm-3.4.0',
-		'description': '...'
+	"spacy_ner": {
+			"label": "SpacyNer",
+			"type": "NER",
+			"supported_langs": ["de", "en", "es", "fr", "it", "nl", "pl", "pt", "ru"],
+			"max_seq_length": "1 million character (spacy's default max_length)",
+			"uri": "https://github.com/explosion/spacy-models/releases/tag/xx_ent_wiki_sm-3.4.0",
+			"description": "..."
 	},
-	'empty_ner': {
-		'label': 'Empty',
-		'type': 'NER',
-		'supported_langs': ['de', 'en', 'es', 'fr', 'it', 'nl', 'pl', 'pt', 'ru'],
-		'max_seq_length': 512,
-		'uri': 'https://huggingface.co/Babelscape/wikineural-multilingual-ner',
-		'description': '...'
+	"no_ner": {
+			"label": "EmptyNer",
+			"type": "NER",
+			"supported_langs": [],
+			"max_seq_length": 0,
+			"uri": "",
+			"description": "..."
 	},
-	'mag_el': {
-		'label': 'MAG',
-		'type': 'EL',
-		'supported_langs': ['de', 'en', 'es', 'fr', 'it', 'ja', 'nl'],
-		'max_seq_length': 512,
-		'uri': 'https://github.com/dice-group/AGDISTIS/wiki/5---New-Capabilities---MAG',
-		'description': '...'
+	"mag_el": {
+			"label": "MagEl",
+			"type": "EL",
+			"supported_langs": ["de", "en", "es", "fr", "it", "ja", "nl"],
+			"max_seq_length": 512,
+			"uri": "https://github.com/dice-group/AGDISTIS/wiki/5---New-Capabilities---MAG",
+			"description": "..."
 	},
-	'mgenre_el': {
-		'label': 'mGenre',
-		'type': 'EL',
-		'supported_langs': ['105 languages'],
-		'max_seq_length': 512,
-		'uri': 'https://github.com/facebookresearch/GENRE',
-		'description': '...'
+	"mgenre_el": {
+			"label": "MgenreEl",
+			"type": "EL",
+			"supported_langs": ["105 languages"],
+			"max_seq_length": 512,
+			"uri": "https://github.com/facebookresearch/GENRE",
+			"description": "..."
 	},
-	'empty_el': {
-		'label': 'Empty',
-		'type': 'EL',
-		'supported_langs': ['de', 'en', 'es', 'fr', 'it', 'ja', 'nl'],
-		'max_seq_length': 512,
-		'uri': 'https://github.com/dice-group/AGDISTIS/wiki/5---New-Capabilities---MAG',
-		'description': '...'
+	"no_el": {
+			"label": "EmptyEl",
+			"type": "EL",
+			"supported_langs": [],
+			"max_seq_length": 0,
+			"uri": "",
+			"description": "..."
 	},
-	'swc_ner_el': {
-		'label': 'SwcNer',
-		'type': 'EL',
-		'supported_langs': ['de', 'en', 'es', 'fr', 'it', 'ja', 'nl'],
-		'max_seq_length': 512,
-		'uri': 'https://github.com/dice-group/AGDISTIS/wiki/5---New-Capabilities---MAG',
-		'description': '...'
+	"swc_ner_el": {
+			"label": "SwcNerEl",
+			"type": "EL",
+			"supported_langs": [],
+			"max_seq_length": 0,
+			"uri": "",
+			"description": "..."
 	},
-	'libre_mt': {
-		'label': 'Libre Translate',
-		'type': 'MT',
-		'supported_langs': ['ar', 'az', 'zh', 'cs', 'da', 'nl', 'en', 'eo', 'fi', 'fr', 'de', 'el', 'he', 'hi', 'hu', 'id', 'ga', 'it', 'ja', 'ko', 'fa', 'pl', 'pt', 'ru', 'sk', 'es', 'sv', 'tr', 'uk'],
-		'max_seq_length': 512,
-		'uri': 'https://github.com/LibreTranslate/LibreTranslate',
-		'description': '...'
+	"libre_mt": {
+			"label": "LibreMt",
+			"type": "MT",
+			"supported_langs": ["ar", "az", "zh", "cs", "da", "nl", "en", "eo", "fi", "fr", "de", "el", "he", "hi", "hu", "id", "ga", "it", "ja", "ko", "fa", "pl", "pt", "ru", "sk", "es", "sv", "tr", "uk"],
+			"max_seq_length": 512,
+			"uri": "https://github.com/LibreTranslate/LibreTranslate",
+			"description": "..."
 	},
-	'opus_mt': {
-		'label': 'OPUS MT',
-		'type': 'MT',
-		'supported_langs': ['203 languages'],
-		'max_seq_length': 512,
-		'uri': 'https://github.com/Helsinki-NLP/Opus-MT',
-		'description': '...'
+	"opus_mt": {
+			"label": "OpusMt",
+			"type": "MT",
+			"supported_langs": ["203 languages"],
+			"max_seq_length": 512,
+			"uri": "https://github.com/Helsinki-NLP/Opus-MT",
+			"description": "..."
 	},
-	'nllb_mt': {
-		'label': 'NLLB MT',
-		'type': 'MT',
-		'supported_langs': ['196 languages'],
-		'max_seq_length': 1024,
-		'uri': 'https://github.com/facebookresearch/fairseq/tree/nllb/#multilingual-translation-models',
-		'description': '...'
+	"nllb_mt": {
+			"label": "NllbMt",
+			"type": "MT",
+			"supported_langs": ["196 languages"],
+			"max_seq_length": 1024,
+			"uri": "https://github.com/facebookresearch/fairseq/tree/nllb/#multilingual-translation-models",
+			"description": "..."
 	},
-	'mbart_mt': {
-		'label': 'MBart MT',
-		'type': 'MT',
-		'supported_langs': ['53 languages'],
-		'max_seq_length': 1024,
-		'uri': 'https://huggingface.co/facebook/mbart-large-50-many-to-many-mmt',
-		'description': '...'
+	"mbart_mt": {
+			"label": "MbartMt",
+			"type": "MT",
+			"supported_langs": ["53 languages"],
+			"max_seq_length": 1024,
+			"uri": "https://huggingface.co/facebook/mbart-large-50-many-to-many-mmt",
+			"description": "..."
 	},
-	'mbart_ep_mt': {
-		'label': 'MBart EP MT',
-		'type': 'MT',
-		'supported_langs': ['53 languages'],
-		'max_seq_length': 1024,
-		'uri': 'https://huggingface.co/facebook/mbart-large-50-many-to-many-mmt',
-		'description': '...'
+	"mbart_ep_mt": {
+			"label": "MbartEpMt",
+			"type": "MT",
+			"supported_langs": [],
+			"max_seq_length": 0,
+			"uri": "",
+			"description": "..."
 	},
-	'mbart_plc_ft_mt': {
-		'label': 'MBart PLC FT MT',
-		'type': 'MT',
-		'supported_langs': ['53 languages'],
-		'max_seq_length': 1024,
-		'uri': 'https://huggingface.co/facebook/mbart-large-50-many-to-many-mmt',
-		'description': '...'
+	"mbart_plc_ft_mt": {
+			"label": "MbartPlcFtMt",
+			"type": "MT",
+			"supported_langs": [],
+			"max_seq_length": 0,
+			"uri": "",
+			"description": "..."
 	},
-	'nllb_plc_ft_mt': {
-		'label': 'NLLB PLC FT MT',
-		'type': 'MT',
-		'supported_langs': ['53 languages'],
-		'max_seq_length': 1024,
-		'uri': 'https://huggingface.co/facebook/mbart-large-50-many-to-many-mmt',
-		'description': '...'
+	"nllb_plc_ft_mt": {
+			"label": "NllbPlcFtMt",
+			"type": "MT",
+			"supported_langs": [],
+			"max_seq_length": 0,
+			"uri": "",
+			"description": "..."
 	},
-	'opus_plc_ft_mt': {
-		'label': 'OPUS PLC FT MT',
-		'type': 'MT',
-		'supported_langs': ['53 languages'],
-		'max_seq_length': 1024,
-		'uri': 'https://huggingface.co/facebook/mbart-large-50-many-to-many-mmt',
-		'description': '...'
-	},
-	
+	"opus_plc_ft_mt": {
+			"label": "OpusPlcFtMt",
+			"type": "MT",
+			"supported_langs": [],
+			"max_seq_length": 0,
+			"uri": "",
+			"description": "..."
+	}
+
 }

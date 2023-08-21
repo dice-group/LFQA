@@ -69,6 +69,7 @@ def_placeholder = '00'
 io_exc_list = ['query', 'full_json']
 comp_inst_map = {}
 path_pipeline_map = {}
+sys.path.insert(1, '/neamt/')
 with open('components.json') as json_file:
     comp_det = json.load(json_file)
 comp_data ={}
@@ -86,21 +87,14 @@ def detect_components(config):
             # extract pipeline path
             pipeline_path = config.get(section, 'path')
             # extract pipeline components
-            comp_list = json.loads(config.get(section, 'components'))
+            comp_list = json.loads(config.get(section, 'components'))            
             logging.info("list of components to be loaded: %s" % str(comp_list))
             # find/add components in the instance map
             inst_list = []
             for comp in comp_list:
                 if comp not in comp_inst_map:
                     comp_inst_map[comp] = comp_map[comp]()
-                    comp_data[comp] = {
-                      'label' : comp_det['label'],
-                      'type' : comp_det['type'],
-                      'supported_langs' : comp_det['supported_langs'],
-                      'max_seq_length' : comp_det['max_seq_length'],
-                      'uri' : comp_det['uri'],
-                      'description' : comp_det['description']
-                    }
+                    comp_data[comp] = comp_det[comp] 
                 inst_list.append(comp_inst_map[comp])
             # map the pipeline path to pipeline name + pipeline instance list
             path_pipeline_map[pipeline_path] = {
@@ -327,3 +321,16 @@ def reset_placeholder_stats():
 def fetch_stats():
     global stat_dict
     return stat_dict
+
+
+@app.route('/components', methods=['GET'])
+def all_components_details():
+    return json.dumps(comp_data)
+ 
+@app.route('/components/<string:component_name>', methods=['GET'])
+def component_details(component_name):
+    if component_name in comp_data:
+        return json.dumps(comp_data[component_name])
+    else:
+      return f"Entry '{component_name}' not found!"
+ 

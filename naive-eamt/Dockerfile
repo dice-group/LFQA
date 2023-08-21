@@ -26,6 +26,7 @@ COPY start.py .
 COPY ./component .
 COPY ./util .
 COPY configuration.ini .
+COPY components.json .
 # Run the application
 CMD ["-m", "flask", "--app", "/neamt/start", "run", "--host=0.0.0.0", "--port=80", "--with-threads"]
 ENTRYPOINT ["python"]
