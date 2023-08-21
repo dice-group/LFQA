@@ -1,7 +1,11 @@
 #!/bin/bash
-# This script is to setup the 
-# Sample Usage
-# Help
+# This script is to setup the different modules that need to intitialized.
+# Execute this script while mentioning the modules that need to be downloaded and installed
+# The syntax is ".\setup_data.sh {Included_module_01} {Included_module_02}
+# In case no modules are passed, all the modules will be installed
+# The tags for the modules are MAG: Mag Module, LIBRE: Libre module, OPUSMT: Helsinki-OPT Module, MGENRE: Genre Module
+# Sample usage: In case only Libre and Genre Module need to be installed, following would be the execution command: 
+# .\setup_data.sh LIBRE MGENRE
 set -eu
 # This might take some hours. Around 150 GB of storage space will be needed.
 cd "${BASH_SOURCE%/*}"||echo "$(pwd)"
