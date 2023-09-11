@@ -2,7 +2,10 @@
 '''
 Wikidata
 '''
+import logging
 import os
+import time
+import urllib
 import SPARQLWrapper
 
 wd_sparql = None
@@ -15,7 +18,16 @@ def wd_query(query):
         if ua := os.getenv('WD_USER_AGENT'):
             wd_sparql.agent = str({'User-Agent': ua})
     wd_sparql.setQuery(query)
-    return wd_sparql.queryAndConvert()
+    while True:
+        try:
+            return wd_sparql.queryAndConvert()
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                delay = int(e.headers['retry-after'])
+                logging.warn('Too many requests. Retrying in %d seconds...', delay)
+                time.sleep(delay)
+            else:
+                raise e
 
 def wd_labels(uri, langs):
     if not isinstance(langs, list): langs = [langs]
