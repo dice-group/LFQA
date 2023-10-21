@@ -32,8 +32,8 @@ services:
     command: ['--host', '0.0.0.0']
     profiles: ["libre_mt"]
     # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
-    ports:
-      - 6120:5000
+    #ports:
+    #  - 6120:5000
     networks:
       - neamt-net
   # Helsinki Opus-MT Translate service
@@ -44,8 +44,8 @@ services:
     volumes:
       - ./data/Opus-MT/models:/usr/src/app/models
     # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
-    ports:
-      - 6121:80
+    #ports:
+    #  - 6121:80
     networks:
       - neamt-net
   # MAG services with relevant parameters
@@ -55,8 +55,8 @@ services:
       - neamt-net
     profiles: ["mag"]
     # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
-    ports:
-      - 6131:8080
+    #ports:
+    #  - 6131:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_en_2016:/usr/local/tomcat/index
@@ -75,8 +75,8 @@ services:
       - neamt-net
     profiles: ["mag"]
     # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
-    ports:
-      - 6132:8080
+    #ports:
+    #  - 6132:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_de_2016:/usr/local/tomcat/index
@@ -95,8 +95,8 @@ services:
       - neamt-net
     profiles: ["mag"]
     # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
-    ports:
-      - 6133:8080
+    #ports:
+    #  - 6133:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_fr_2016:/usr/local/tomcat/index
@@ -113,8 +113,8 @@ services:
       - neamt-net
     profiles: ["mag"]
     # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
-    ports:
-      - 6134:8080
+    #ports:
+    #  - 6134:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_es_2016:/usr/local/tomcat/index
@@ -131,8 +131,8 @@ services:
       - neamt-net
     profiles: ["mag"]
     # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
-    ports:
-      - 6135:8080
+    #ports:
+    #  - 6135:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_it_2016:/usr/local/tomcat/index
@@ -149,8 +149,8 @@ services:
       - neamt-net
     profiles: ["mag"]
     # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
-    ports:
-      - 6136:8080
+    #ports:
+    #  - 6136:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_ja_2016:/usr/local/tomcat/index
@@ -167,8 +167,8 @@ services:
       - neamt-net
     profiles: ["mag"]
     # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
-    ports:
-      - 6137:8080
+    #ports:
+    #  - 6137:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_nl_2016:/usr/local/tomcat/index
