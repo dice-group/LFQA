@@ -9,6 +9,7 @@
 set -eu
 # This might take some hours. Around 150 GB of storage space will be needed.
 cd "${BASH_SOURCE%/*}"||echo "$(pwd)"
+CUR_NEAMT=$(pwd)
 
 # Download and unzip files
 download_unzip_files() {
@@ -137,7 +138,7 @@ OPUSMT() {
 
   # Copy customized services.json
   mv services.json services.json.old
-  cp ../../helsinki_opusmt_services.json ./services.json
+  cp $CUR_NEAMT/helsinki_opusmt_services.json ./services.json
 
 
   # Download and extract models
@@ -153,6 +154,8 @@ OPUSMT() {
     ["zh-en"]="https://object.pouta.csc.fi/Tatoeba-MT-models/zho-eng/opus-2020-07-14.zip"
     ["it-en"]="https://object.pouta.csc.fi/OPUS-MT-models/it-en/opus-2019-12-05.zip"
     ["pt-en"]="https://object.pouta.csc.fi/OPUS-MT-models/pt-en/opus-2019-12-05.zip"
+    ["ja-en"]="https://object.pouta.csc.fi/OPUS-MT-models/ja-en/opus-2019-12-05.zip"
+    ["lt-en"]="https://object.pouta.csc.fi/OPUS-MT-models/lt-en/opus-2019-12-05.zip"
   )
 
 

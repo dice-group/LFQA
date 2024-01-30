@@ -95,9 +95,9 @@ It comes already integrated with the following tools:
 
 Language code ref: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes 
 
-[*] currently the application only downloads some (de, es, fr, nl, ru) of the supported languages' data for Opus MT. For further language support, please download the data and modify the [configuration](helsinki_opusmt_services.json). This should be done before [setup](setup_data.sh) is executed, otherwise you will have to rebuild the Opus docker image with the right configuration.
+[*] currently the application only downloads some (de, es, fr, nl, ru, zh, it, pt, lt, ja) of the supported languages' data for Opus MT. For further language support, please download the data and modify the [configuration](helsinki_opusmt_services.json). This should be done before [setup](setup_data.sh) is executed, otherwise you will have to rebuild the Opus docker image with the right configuration.
 
-[**] for NLLB and MBart MT, currently the application only allows the following: de, es, fr, pt, ru. Edit the `lang_code_map` in the component file to extend support for further languages.
+[**] for NLLB and MBart MT, currently the application only allows (de, es, fr, pt, ru, it, nl, uk, be, zh, ja, ba, lt, hy) and (de, es, fr, pt, ru, it, nl, uk, zh, ja, lt) respectively. Edit the `lang_code_map` in the component file to extend support for further languages.
 ## Configuration
 
 The application uses a configuration file [`configuration.ini`](configuration.ini) to allow users to form pipelines based upon their combination of components.
