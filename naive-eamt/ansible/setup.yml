@@ -26,9 +26,9 @@
           mode: "0770"
   - hosts: all
     tasks:
-      # - git:
-      #     repo: "https://github.com/dice-group/LFQA"
-      #     dest: "/data/lfqa"
+      - git:
+           repo: "https://github.com/dice-group/LFQA"
+           dest: "/data/lfqa"
       - lineinfile:
           path: "/data/lfqa/naive-eamt/configuration.ini"
           regexp: "^redis_enabled ="
@@ -47,9 +47,9 @@
       - apt:
           pkg:
             - docker.io
-      #- command:
-      #    chdir: "/data/lfqa/naive-eamt"
-      #    cmd: "./setup_data.sh"
+      - command:
+          chdir: "/data/lfqa/naive-eamt"
+          cmd: "./setup_data.sh"
       - command:
           chdir: "/data/lfqa/naive-eamt"
           cmd: "docker build -t naive-eamt ."

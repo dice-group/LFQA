@@ -1,0 +1,21 @@
+#!/usr/bin/ansible-playbook
+---
+  - hosts: all
+    become: yes
+    tasks:
+      # stop all docker containers
+      - shell:
+          chdir: "/data/"
+          cmd: "docker ps -a -q | xargs --no-run-if-empty docker stop"
+      # delete all docker containers
+      - shell:
+          chdir: "/data/"
+          cmd: "docker ps -aq | xargs --no-run-if-empty docker rm -vf"
+      # delete all docker images
+      - shell:
+          chdir: "/data/"
+          cmd: "docker images -aq | xargs --no-run-if-empty docker rmi -f"
+      # delete lfqa
+      - shell:
+          chdir: "/data/"
+          cmd: "rm -rf lfqa"
