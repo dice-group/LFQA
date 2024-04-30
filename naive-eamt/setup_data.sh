@@ -133,7 +133,8 @@ OPUSMT() {
   cd data
   if [[ ! -d Opus-MT ]]
   then
-    git clone --depth 1 https://github.com/Helsinki-NLP/Opus-MT.git
+    # git clone --depth 1 https://github.com/Helsinki-NLP/Opus-MT.git
+    git clone --depth 1  https://github.com/dice-group/Opus-MT
   fi
   cd Opus-MT
 
