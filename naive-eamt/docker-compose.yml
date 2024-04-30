@@ -31,7 +31,7 @@ services:
     restart: always
     command: ['--host', '0.0.0.0']
     profiles: ["libre_mt"]
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
+    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
     #ports:
     #  - 6120:5000
     networks:
@@ -43,7 +43,7 @@ services:
     restart: always
     volumes:
       - ./data/Opus-MT/models:/usr/src/app/models
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
+    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
     #ports:
     #  - 6121:80
     networks:
@@ -54,7 +54,7 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
+    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
     #ports:
     #  - 6131:8080
     volumes:
@@ -74,7 +74,7 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
+    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
     #ports:
     #  - 6132:8080
     volumes:
@@ -94,7 +94,7 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
+    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
     #ports:
     #  - 6133:8080
     volumes:
@@ -112,7 +112,7 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
+    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
     #ports:
     #  - 6134:8080
     volumes:
@@ -130,7 +130,7 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
+    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
     #ports:
     #  - 6135:8080
     volumes:
@@ -148,7 +148,7 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
+    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
     #ports:
     #  - 6136:8080
     volumes:
@@ -166,7 +166,7 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting the any functionality.
+    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
     #ports:
     #  - 6137:8080
     volumes:

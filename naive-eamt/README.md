@@ -72,7 +72,7 @@ It comes already integrated with the following tools:
         <tr>
             <td>Opus MT*</td>
             <td>opus_mt</td>
-            <td>Supports 203 languages for translation to English (https://opus.nlpl.eu/Opus-MT/)</td>
+            <td>Supports 203 languages for translation to English (https://github.com/Helsinki-NLP/Opus-MT-train/tree/master/models)</td>
             <td>https://github.com/Helsinki-NLP/Opus-MT</td>
             <td>512 tokens (https://huggingface.co/Helsinki-NLP)</td>
         </tr>

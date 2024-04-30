@@ -116,6 +116,7 @@ LIBRE() {
     
   fi
 
+  # As described here: https://github.com/LibreTranslate/LibreTranslate/blob/main/CONTRIBUTING.md#build-with-docker
   cd LibreTranslate
   docker build -f docker/Dockerfile --build-arg with_models=true -t libretranslate .
   cd ../..
@@ -145,17 +146,28 @@ OPUSMT() {
   mkdir -p models
   cd models
 
+  # Lang codes: https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
+  # Models: https://github.com/Helsinki-NLP/Opus-MT-train/tree/master/models
+
   declare -A model_urls=(
-    ["de-en"]="https://object.pouta.csc.fi/OPUS-MT-models/de-en/opus-2020-02-26.zip"
-    ["es-en"]="https://object.pouta.csc.fi/OPUS-MT-models/es-en/opus-2019-12-04.zip"
-    ["fr-en"]="https://object.pouta.csc.fi/OPUS-MT-models/fr-en/opus-2020-02-26.zip"
-    ["ru-en"]="https://object.pouta.csc.fi/OPUS-MT-models/ru-en/opus-2020-02-26.zip"
-    ["nl-en"]="https://object.pouta.csc.fi/OPUS-MT-models/nl-en/opus-2019-12-05.zip"
-    ["zh-en"]="https://object.pouta.csc.fi/Tatoeba-MT-models/zho-eng/opus-2020-07-14.zip"
-    ["it-en"]="https://object.pouta.csc.fi/OPUS-MT-models/it-en/opus-2019-12-05.zip"
-    ["pt-en"]="https://object.pouta.csc.fi/OPUS-MT-models/pt-en/opus-2019-12-05.zip"
-    ["ja-en"]="https://object.pouta.csc.fi/OPUS-MT-models/ja-en/opus-2019-12-05.zip"
-    ["lt-en"]="https://object.pouta.csc.fi/OPUS-MT-models/lt-en/opus-2019-12-05.zip"
+    ["de-en"]="https://object.pouta.csc.fi/OPUS-MT-models/af-en/opus-2019-12-18.zip" # sentencepiece
+    ["es-en"]="https://object.pouta.csc.fi/OPUS-MT-models/es-en/opus-2019-12-04.zip" # BPE
+    ["fr-en"]="https://object.pouta.csc.fi/OPUS-MT-models/fr-en/opus-2020-02-26.zip" # SentencePiece
+    ["ru-en"]="https://object.pouta.csc.fi/OPUS-MT-models/ru-en/opus-2020-02-26.zip" # SentencePiece
+    ["nl-en"]="https://object.pouta.csc.fi/OPUS-MT-models/nl-en/opus-2019-12-05.zip" # SentencePiece
+    ["zh-en"]="https://object.pouta.csc.fi/OPUS-MT-models/nl-en/opus-2019-12-05.zip" # SentencePiece
+    ["it-en"]="https://object.pouta.csc.fi/OPUS-MT-models/it-en/opus-2019-12-05.zip" # BPE
+    ["pt-en"]="https://object.pouta.csc.fi/OPUS-MT-models/pt-en/opus-2019-12-05.zip" # BPE
+    ["ja-en"]="https://object.pouta.csc.fi/OPUS-MT-models/ja-en/opus-2019-12-05.zip" # BPE
+    ["lt-en"]="https://object.pouta.csc.fi/OPUS-MT-models/lt-en/opus-2019-12-05.zip" # BPE
+    ["id-en"]="https://object.pouta.csc.fi/OPUS-MT-models/id-en/opus-2019-12-05.zip" # BPE
+    ["bn-en"]="https://object.pouta.csc.fi/OPUS-MT-models/bn-en/opus-2019-12-04.zip" # BPE
+    ["et-en"]="https://object.pouta.csc.fi/OPUS-MT-models/et-en/opus-2019-12-04.zip" # BPE
+    ["he-en"]="https://object.pouta.csc.fi/OPUS-MT-models/he-en/opus-2019-12-05.zip" # BPE
+    # Doesn't work #["lv-en"]="https://object.pouta.csc.fi/OPUS-MT-models/lv-en/opus-2019-12-18.zip" # SentencePiece
+    ["ro-en"]="https://object.pouta.csc.fi/OPUS-MT-models/ro-en/opus-2019-12-05.zip" # BPE
+    ["th-en"]="https://object.pouta.csc.fi/OPUS-MT-models/th-en/opus-2019-12-05.zip" # BPE
+    ["uk-en"]="https://object.pouta.csc.fi/OPUS-MT-models/uk-en/opus-2019-12-05.zip" # BPE
   )
 
 
