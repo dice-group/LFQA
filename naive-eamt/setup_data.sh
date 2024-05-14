@@ -72,23 +72,23 @@ MAG() {
 
   echo 'MAG: Downloading Indexes for en, de, fr & es..'
 
-  download_unzip_files "http://hobbitdata.informatik.uni-leipzig.de/agdistis/dbpedia_index_2016-04/en/indexdbpedia_en_2016.zip" "data/mag_data" "unzip" "no"
+  download_unzip_files "https://files.dice-research.org/projects/AGDISTIS/dbpedia_index_2016-04/en/indexdbpedia_en_2016.zip" "data/mag_data" "unzip" "no"
 
-  download_unzip_files "http://hobbitdata.informatik.uni-leipzig.de/agdistis/dbpedia_index_2016-04/en/index_bycontext.zip" "data/mag_data" "unzip" "data/mag_data/index_bycontext_en"
+  download_unzip_files "https://files.dice-research.org/projects/AGDISTIS/dbpedia_index_2016-04/en/index_bycontext.zip" "data/mag_data" "unzip" "data/mag_data/index_bycontext_en"
 
-  download_unzip_files "http://hobbitdata.informatik.uni-leipzig.de/agdistis/dbpedia_index_2016-04/de/indexdbpedia_de_2016.zip" "data/mag_data" "unzip" "no"
+  download_unzip_files "https://files.dice-research.org/projects/AGDISTIS/dbpedia_index_2016-04/de/indexdbpedia_de_2016.zip" "data/mag_data" "unzip" "no"
 
-  download_unzip_files "http://hobbitdata.informatik.uni-leipzig.de/agdistis/dbpedia_index_2016-04/de/index_bycontext.zip" "data/mag_data" "unzip" "data/mag_data/index_bycontext_de"
+  download_unzip_files "https://files.dice-research.org/projects/AGDISTIS/dbpedia_index_2016-04/de/index_bycontext.zip" "data/mag_data" "unzip" "data/mag_data/index_bycontext_de"
 
-  download_unzip_files "http://hobbitdata.informatik.uni-leipzig.de/agdistis/dbpedia_index_2016-04/fr/indexdbpedia_fr_2016.zip" "data/mag_data" "unzip" "no"
+  download_unzip_files "https://files.dice-research.org/projects/AGDISTIS/dbpedia_index_2016-04/fr/indexdbpedia_fr_2016.zip" "data/mag_data" "unzip" "no"
 
-  download_unzip_files "http://hobbitdata.informatik.uni-leipzig.de/agdistis/dbpedia_index_2016-04/es/indexdbpedia_es_2016.zip" "data/mag_data" "unzip" "no"
+  download_unzip_files "https://files.dice-research.org/projects/AGDISTIS/dbpedia_index_2016-04/es/indexdbpedia_es_2016.zip" "data/mag_data" "unzip" "no"
 
-  download_unzip_files "http://hobbitdata.informatik.uni-leipzig.de/agdistis/dbpedia_index_2016-04/it/indexdbpedia_it_2016.zip" "data/mag_data" "unzip" "no"
+  download_unzip_files "https://files.dice-research.org/projects/AGDISTIS/dbpedia_index_2016-04/it/indexdbpedia_it_2016.zip" "data/mag_data" "unzip" "no"
 
-  download_unzip_files "http://hobbitdata.informatik.uni-leipzig.de/agdistis/dbpedia_index_2016-04/ja/indexdbpedia_ja_2016.zip" "data/mag_data" "unzip" "no"
+  download_unzip_files "https://files.dice-research.org/projects/AGDISTIS/dbpedia_index_2016-04/ja/indexdbpedia_ja_2016.zip" "data/mag_data" "unzip" "no"
 
-  download_unzip_files "http://hobbitdata.informatik.uni-leipzig.de/agdistis/dbpedia_index_2016-04/nl/indexdbpedia_nl_2016.zip" "data/mag_data" "unzip" "no"
+  download_unzip_files "https://files.dice-research.org/projects/AGDISTIS/dbpedia_index_2016-04/nl/indexdbpedia_nl_2016.zip" "data/mag_data" "unzip" "no"
 
   echo 'MAG: Indexes download finished.'
 }
