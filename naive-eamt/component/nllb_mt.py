@@ -41,6 +41,11 @@ class NllbMt(GenHuggingfaceMt):
             'lv': 'lvs_Latn', # Latvian
             'ro': 'ron_Latn', # Romanian
             'th': 'tha_Thai', # Thai
+            'cs': 'ces_Latn', # Czech
+            'fi': 'fin_Latn', # Finnish
+            'pl': 'pol_Latn', # Polish
+            'sv': 'swe_Latn', # Swedish
+            'tr': 'tur_Latn' # Turkish
         }
     }
 

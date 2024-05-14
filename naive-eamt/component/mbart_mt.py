@@ -34,6 +34,11 @@ class MbartMt(GenHuggingfaceMt):
             'lv': 'lv_LV', # Latvian
             'ro': 'ro_RO', # Romanian
             'th': 'th_TH', # Thai
+            'cs': 'cs_CZ', # Czech
+            'fi': 'fi_FI', # Finnish
+            'pl': 'pl_PL', # Polish
+            'sv': 'sv_SE', # Swedish
+            'tr': 'tr_TR' # Turkish
         }
     }
 

@@ -169,6 +169,13 @@ OPUSMT() {
     ["ro-en"]="https://object.pouta.csc.fi/OPUS-MT-models/ro-en/opus-2019-12-05.zip" # BPE
     ["th-en"]="https://object.pouta.csc.fi/OPUS-MT-models/th-en/opus-2019-12-05.zip" # BPE
     ["uk-en"]="https://object.pouta.csc.fi/OPUS-MT-models/uk-en/opus-2019-12-05.zip" # BPE
+    ["cs-en"]="https://object.pouta.csc.fi/OPUS-MT-models/cs-en/opus-2019-12-04.zip" # BPE
+    ["fi-en"]="https://object.pouta.csc.fi/OPUS-MT-models/fi-en/opus-2019-12-04.zip" # BPE
+    ["hi-en"]="https://object.pouta.csc.fi/OPUS-MT-models/hi-en/opus-2019-12-05.zip" # BPE
+    ["ko-en"]="https://object.pouta.csc.fi/OPUS-MT-models/ko-en/opus-2019-12-05.zip" # BPE
+    ["pl-en"]="https://object.pouta.csc.fi/OPUS-MT-models/pl-en/opus-2019-12-05.zip" # BPE
+    # Doesn't work #["sv-en"]="https://object.pouta.csc.fi/OPUS-MT-models/sv-en/opus-2020-02-26.zip" # SentencePiece
+    ["tr-en"]="https://object.pouta.csc.fi/OPUS-MT-models/tr-en/opus-2019-12-05.zip" # BPE
   )
 
 

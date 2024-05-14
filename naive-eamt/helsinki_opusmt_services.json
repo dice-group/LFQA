@@ -151,5 +151,59 @@
             "host": "0.0.0.0",
             "port": "10018"
         }
+    },
+    "cs": {
+        "en": {
+            "configuration": "./models/cs-en/decoder.yml",
+            "sourcebpe": "./models/cs-en/source.bpe",
+            "targetbpe": "./models/cs-en/target.bpe",
+            "host": "0.0.0.0",
+            "port": "10019"
+        }
+    },
+    "fi": {
+        "en": {
+            "configuration": "./models/fi-en/decoder.yml",
+            "sourcebpe": "./models/fi-en/source.bpe",
+            "targetbpe": "./models/fi-en/target.bpe",
+            "host": "0.0.0.0",
+            "port": "10020"
+        }
+    },
+    "hi": {
+        "en": {
+            "configuration": "./models/hi-en/decoder.yml",
+            "sourcebpe": "./models/hi-en/source.bpe",
+            "targetbpe": "./models/hi-en/target.bpe",
+            "host": "0.0.0.0",
+            "port": "10021"
+        }
+    },
+    "ko": {
+        "en": {
+            "configuration": "./models/ko-en/decoder.yml",
+            "sourcebpe": "./models/ko-en/source.bpe",
+            "targetbpe": "./models/ko-en/target.bpe",
+            "host": "0.0.0.0",
+            "port": "10022"
+        }
+    },
+    "pl": {
+        "en": {
+            "configuration": "./models/pl-en/decoder.yml",
+            "sourcebpe": "./models/pl-en/source.bpe",
+            "targetbpe": "./models/pl-en/target.bpe",
+            "host": "0.0.0.0",
+            "port": "10024"
+        }
+    },
+    "tr": {
+        "en": {
+            "configuration": "./models/tr-en/decoder.yml",
+            "sourcebpe": "./models/tr-en/source.bpe",
+            "targetbpe": "./models/tr-en/target.bpe",
+            "host": "0.0.0.0",
+            "port": "10026"
+        }
     }
 }
