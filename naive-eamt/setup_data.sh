@@ -151,7 +151,7 @@ OPUSMT() {
   # Models: https://github.com/Helsinki-NLP/Opus-MT-train/tree/master/models
 
   declare -A model_urls=(
-    ["de-en"]="https://object.pouta.csc.fi/OPUS-MT-models/af-en/opus-2019-12-18.zip" # sentencepiece
+    ["de-en"]="https://object.pouta.csc.fi/OPUS-MT-models/de-en/opus-2020-02-26.zip" # sentencepiece
     ["es-en"]="https://object.pouta.csc.fi/OPUS-MT-models/es-en/opus-2019-12-04.zip" # BPE
     ["fr-en"]="https://object.pouta.csc.fi/OPUS-MT-models/fr-en/opus-2020-02-26.zip" # SentencePiece
     ["ru-en"]="https://object.pouta.csc.fi/OPUS-MT-models/ru-en/opus-2020-02-26.zip" # SentencePiece
