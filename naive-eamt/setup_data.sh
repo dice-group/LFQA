@@ -156,7 +156,7 @@ OPUSMT() {
     ["fr-en"]="https://object.pouta.csc.fi/OPUS-MT-models/fr-en/opus-2020-02-26.zip" # SentencePiece
     ["ru-en"]="https://object.pouta.csc.fi/OPUS-MT-models/ru-en/opus-2020-02-26.zip" # SentencePiece
     ["nl-en"]="https://object.pouta.csc.fi/OPUS-MT-models/nl-en/opus-2019-12-05.zip" # SentencePiece
-    ["zh-en"]="https://object.pouta.csc.fi/Tatoeba-MT-models/zho-eng/opus-2020-07-14.zip" # SentencePiece
+    # Not supported # ["zh-en"]="https://object.pouta.csc.fi/Tatoeba-MT-models/zho-eng/opus-2020-07-14.zip" # SentencePiece
     ["it-en"]="https://object.pouta.csc.fi/OPUS-MT-models/it-en/opus-2019-12-05.zip" # BPE
     ["pt-en"]="https://object.pouta.csc.fi/OPUS-MT-models/pt-en/opus-2019-12-05.zip" # BPE
     ["ja-en"]="https://object.pouta.csc.fi/OPUS-MT-models/ja-en/opus-2019-12-05.zip" # BPE
