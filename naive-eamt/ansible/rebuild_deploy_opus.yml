@@ -1,0 +1,34 @@
+#!/usr/bin/ansible-playbook
+---
+  - hosts: all
+    become: yes
+    tasks:
+      # stop and remove opus container
+      - name: Stop and remove Docker containers
+        shell: |
+            container_ids=$(docker ps -a -q --filter ancestor=opus-mt --format="{{'{{'}}.ID{{'}}'}}")
+            if [ -n "$container_ids" ]; then
+            docker rm $(docker stop $container_ids)
+            else
+            echo "No containers to stop and remove."
+            fi
+        args:
+            chdir: "/data/"
+      # pull latest code from repo
+      - shell:
+          chdir: "/data/lfqa"
+          cmd: "git pull"
+      # rebuild OPUS-MT
+      - name: Run setup_data.sh script
+        shell: "./setup_data.sh OPUSMT"
+        args:
+            chdir: "/data/lfqa/naive-eamt"
+        ignore_errors: true
+      # restart OPUS-MT
+      - shell:
+          chdir: "/data/lfqa/naive-eamt"
+          cmd: "./start_docker_containers.sh"
+      # remove dangling images and containers
+      - shell:
+          chdir: "/data/lfqa/naive-eamt"
+          cmd: "docker image prune -f"
