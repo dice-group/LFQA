@@ -44,15 +44,6 @@
             "port": "10005"
         }
     },
-     "zh": {
-        "en": {
-            "configuration": "./models/zh-en/decoder.yml",
-            "sourcespm": "./models/zh-en/source.spm",
-            "targetspm": "./models/zh-en/target.spm",
-            "host": "0.0.0.0",
-            "port": "10006"
-        }
-    },
      "it": {
         "en": {
             "configuration": "./models/it-en/decoder.yml",
