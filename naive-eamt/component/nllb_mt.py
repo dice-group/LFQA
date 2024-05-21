@@ -45,7 +45,16 @@ class NllbMt(GenHuggingfaceMt):
             'fi': 'fin_Latn', # Finnish
             'pl': 'pol_Latn', # Polish
             'sv': 'swe_Latn', # Swedish
-            'tr': 'tur_Latn' # Turkish
+            'tr': 'tur_Latn', # Turkish
+            'bg': 'bul_Cyrl', # Bulgarian
+            'ml': 'mal_Mlym', # Malayalam
+            'mr': 'mar_Deva', # Marathi
+            'mk': 'mkd_Cyrl', # Macedonian
+            'nb': 'nob_Latn', # Norwegian Bokmål
+            'ne': 'npi_Deva', # Nepali
+            'si': 'sin_Sinh', # Sinhala
+            'te': 'tel_Telu', # Telugu
+            'xh': 'xho_Latn', # Xhosa
         }
     }
 

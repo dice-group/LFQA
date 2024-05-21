@@ -24,6 +24,10 @@
         args:
             chdir: "/data/lfqa/naive-eamt"
         ignore_errors: true
+      # stop NEAMT
+      - shell:
+          chdir: "/data/lfqa/naive-eamt"
+          cmd: "./stop_docker_containers.sh"
       # restart OPUS-MT
       - shell:
           chdir: "/data/lfqa/naive-eamt"
