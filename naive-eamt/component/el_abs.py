@@ -24,7 +24,11 @@ class GenEL(ABC):
         lang = input['lang']
         # run the preprocessing function
         extra_args = self.prep_input_args(input)
+        # cast the indexes for integers
         ent_indexes = input.get('ent_mentions', [])
+        for mention in ent_indexes:
+            mention['start'] = int(mention['start'])
+            mention['end'] = int(mention['end'])
         # find the entity links
         input['ent_mentions'] = cache_util.call(self.link_entities, self.__class__.__qualname__, query, lang, ent_indexes, extra_args)
         logging.debug('Output: %s' % input)
