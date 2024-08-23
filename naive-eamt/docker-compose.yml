@@ -32,8 +32,8 @@ services:
     command: ['--host', '0.0.0.0']
     profiles: ["libre_mt"]
     # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
-    #ports:
-    #  - 6120:5000
+    ports:
+      - 6120:5000
     networks:
       - neamt-net
   # Helsinki Opus-MT Translate service
@@ -54,9 +54,9 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
-    #ports:
-    #  - 6131:8080
+    # This port mapping is being used by GERBIL (for neamt server only)
+    ports:
+      - 6131:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_en_2016:/usr/local/tomcat/index
@@ -74,9 +74,9 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
-    #ports:
-    #  - 6132:8080
+    # This port mapping is being used by GERBIL (for neamt server only)
+    ports:
+      - 6132:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_de_2016:/usr/local/tomcat/index
@@ -94,9 +94,9 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
-    #ports:
-    #  - 6133:8080
+    # This port mapping is being used by GERBIL (for neamt server only)
+    ports:
+      - 6133:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_fr_2016:/usr/local/tomcat/index
@@ -112,9 +112,9 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
-    #ports:
-    #  - 6134:8080
+    # This port mapping is being used by GERBIL (for neamt server only)
+    ports:
+      - 6134:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_es_2016:/usr/local/tomcat/index
@@ -130,9 +130,9 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
-    #ports:
-    #  - 6135:8080
+    # This port mapping is being used by GERBIL (for neamt server only)
+    ports:
+      - 6135:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_it_2016:/usr/local/tomcat/index
@@ -148,9 +148,9 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
-    #ports:
-    #  - 6136:8080
+    # This port mapping is being used by GERBIL (for neamt server only)
+    ports:
+      - 6136:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_ja_2016:/usr/local/tomcat/index
@@ -166,9 +166,9 @@ services:
     networks:
       - neamt-net
     profiles: ["mag"]
-    # The port mapping below is only needed for testing/dev purposes. It can be removed safely without affecting any functionality.
-    #ports:
-    #  - 6137:8080
+    # This port mapping is being used by GERBIL (for neamt server only)
+    ports:
+      - 6137:8080
     volumes:
       # mount index
       - ./data/mag_data/indexdbpedia_nl_2016:/usr/local/tomcat/index
