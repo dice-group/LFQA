@@ -1,0 +1,21 @@
+#!/usr/bin/ansible-playbook
+---
+  - hosts: all
+    become: yes
+    tasks:
+      # pull latest code from repo
+      - shell:
+          chdir: "/data/lfqa"
+          cmd: "git pull"
+      # stop NEAMT
+      - shell:
+          chdir: "/data/lfqa/naive-eamt"
+          cmd: "./stop_docker_containers.sh"
+      # start NEAMT
+      - shell:
+          chdir: "/data/lfqa/naive-eamt"
+          cmd: "./start_docker_containers.sh"
+      # remove dangling images and containers
+      - shell:
+          chdir: "/data/lfqa/naive-eamt"
+          cmd: "docker image prune -f"
